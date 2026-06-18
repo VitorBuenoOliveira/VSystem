@@ -1,0 +1,2509 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>👑 PROJETO MONARCA — Evolução Pessoal</title>
+<meta name="description" content="Sistema de evolução pessoal RPG inspirado em Solo Leveling. Construa o homem que deseja ser.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+  :root{--bg:#02050f;--bg2:#04091a;--panel:rgba(8,18,43,0.7);--panel-solid:#060f26;--border:rgba(95,212,255,0.22);--border-bright:rgba(95,212,255,0.65);--sys-cyan:#5fd4ff;--sys-blue:#2188ff;--sys-deep:#004ba8;--gold:#ffd000;--green:#3ff0a0;--red:#ff3a5e;--purple:#aa66ff;--pink:#ff69b4;--text:#afc7f2;--text-dim:#556c9a;--text-bright:#ffffff;}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{background:#000;}
+  body{color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;position:relative;background:radial-gradient(ellipse 100% 60% at 50% -10%,rgba(33,136,255,0.15) 0%,transparent 55%),radial-gradient(ellipse 80% 50% at 50% 110%,rgba(170,102,255,0.08) 0%,transparent 55%),var(--bg);}
+  .backdrop{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(95,212,255,0.035) 1px,transparent 1px),linear-gradient(90deg,rgba(95,212,255,0.035) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 90% 90% at 50% 40%,black 30%,transparent 80%);}
+  .scanlines{position:fixed;inset:0;z-index:50;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0px,rgba(0,0,0,0) 2px,rgba(0,8,20,0.18) 3px);opacity:0.4;}
+  body::before{content:'';position:fixed;inset:-30%;z-index:1;pointer-events:none;background:conic-gradient(from 90deg at 50% 50%,transparent 0 18%,rgba(95,212,255,.05) 20%,transparent 24% 48%,rgba(170,102,255,.04) 50%,transparent 55% 100%);animation:systemRotate 28s linear infinite;opacity:.55;mix-blend-mode:screen;}
+  @keyframes systemRotate{to{transform:rotate(360deg);}}
+  .system-alert{position:fixed;left:50%;top:74px;z-index:500;min-width:min(92vw,420px);max-width:calc(100vw - 28px);transform:translate(-50%,-18px) scale(.97);opacity:0;pointer-events:none;padding:14px 18px 13px;background:linear-gradient(135deg,rgba(3,10,27,.96),rgba(8,23,52,.92));border:1px solid rgba(95,212,255,.8);box-shadow:0 0 34px rgba(95,212,255,.34),inset 0 0 24px rgba(95,212,255,.08);clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);transition:opacity .24s ease,transform .24s ease;}
+  .system-alert.show{opacity:1;transform:translate(-50%,0) scale(1);}
+  .system-alert::before,.system-alert::after{content:'';position:absolute;left:12px;right:12px;height:1px;background:linear-gradient(90deg,transparent,var(--sys-cyan),transparent);}
+  .system-alert::before{top:5px}.system-alert::after{bottom:5px}
+  .system-alert-title{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:4px;color:#c8f4ff;text-shadow:0 0 14px rgba(95,212,255,.9);margin-bottom:5px;text-transform:uppercase;}
+  .system-alert-body{font-size:15px;color:#eaf6ff;line-height:1.25;text-shadow:0 0 10px rgba(95,212,255,.35);}
+  #boot{position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;transition:opacity .6s ease;}
+  #boot.hide{opacity:0;pointer-events:none;}
+  .boot-ring{width:100px;height:100px;border:2px solid rgba(95,212,255,0.2);border-top-color:var(--sys-cyan);border-radius:50%;animation:spin .9s linear infinite;box-shadow:0 0 40px rgba(95,212,255,0.45);}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .boot-crown{font-size:36px;filter:drop-shadow(0 0 16px rgba(95,212,255,0.85));animation:pulse2 2s ease infinite;}
+  @keyframes pulse2{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+  .boot-text{font-family:'Orbitron',sans-serif;font-size:14px;letter-spacing:5px;color:var(--sys-cyan);text-shadow:0 0 14px rgba(95,212,255,0.65);}
+  .boot-sub{font-size:12px;color:var(--text-dim);letter-spacing:2px;min-height:18px;}
+  .container{position:relative;z-index:2;max-width:860px;margin:0 auto;padding:18px 14px 92px;}
+  .top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:4px 2px;}
+  .sys-logo{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:3px;color:var(--sys-cyan);text-shadow:0 0 10px rgba(95,212,255,0.5);display:flex;align-items:center;gap:6px;}
+  .sound-toggle{background:var(--panel);border:1px solid var(--border);color:var(--text-dim);padding:5px 10px;border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .2s;}
+  .sound-toggle.on{color:var(--sys-cyan);border-color:var(--border-bright);}
+ 
+  /* Main Mission Bar */
+  .main-mission{background:linear-gradient(135deg,rgba(95,212,255,0.08),rgba(6,15,38,0.7));border:1px solid rgba(95,212,255,0.3);border-radius:8px;padding:14px 16px;margin-bottom:16px;position:relative;overflow:hidden;}
+  .main-mission::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(95,212,255,0.03),transparent);animation:shimmer 3s ease infinite;}
+  @keyframes shimmer{0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
+  .mm-title{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:3px;color:var(--sys-cyan);margin-bottom:4px;}
+  .mm-desc{font-size:12px;color:var(--text-dim);margin-bottom:10px;font-style:italic;}
+  .mm-bar-track{height:12px;background:rgba(0,0,0,0.5);border:1px solid rgba(95,212,255,0.25);border-radius:6px;overflow:hidden;}
+  .mm-bar-fill{height:100%;background:linear-gradient(90deg,#004ba8,var(--sys-cyan),#c2efff);border-radius:5px;transition:width .8s cubic-bezier(.2,.8,.2,1);position:relative;}
+  .mm-bar-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.4),transparent 60%);}
+  .mm-pct{text-align:right;font-family:'Orbitron',sans-serif;font-size:10px;color:var(--sys-cyan);margin-top:4px;}
+ 
+  /* System Window */
+  .sys-window{background:var(--panel);backdrop-filter:blur(8px);border:1px solid var(--border-bright);border-radius:6px;position:relative;padding:18px 16px 16px;margin-bottom:16px;box-shadow:0 0 30px rgba(33,136,255,0.15),inset 0 0 40px rgba(33,136,255,0.04);}
+  .sys-window::before,.sys-window::after{content:'';position:absolute;width:14px;height:14px;border-color:var(--sys-cyan);border-style:solid;}
+  .sys-window::before{top:-1px;left:-1px;border-width:2px 0 0 2px;}
+  .sys-window::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
+  .win-corner-tr,.win-corner-bl{position:absolute;width:14px;height:14px;border-color:var(--sys-cyan);border-style:solid;}
+  .win-corner-tr{top:-1px;right:-1px;border-width:2px 2px 0 0;}
+  .win-corner-bl{bottom:-1px;left:-1px;border-width:0 0 2px 2px;}
+  .win-tag{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--bg2);padding:1px 16px;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:4px;color:var(--sys-cyan);text-shadow:0 0 8px rgba(95,212,255,0.5);border:1px solid rgba(95,212,255,0.3);border-radius:3px;}
+  .player-head{text-align:center;margin-bottom:14px;}
+  .player-name{font-family:'Orbitron',sans-serif;font-size:clamp(18px,4.5vw,28px);font-weight:800;color:var(--text-bright);letter-spacing:2px;text-shadow:0 0 24px rgba(95,212,255,0.45);}
+  .player-class{font-size:12px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;margin-top:2px;}
+  .player-title{font-size:12px;color:var(--gold);letter-spacing:1px;margin-top:3px;font-style:italic;}
+  .player-identity{font-size:11px;color:var(--text-dim);margin-top:6px;max-width:320px;margin-left:auto;margin-right:auto;line-height:1.4;font-style:italic;}
+  .lvl-rank-row{display:flex;justify-content:center;gap:10px;margin:12px 0 14px;}
+  .lr-box{flex:1;max-width:140px;text-align:center;padding:8px;background:rgba(86,140,255,0.06);border:1px solid var(--border);border-radius:4px;}
+  .lr-label{font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;}
+  .lr-val{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;line-height:1.1;}
+  .bar-block{margin-bottom:9px;}
+  .bar-top{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;letter-spacing:1px;}
+  .bar-name{color:var(--text-dim);text-transform:uppercase;font-weight:600;}
+  .bar-track{height:9px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:3px;overflow:hidden;position:relative;}
+  .bar-fill{height:100%;border-radius:2px;transition:width .5s cubic-bezier(.2,.8,.2,1);position:relative;}
+  .bar-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.35),transparent 60%);}
+  .hp-fill{background:linear-gradient(90deg,#ff3a5e,#ff7a90);}
+  .mp-fill{background:linear-gradient(90deg,#2a7dff,#5fd4ff);}
+  .xp-fill{background:linear-gradient(90deg,#f5c451,#ffe9a8);}
+  .fatigue-fill{background:linear-gradient(90deg,#8b5cff,#c4a0ff);}
+  .gold-row{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+  .gold-disp{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;color:var(--gold);text-shadow:0 0 10px rgba(245,196,81,0.4);}
+  .points-disp{font-size:13px;color:var(--green);font-weight:600;}
+  .points-disp b{font-family:'Orbitron',sans-serif;}
+
+  /* Tabs */
+  .tabs{position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;background:rgba(7,10,22,0.95);backdrop-filter:blur(10px);border-top:1px solid rgba(245,196,81,0.3);padding:4px 1px calc(4px + env(safe-area-inset-bottom));}
+  .tab-btn{flex:1;background:none;border:none;color:var(--text-dim);font-family:'Rajdhani',sans-serif;font-size:8px;font-weight:600;letter-spacing:.3px;cursor:pointer;padding:5px 0;text-transform:uppercase;transition:color .2s;display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .tab-btn .ti{font-size:15px;line-height:1;}
+  .tab-btn.active{color:var(--gold);text-shadow:0 0 10px rgba(245,196,81,0.5);}
+  .tab-panel{display:none;animation:fadeUp .35s ease;}
+  .tab-panel.active{display:block;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  /* Panels */
+  .panel{background:var(--panel);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:14px;position:relative;}
+  .panel-title{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .panel-title::before{content:'◈';color:var(--sys-blue);}
+  .sub-panel-title{font-size:13px;font-weight:700;color:var(--text-bright);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;}
+
+  /* Stats Grid */
+  .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;}
+  .stat-cell{background:rgba(86,140,255,0.05);border:1px solid var(--border);border-radius:4px;padding:9px 11px;}
+  .stat-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}
+  .stat-nm{font-size:10px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;}
+  .stat-vl{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;}
+  .stat-line{height:3px;background:rgba(0,0,0,.4);border-radius:2px;overflow:hidden;}
+  .stat-line-fill{height:100%;border-radius:2px;transition:width .5s;}
+  .stat-plus{margin-top:6px;width:100%;padding:3px;background:rgba(63,240,160,0.08);border:1px solid rgba(63,240,160,0.25);color:var(--green);border-radius:3px;cursor:pointer;font-size:13px;font-weight:700;transition:all .15s;font-family:'Orbitron',sans-serif;}
+  .stat-plus:hover:not(:disabled){background:rgba(63,240,160,0.18);}
+  .stat-plus:disabled{opacity:.25;cursor:not-allowed;}
+
+  /* Quests */
+  .q-deadline{display:flex;justify-content:space-between;align-items:center;background:rgba(255,84,112,0.07);border:1px solid rgba(255,84,112,0.25);border-radius:5px;padding:9px 12px;margin-bottom:12px;}
+  .q-deadline-txt{font-size:11px;color:var(--red);letter-spacing:1px;}
+  .q-deadline-time{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;color:var(--red);}
+  .warn-banner{background:rgba(255,84,112,0.1);border:1px solid rgba(255,84,112,0.4);border-radius:5px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--red);display:flex;gap:8px;align-items:center;}
+  .q-filters{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+  .fbtn{padding:4px 11px;background:rgba(86,140,255,0.05);border:1px solid var(--border);color:var(--text-dim);font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;cursor:pointer;border-radius:3px;transition:all .15s;}
+  .fbtn.active{border-color:var(--gold);color:var(--gold);background:rgba(245,196,81,0.1);}
+  .quest{background:rgba(86,140,255,0.04);border:1px solid var(--border);border-left:3px solid var(--sys-blue);border-radius:4px;padding:11px 13px;margin-bottom:8px;display:flex;align-items:center;gap:11px;cursor:pointer;transition:all .2s;}
+  .quest:hover{border-left-color:var(--gold);background:rgba(86,140,255,0.08);}
+  .quest.done{opacity:.45;border-left-color:var(--green);}
+  .quest.done .q-name{text-decoration:line-through;}
+  .quest.penalty{border-left-color:var(--red);background:rgba(255,84,112,0.05);}
+  .quest.special{border-left-color:var(--gold);background:rgba(245,196,81,0.05);}
+  .quest.rel{border-left-color:var(--pink);background:rgba(255,105,180,0.05);}
+  .quest.spi{border-left-color:#ffd700;background:rgba(255,215,0,0.05);}
+  .quest.notToday{opacity:.4;border-left-color:var(--text-dim);}
+  .q-check{width:22px;height:22px;border:2px solid var(--border-bright);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--green);font-size:14px;font-weight:700;transition:all .2s;}
+  .quest.done .q-check{background:rgba(63,240,160,.12);border-color:var(--green);}
+  .q-info{flex:1;min-width:0;}
+  .q-name{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:3px;}
+  .q-meta{display:flex;gap:8px;flex-wrap:wrap;font-size:10px;align-items:center;}
+  .q-tag{padding:1px 7px;border-radius:3px;font-weight:700;letter-spacing:.5px;}
+  .t-easy{background:rgba(63,240,160,.1);color:var(--green);border:1px solid rgba(63,240,160,.3);}
+  .t-med{background:rgba(79,142,255,.1);color:var(--sys-blue);border:1px solid rgba(79,142,255,.3);}
+  .t-hard{background:rgba(245,196,81,.1);color:var(--gold);border:1px solid rgba(245,196,81,.3);}
+  .t-epic{background:rgba(255,84,112,.1);color:var(--red);border:1px solid rgba(255,84,112,.3);}
+  .q-stat-tag{color:var(--sys-cyan);}
+  .q-reward{color:var(--gold);font-weight:700;}
+  .q-xp{color:var(--green);font-weight:700;}
+  .q-streak{color:#ff8c42;font-weight:700;}
+  .q-del{background:rgba(255,84,112,.1);border:1px solid rgba(255,84,112,.25);color:var(--red);width:24px;height:24px;border-radius:4px;cursor:pointer;flex-shrink:0;font-size:13px;line-height:1;}
+
+  /* Priority Sections */
+  .priority-section{margin-bottom:6px;}
+  .priority-header{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:4px;margin-bottom:6px;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:2px;font-weight:700;text-transform:uppercase;}
+  .priority-header.ph-main{background:rgba(255,58,94,0.12);border:1px solid rgba(255,58,94,0.35);color:var(--red);}
+  .priority-header.ph-secondary{background:rgba(95,212,255,0.08);border:1px solid rgba(95,212,255,0.25);color:var(--sys-cyan);}
+  .priority-header.ph-bonus{background:rgba(63,240,160,0.07);border:1px solid rgba(63,240,160,0.2);color:var(--green);}
+  .priority-header .ph-badge{font-size:10px;margin-left:auto;padding:1px 7px;border-radius:10px;font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:0;}
+  .ph-main .ph-badge{background:rgba(255,58,94,0.2);color:var(--red);}
+  .ph-secondary .ph-badge{background:rgba(95,212,255,0.15);color:var(--sys-cyan);}
+  .ph-bonus .ph-badge{background:rgba(63,240,160,0.15);color:var(--green);}
+  .quest.priority-main{border-left-color:var(--red)!important;}
+  .quest.priority-secondary{border-left-color:var(--sys-cyan)!important;}
+  .quest.priority-bonus{border-left-color:var(--green)!important;}
+  .quest.priority-bonus.done{border-left-color:var(--green)!important;}
+  .warn-main{background:rgba(255,58,94,0.12);border:1px solid rgba(255,58,94,0.45);border-radius:5px;padding:9px 12px;margin-bottom:8px;font-size:12px;color:var(--red);display:flex;gap:8px;align-items:center;}
+  .warn-secondary{background:rgba(95,212,255,0.08);border:1px solid rgba(95,212,255,0.3);border-radius:5px;padding:7px 12px;margin-bottom:8px;font-size:12px;color:var(--sys-cyan);display:flex;gap:8px;align-items:center;}
+  /* Honrar o Dia */
+  .honrar-card{background:linear-gradient(135deg,rgba(245,196,81,0.1),rgba(13,22,48,0.6));border:1px solid rgba(245,196,81,0.4);border-radius:8px;padding:14px;margin-bottom:14px;position:relative;overflow:hidden;}
+  .honrar-card::after{content:'';position:absolute;top:-50%;right:-50%;width:100%;height:100%;background:radial-gradient(circle,rgba(245,196,81,0.05),transparent 70%);pointer-events:none;}
+  .honrar-title{font-family:'Orbitron',sans-serif;font-size:12px;color:var(--gold);letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .honrar-checks{display:flex;flex-direction:column;gap:6px;}
+  .honrar-check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);}
+  .honrar-check.met{color:var(--green);}
+  .honrar-check .hc-icon{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+  .honrar-check.met .hc-icon{border-color:var(--green);background:rgba(63,240,160,0.15);}
+  .honrar-reward{margin-top:10px;font-size:11px;color:var(--gold);text-align:center;}
+  .honrar-count{font-family:'Orbitron',sans-serif;font-size:10px;color:var(--text-dim);margin-top:6px;text-align:center;}
+
+  /* Add Form */
+  .add-form{background:rgba(86,140,255,0.04);border:1px dashed var(--border-bright);border-radius:5px;padding:13px;margin-top:12px;}
+  .frow{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+  .finput,.fselect{background:var(--panel-solid);border:1px solid var(--border);color:var(--text-bright);font-family:'Rajdhani',sans-serif;font-size:13px;padding:8px 11px;border-radius:4px;outline:none;transition:border-color .15s;}
+  .finput:focus,.fselect:focus{border-color:var(--gold);}
+  .finput{flex:1;min-width:140px;}
+  .fselect option{background:var(--panel-solid);}
+  .day-picker{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+  .day-chip{width:34px;height:32px;display:flex;align-items:center;justify-content:center;background:var(--panel-solid);border:1px solid var(--border);border-radius:4px;font-size:12px;font-weight:600;color:var(--text-dim);cursor:pointer;user-select:none;transition:all .15s;}
+  .day-chip.on{background:rgba(245,196,81,0.12);border-color:var(--gold);color:var(--gold);}
+  .btn{padding:9px 16px;border:none;border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .15s;text-transform:uppercase;}
+  .btn-pri{background:linear-gradient(135deg,#b8860b,var(--gold));color:#2a1a00;border:1px solid rgba(245,196,81,0.5);box-shadow:0 0 16px rgba(245,196,81,.2);}
+  .btn-pri:hover{filter:brightness(1.15);transform:translateY(-1px);}
+  .btn-danger{background:rgba(255,84,112,.12);color:var(--red);border:1px solid rgba(255,84,112,.3);}
+  .btn-ghost{background:rgba(86,140,255,.06);color:var(--text-dim);border:1px solid var(--border);}
+  .btn-sm{padding:6px 11px;font-size:11px;}
+  .btn-block{width:100%;}
+
+  /* Boss */
+  .boss-card{background:linear-gradient(160deg,rgba(255,84,112,0.08),rgba(13,22,48,0.5));border:1px solid rgba(255,84,112,0.4);border-radius:7px;padding:16px;margin-bottom:16px;position:relative;overflow:hidden;box-shadow:0 0 28px rgba(255,84,112,0.15);}
+  .boss-card.legendary{border-color:var(--gold);background:linear-gradient(160deg,rgba(245,196,81,0.06),rgba(60,20,120,0.1),rgba(13,22,48,0.5));box-shadow:0 0 40px rgba(245,196,81,0.2);}
+  .boss-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+  .boss-emoji{font-size:48px;filter:drop-shadow(0 0 16px rgba(245,196,81,0.6));animation:pulse2 3s ease infinite;}
+  .boss-name{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:800;color:var(--text-bright);letter-spacing:1px;}
+  .boss-sub{font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+  .boss-hp-top{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;}
+  .boss-hp-track{height:16px;background:rgba(0,0,0,0.5);border:1px solid rgba(245,196,81,0.3);border-radius:5px;overflow:hidden;position:relative;}
+  .boss-hp-fill{height:100%;background:linear-gradient(90deg,#ff2d4f,#ff7a90);transition:width .6s cubic-bezier(.2,.8,.2,1);position:relative;}
+  .boss-hp-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.3),transparent 50%);}
+  .boss-reward{font-size:11px;color:var(--text-dim);margin-top:10px;text-align:center;}
+  .boss-reward b{color:var(--gold);}
+  .boss-dmg{font-family:'Orbitron',sans-serif;font-size:10px;color:var(--gold);text-align:center;margin-top:6px;}
+
+  /* Dungeons */
+  .dungeon{background:rgba(86,140,255,0.04);border:1px solid var(--border);border-radius:6px;padding:13px;margin-bottom:11px;position:relative;}
+  .dungeon.complete{border-color:var(--green);background:rgba(63,240,160,0.05);}
+  .dg-top{display:flex;align-items:center;gap:11px;margin-bottom:10px;}
+  .dg-icon{font-size:28px;width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:rgba(245,196,81,0.07);border:1px solid var(--border);border-radius:7px;flex-shrink:0;}
+  .dg-info{flex:1;min-width:0;}
+  .dg-name{font-size:14px;font-weight:700;color:var(--text-bright);}
+  .dg-floors{font-size:11px;color:var(--text-dim);margin-top:1px;}
+  .dg-boss{font-size:10px;color:var(--gold);margin-top:2px;}
+  .dg-floor-name{font-size:11px;color:var(--sys-cyan);margin-bottom:6px;}
+  .dg-prog-track{height:8px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:10px;}
+  .dg-prog-fill{height:100%;background:linear-gradient(90deg,var(--sys-deep),var(--gold));transition:width .5s;border-radius:2px;}
+  .dg-actions{display:flex;gap:8px;align-items:center;}
+  .dg-rew{font-size:11px;color:var(--text-dim);flex:1;}
+  .dg-rew b{color:var(--gold);}
+  .dg-clear{padding:7px 14px;background:linear-gradient(135deg,#b8860b,var(--gold));color:#2a1a00;border:none;border-radius:5px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;transition:all .15s;}
+  .dg-clear:hover:not(:disabled){filter:brightness(1.15);}
+  .dg-clear:disabled{opacity:.4;cursor:not-allowed;background:rgba(86,140,255,0.1);border:1px solid var(--border);color:var(--text-dim);}
+
+  /* Shadow Army */
+  .shadow-card{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(123,94,167,0.12),rgba(13,22,48,0.4));border:1px solid rgba(181,123,255,0.3);border-radius:5px;padding:10px 12px;margin-bottom:8px;}
+  .shadow-card.elite{border-color:rgba(95,212,255,0.5);background:linear-gradient(135deg,rgba(95,212,255,0.08),rgba(13,22,48,0.4));}
+  .shadow-card.general{border-color:rgba(245,196,81,0.5);background:linear-gradient(135deg,rgba(245,196,81,0.08),rgba(13,22,48,0.4));}
+  .shadow-card.monarca{border-color:rgba(255,84,112,0.5);background:linear-gradient(135deg,rgba(255,84,112,0.08),rgba(245,196,81,0.05),rgba(13,22,48,0.4));box-shadow:0 0 12px rgba(245,196,81,0.15);}
+  .shadow-ic{font-size:24px;filter:drop-shadow(0 0 8px rgba(181,123,255,0.6));}
+  .shadow-info{flex:1;min-width:0;}
+  .shadow-nm{font-size:13px;font-weight:600;color:var(--purple);}
+  .shadow-pw{font-size:11px;color:var(--text-dim);}
+  .arise-item{display:flex;align-items:center;gap:10px;background:rgba(181,123,255,0.06);border:1px dashed rgba(181,123,255,0.4);border-radius:5px;padding:10px 12px;margin-bottom:8px;}
+  .arise-btn{padding:6px 14px;background:linear-gradient(135deg,#6a3fb0,var(--purple));color:#fff;border:none;border-radius:5px;font-family:'Orbitron',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;cursor:pointer;animation:pulsePurple 1.6s infinite;}
+  @keyframes pulsePurple{0%,100%{box-shadow:0 0 0 0 rgba(181,123,255,.4);}50%{box-shadow:0 0 0 6px rgba(181,123,255,0);}}
+
+  /* Skill Tree */
+  .perk-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;}
+  .perk{background:rgba(86,140,255,0.04);border:1px solid var(--border);border-radius:5px;padding:11px;}
+  .perk.owned{border-color:var(--green);background:rgba(63,240,160,0.05);}
+  .perk-ic{font-size:22px;}
+  .perk-nm{font-size:13px;font-weight:700;color:var(--text-bright);margin:4px 0 2px;}
+  .perk-desc{font-size:11px;color:var(--text-dim);line-height:1.4;min-height:30px;}
+  .perk-buy{margin-top:8px;width:100%;padding:5px;border-radius:4px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;cursor:pointer;border:1px solid var(--green);background:rgba(63,240,160,0.1);color:var(--green);}
+  .perk-buy:disabled{opacity:.35;cursor:not-allowed;}
+  .perk.owned .perk-buy{cursor:default;}
+
+  /* Vida Tab - Relationship, Spiritual, Financial, Library */
+  .vida-section{background:rgba(86,140,255,0.03);border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:12px;}
+  .vida-header{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;}
+  .vida-header-ic{font-size:26px;}
+  .vida-header-info{flex:1;}
+  .vida-header-nm{font-size:15px;font-weight:700;color:var(--text-bright);}
+  .vida-header-lv{font-size:11px;color:var(--gold);}
+  .vida-header-arrow{font-size:14px;color:var(--text-dim);transition:transform .3s;}
+  .vida-header-arrow.open{transform:rotate(180deg);}
+  .vida-body{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+  .vida-body.open{display:block;animation:fadeUp .3s;}
+  .vida-bar{margin:8px 0;}
+  .vida-bar-track{height:6px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:3px;overflow:hidden;}
+  .vida-bar-fill{height:100%;border-radius:2px;transition:width .5s;}
+
+  /* Financial specific */
+  .fin-goal{background:rgba(63,240,160,0.04);border:1px solid var(--border);border-radius:5px;padding:10px;margin-bottom:8px;}
+  .fin-goal-top{display:flex;justify-content:space-between;margin-bottom:6px;}
+  .fin-goal-nm{font-size:13px;font-weight:600;color:var(--text-bright);}
+  .fin-goal-val{font-family:'Orbitron',sans-serif;font-size:12px;color:var(--green);}
+
+  /* Library specific */
+  .book-item{display:flex;align-items:center;gap:10px;background:rgba(86,140,255,0.04);border:1px solid var(--border);border-radius:5px;padding:10px;margin-bottom:8px;}
+  .book-icon{font-size:26px;}
+  .book-info{flex:1;min-width:0;}
+  .book-nm{font-size:13px;font-weight:600;color:var(--text-bright);}
+  .book-effect{font-size:11px;color:var(--green);margin-top:2px;}
+
+  /* Titles & Achievements */
+  .title-item{display:flex;align-items:center;gap:11px;padding:10px 12px;background:rgba(86,140,255,0.04);border:1px solid var(--border);border-radius:5px;margin-bottom:8px;}
+  .title-item.locked{opacity:.4;}
+  .title-item.active-title{border-color:var(--gold);background:rgba(245,196,81,0.06);}
+  .title-ic{font-size:22px;width:40px;text-align:center;flex-shrink:0;}
+  .title-tx{flex:1;}
+  .title-nm{font-size:14px;font-weight:600;color:var(--gold);}
+  .title-cond{font-size:11px;color:var(--text-dim);margin-top:1px;}
+  .title-use{padding:4px 10px;background:rgba(245,196,81,0.1);border:1px solid rgba(245,196,81,0.3);color:var(--gold);border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;}
+  .title-use:disabled{opacity:.4;cursor:default;}
+  .ach-category{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px;color:var(--sys-cyan);margin:14px 0 8px;text-transform:uppercase;}
+  .ach-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(86,140,255,0.03);border:1px solid var(--border);border-radius:4px;margin-bottom:6px;font-size:12px;}
+  .ach-item.unlocked{border-color:var(--gold);background:rgba(245,196,81,0.05);}
+  .ach-item .ach-ic{font-size:18px;width:28px;text-align:center;}
+  .ach-item .ach-tx{flex:1;color:var(--text);}
+  .ach-item.unlocked .ach-tx{color:var(--gold);}
+  .ach-item .ach-status{font-size:10px;color:var(--text-dim);}
+  .ach-item.unlocked .ach-status{color:var(--green);}
+
+  /* Random Event Modal */
+  #event-modal{position:fixed;inset:0;z-index:350;display:none;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,rgba(245,196,81,0.15),rgba(0,0,0,0.92));}
+  #event-modal.show{display:flex !important;animation:fadeUp .3s;}
+  .event-card{text-align:center;max-width:320px;padding:30px 24px;background:var(--panel);border:1px solid var(--gold);border-radius:10px;box-shadow:0 0 40px rgba(245,196,81,0.25);animation:luPop .5s cubic-bezier(.2,1.2,.3,1);}
+  .event-ic{font-size:48px;margin-bottom:12px;filter:drop-shadow(0 0 14px rgba(245,196,81,0.5));}
+  .event-title{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:3px;color:var(--gold);margin-bottom:8px;}
+  .event-text{font-size:16px;font-weight:600;color:var(--text-bright);margin-bottom:6px;}
+  .event-reward{font-size:12px;color:var(--green);margin-bottom:16px;}
+
+  /* Charts */
+  .chart-wrap{background:rgba(0,0,0,0.25);border:1px solid var(--border);border-radius:5px;padding:10px;margin-bottom:10px;}
+  .chart-cap{font-size:11px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+  canvas{width:100%;display:block;}
+  .heat-wrap{overflow-x:auto;padding-bottom:6px;}
+  .heat-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:3px;min-width:max-content;}
+  .heat-cell{width:13px;height:13px;border-radius:2px;background:rgba(86,140,255,0.06);}
+  .heat-legend{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-dim);margin-top:8px;justify-content:flex-end;}
+  .heat-legend .heat-cell{width:11px;height:11px;}
+  .stat-summary{display:flex;justify-content:space-around;text-align:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+  .ss-box .ss-val{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:800;color:var(--gold);}
+  .ss-box .ss-lbl{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;}
+  .progress-mini{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;}
+  .pm-card{background:rgba(86,140,255,0.04);border:1px solid var(--border);border-radius:5px;padding:10px;text-align:center;}
+  .pm-val{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;color:var(--gold);}
+  .pm-lbl{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:3px;}
+
+  /* Log */
+  .log-row{padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;display:flex;gap:10px;align-items:center;}
+  .log-t{color:var(--text-dim);font-size:10px;min-width:78px;flex-shrink:0;}
+  .log-x{flex:1;}
+  .log-amt{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;flex-shrink:0;}
+
+  /* Config */
+  .cfg-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+  .cfg-input{width:100%;background:var(--panel-solid);border:1px solid var(--border);color:var(--text-bright);font-family:'Rajdhani',sans-serif;font-size:14px;padding:9px 12px;border-radius:4px;outline:none;margin-bottom:14px;}
+  .cfg-input:focus{border-color:var(--gold);}
+  .empty{text-align:center;padding:28px 10px;color:var(--text-dim);font-size:13px;line-height:1.5;}
+
+  /* Notifications */
+  #notif-wrap{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:200;width:90%;max-width:340px;pointer-events:none;}
+  .notif{background:rgba(10,16,36,0.95);backdrop-filter:blur(8px);border:1px solid var(--gold);border-radius:5px;padding:12px 16px;margin-bottom:8px;box-shadow:0 0 24px rgba(245,196,81,.3);opacity:0;transform:translateY(-16px) scale(.96);transition:all .3s cubic-bezier(.2,.9,.3,1);position:relative;overflow:hidden;}
+  .notif.show{opacity:1;transform:translateY(0) scale(1);}
+  .notif::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);}
+  .notif-h{font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:3px;color:var(--gold);margin-bottom:3px;}
+  .notif-b{font-size:13px;color:var(--text-bright);}
+  .notif.danger{border-color:var(--red);box-shadow:0 0 24px rgba(255,84,112,.35);}
+  .notif.danger::before{background:var(--red);}
+  .notif.danger .notif-h{color:var(--red);}
+  .notif.green{border-color:var(--green);box-shadow:0 0 24px rgba(63,240,160,.3);}
+  .notif.green::before{background:var(--green);}
+  .notif.green .notif-h{color:var(--green);}
+  .notif.purple{border-color:var(--purple);box-shadow:0 0 24px rgba(181,123,255,.35);}
+  .notif.purple::before{background:var(--purple);}
+  .notif.purple .notif-h{color:var(--purple);}
+
+  /* Overlays */
+  #levelup,#penalty,#bossWin,#arise{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;}
+  #levelup{background:radial-gradient(ellipse at center,rgba(120,90,10,0.5),rgba(0,0,0,0.88));}
+  #penalty{background:radial-gradient(ellipse at center,rgba(120,10,30,0.55),rgba(0,0,0,0.92));}
+  #bossWin{background:radial-gradient(ellipse at center,rgba(120,90,10,0.5),rgba(0,0,0,0.9));}
+  #arise{background:radial-gradient(ellipse at center,rgba(60,20,120,0.6),rgba(0,0,0,0.92));}
+  .show{display:flex !important;animation:fadeUp .3s;}
+  .lu-card,.pen-card,.bw-card,.ar-card{text-align:center;max-width:340px;padding:0 20px;animation:luPop .6s cubic-bezier(.2,1.2,.3,1);}
+  @keyframes luPop{0%{transform:scale(.4);opacity:0;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+  .lu-text{font-family:'Orbitron',sans-serif;font-size:clamp(32px,9vw,56px);font-weight:900;color:#fff;letter-spacing:4px;text-shadow:0 0 40px rgba(245,196,81,.9),0 0 80px rgba(245,196,81,.5);}
+  .lu-sub{font-family:'Orbitron',sans-serif;font-size:18px;color:var(--gold);margin-top:6px;letter-spacing:6px;}
+  .lu-detail{margin-top:18px;font-size:14px;color:var(--text-bright);letter-spacing:1px;}
+  .lu-rays{position:absolute;inset:0;pointer-events:none;background:conic-gradient(from 0deg,transparent 0deg,rgba(245,196,81,.08) 20deg,transparent 40deg,transparent 60deg,rgba(245,196,81,.06) 80deg,transparent 100deg);animation:spin 8s linear infinite;}
+  .pen-icon,.bw-icon,.ar-icon{font-size:54px;margin-bottom:10px;}
+  .pen-icon{filter:drop-shadow(0 0 20px rgba(255,84,112,.7));}
+  .bw-icon{filter:drop-shadow(0 0 22px rgba(245,196,81,.7));}
+  .ar-icon{filter:drop-shadow(0 0 22px rgba(181,123,255,.8));}
+  .pen-text{font-family:'Orbitron',sans-serif;font-size:clamp(26px,7vw,40px);font-weight:900;color:var(--red);letter-spacing:3px;text-shadow:0 0 30px rgba(255,84,112,.8);}
+  .bw-text{font-family:'Orbitron',sans-serif;font-size:clamp(26px,7vw,42px);font-weight:900;color:var(--gold);letter-spacing:3px;text-shadow:0 0 30px rgba(245,196,81,.8);}
+  .ar-text{font-family:'Orbitron',sans-serif;font-size:clamp(34px,10vw,60px);font-weight:900;color:var(--purple);letter-spacing:6px;text-shadow:0 0 40px rgba(181,123,255,.9);}
+  .pen-msg,.bw-msg,.ar-msg{font-size:14px;color:var(--text-bright);margin:14px 0 20px;line-height:1.6;}
+  .pen-list{text-align:left;font-size:13px;color:var(--red);margin-bottom:20px;}
+  .pen-list div{padding:3px 0;}
+  .pulse-red{animation:pulseRed 1.5s infinite;}
+  @keyframes pulseRed{0%,100%{box-shadow:0 0 0 0 rgba(255,84,112,.3);}50%{box-shadow:0 0 0 6px rgba(255,84,112,0);}}
+
+  /* Shop */
+  .shop-item{background:rgba(86,140,255,0.04);border:1px solid var(--border);border-radius:5px;padding:12px;margin-bottom:9px;display:flex;align-items:center;gap:12px;}
+  .shop-icon{font-size:26px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(245,196,81,0.08);border:1px solid rgba(245,196,81,0.2);border-radius:6px;flex-shrink:0;}
+  .shop-info{flex:1;min-width:0;}
+  .shop-name{font-size:14px;font-weight:600;color:var(--text-bright);}
+  .shop-desc{font-size:11px;color:var(--text-dim);margin-top:1px;}
+  .shop-buy{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+  .shop-cost{font-family:'Orbitron',sans-serif;font-size:13px;color:var(--gold);font-weight:700;}
+  .buy-btn{padding:5px 13px;background:linear-gradient(135deg,#b8860b,var(--gold));color:#2a1a00;border:none;border-radius:4px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;transition:all .15s;}
+  .buy-btn:hover:not(:disabled){filter:brightness(1.1);}
+  .buy-btn:disabled{opacity:.35;cursor:not-allowed;}
+  .use-btn{padding:5px 13px;background:linear-gradient(135deg,var(--sys-deep),var(--sys-blue));color:#fff;border:1px solid var(--border-bright);border-radius:4px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;}
+  .use-btn:disabled{opacity:.35;cursor:not-allowed;}
+  .item-count{font-family:'Orbitron',sans-serif;font-size:13px;color:var(--sys-cyan);font-weight:700;}
+
+  /* Scrollbar */
+  ::-webkit-scrollbar{width:4px;height:4px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:rgba(95,212,255,0.3);border-radius:2px;}
+
+  /* Active states & side cards styling */
+  .quest:active, .perk:active, .shop-item:active, .dungeon:active {
+    transform: scale(0.985);
+    transition: transform 0.05s;
+  }
+  .quest-side-card {
+    transition: all 0.2s;
+  }
+  .quest-side-card:hover {
+    background: rgba(170, 102, 255, 0.08) !important;
+    border-color: var(--purple) !important;
+  }
+  .quest-side-card:active {
+    transform: scale(0.985);
+  }
+  /* Holographic locks for dungeons */
+  .dungeon-lock-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(2, 5, 15, 0.88);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    z-index: 10;
+    border-radius: 6px;
+    border: 1px dashed var(--sys-cyan);
+  }
+</style>
+</head>
+<body>
+<div class="backdrop"></div>
+<div class="scanlines"></div>
+
+<!-- BOOT -->
+<div id="boot">
+  <div class="boot-crown">👑</div>
+  <div class="boot-ring"></div>
+  <div class="boot-text">PROJETO MONARCA</div>
+  <div class="boot-sub" id="boot-sub">Inicializando...</div>
+</div>
+
+<div id="notif-wrap"></div>
+<div id="system-alert" class="system-alert"><div class="system-alert-title" id="system-alert-title">SYSTEM</div><div class="system-alert-body" id="system-alert-body"></div></div>
+<audio id="system-audio" preload="auto" src="https://www.myinstants.com/media/sounds/system-notifikason-solo-leveling.mp3"></audio>
+
+<!-- OVERLAYS -->
+<div id="levelup"><div class="lu-rays"></div><div class="lu-card"><div class="lu-text">LEVEL UP</div><div class="lu-sub" id="lu-sub">LV. 2</div><div class="lu-detail" id="lu-detail"></div></div></div>
+<div id="penalty"><div class="pen-card"><div class="pen-icon">⚠️</div><div class="pen-text">PENALIDADE</div><div class="pen-msg" id="pen-msg"></div><div class="pen-list" id="pen-list"></div><button class="btn btn-danger btn-block" onclick="closeOv('penalty')">Aceitar Consequências</button></div></div>
+<div id="bossWin"><div class="bw-card"><div class="bw-icon">👑</div><div class="bw-text">VITÓRIA</div><div class="bw-msg" id="bw-msg"></div><button class="btn btn-pri btn-block" onclick="closeOv('bossWin')">Reivindicar</button></div></div>
+<div id="arise"><div class="ar-card"><div class="ar-icon">🌑</div><div class="ar-text">ARISE</div><div class="ar-msg" id="ar-msg"></div><button class="btn btn-pri btn-block" style="background:linear-gradient(135deg,#6a3fb0,var(--purple))" onclick="closeOv('arise')">Erguer Sombra</button></div></div>
+<div id="event-modal"><div class="event-card"><div class="event-ic" id="ev-ic">⚡</div><div class="event-title">EVENTO ALEATÓRIO</div><div class="event-text" id="ev-text"></div><div class="event-reward" id="ev-reward"></div><button class="btn btn-pri" onclick="completeEvent()">Aceitar Desafio</button><button class="btn btn-ghost btn-sm" onclick="dismissEvent()" style="margin-left:8px">Recusar</button></div></div>
+
+<div class="container">
+  <div class="top-bar"><span class="sys-logo">👑 PROJETO MONARCA</span><button class="sound-toggle on" id="sound-btn" onclick="toggleSound()">♪ ON</button></div>
+
+  <!-- MAIN MISSION -->
+  <div class="main-mission" id="main-mission-bar">
+    <div class="mm-title">👑 MISSÃO PRINCIPAL — PROJETO MONARCA</div>
+    <div class="mm-desc">"Ser o homem que ela merece — forte, estudioso, fiel e cheio de propósito."</div>
+    <div class="mm-bar-track"><div class="mm-bar-fill" id="mm-fill" style="width:0%"></div></div>
+    <div class="mm-pct" id="mm-pct">0%</div>
+  </div>
+
+  <!-- TAB: STATUS -->
+  <div class="tab-panel active" id="tab-status">
+    <div class="sys-window">
+      <span class="win-corner-tr"></span><span class="win-corner-bl"></span>
+      <div class="win-tag">STATUS</div>
+      <div class="player-head">
+        <div class="player-name" id="p-name">APRENDIZ DE MONARCA</div>
+        <div class="player-class" id="p-class">Aprendiz</div>
+        <div class="player-title" id="p-title"></div>
+        <div class="player-identity">"Trabalho duro, fé inabalável e amor verdadeiro — construindo o futuro com ela, dia após dia."</div>
+      </div>
+      <div class="lvl-rank-row">
+        <div class="lr-box"><div class="lr-label">Nível</div><div class="lr-val" style="color:var(--gold)" id="p-level">1</div></div>
+        <div class="lr-box"><div class="lr-label">Classe</div><div class="lr-val" id="p-rank" style="color:var(--purple);font-size:14px">👤</div></div>
+      </div>
+      <div class="bar-block"><div class="bar-top"><span class="bar-name">HP</span><span id="hp-txt">100/100</span></div><div class="bar-track"><div class="bar-fill hp-fill" id="hp-bar" style="width:100%"></div></div></div>
+      <div class="bar-block"><div class="bar-top"><span class="bar-name">MP</span><span id="mp-txt">50/50</span></div><div class="bar-track"><div class="bar-fill mp-fill" id="mp-bar" style="width:100%"></div></div></div>
+      <div class="bar-block"><div class="bar-top"><span class="bar-name">EXP</span><span id="xp-txt">0/100</span></div><div class="bar-track"><div class="bar-fill xp-fill" id="xp-bar" style="width:0%"></div></div></div>
+      <div class="bar-block"><div class="bar-top"><span class="bar-name">Fadiga</span><span id="fat-txt">0/100</span></div><div class="bar-track"><div class="bar-fill fatigue-fill" id="fat-bar" style="width:0%"></div></div></div>
+      <div class="gold-row"><span class="gold-disp">⬡ <span id="p-gold">0</span> G</span><span class="points-disp">Pontos: <b id="p-points">0</b> · Skills: <b id="p-skill">0</b></span></div>
+    </div>
+    <div class="panel"><div class="panel-title">Atributos</div><div class="stats-grid" id="stats-grid"></div></div>
+    <div class="panel"><div class="panel-title">Árvore de Habilidades <span style="margin-left:auto;font-family:Rajdhani;font-size:11px;color:var(--green);letter-spacing:0">Pontos: <b id="skill-pts">0</b></span></div><div class="perk-grid" id="perk-grid"></div></div>
+    <div class="panel"><div class="panel-title">Exército das Sombras</div><div id="arise-zone"></div><div id="shadow-zone"></div></div>
+    <div class="panel"><div class="panel-title">Ranking de Hunters</div><div class="stats-grid" id="rank-grid" style="grid-template-columns:repeat(3,1fr)"></div></div>
+  </div>
+
+  <!-- TAB: QUESTS -->
+  <div class="tab-panel" id="tab-quests">
+    <div class="panel">
+      <div class="panel-title">Missões</div>
+      <div class="q-deadline"><span class="q-deadline-txt">⏳ Reset diário em</span><span class="q-deadline-time" id="countdown">--:--:--</span></div>
+      <div id="warn-zone"></div>
+      <!-- Honrar o Dia -->
+      <div id="honrar-zone"></div>
+      <div class="q-filters">
+        <button class="fbtn active" onclick="setFilter('today',this)">Hoje</button>
+        <button class="fbtn" onclick="setFilter('priority-main',this)">⚠ Principais</button>
+        <button class="fbtn" onclick="setFilter('all',this)">Todas</button>
+        <button class="fbtn" onclick="setFilter('weekly',this)">Semanais</button>
+        <button class="fbtn" onclick="setFilter('main',this)">Main Quest</button>
+      </div>
+      <div id="quest-list"></div>
+      <div class="add-form" id="add-form" style="display:none">
+        <div class="frow"><input class="finput" id="q-name" placeholder="Nome da missão..."></div>
+        <div class="frow">
+          <select class="fselect" id="q-cat">
+            <option value="geral">📋 Geral</option><option value="estudo">📚 Estudo</option>
+            <option value="fe">🙏 Fé</option><option value="amor">❤️ Amor</option>
+            <option value="saude">💪 Saúde</option><option value="carreira">💻 Carreira</option>
+          </select>
+          <select class="fselect" id="q-stat"><option value="forca">Força</option><option value="agi">Agilidade</option><option value="int">Inteligência</option><option value="vit">Vitalidade</option><option value="per">Percepção</option><option value="disc">Disciplina</option><option value="fe">Fé</option><option value="amor">Amor</option><option value="prosperidade">Prosperidade</option><option value="honra">Honra</option></select>
+          <select class="fselect" id="q-diff"><option value="easy">Fácil</option><option value="med">Médio</option><option value="hard">Difícil</option><option value="epic">Épico</option></select>
+          <select class="fselect" id="q-type"><option value="daily">Diária</option><option value="weekly">Semanal</option><option value="main">Main Quest</option></select>
+          <select class="fselect" id="q-priority">
+            <option value="main">⚠ Principal (penalidade)</option>
+            <option value="secondary" selected>📋 Secundária (leve)</option>
+            <option value="bonus">⭐ Bônus (sem punição)</option>
+          </select>
+        </div>
+        <div class="cfg-label" style="margin-bottom:5px">Dias da semana (vazio = todos)</div>
+        <div class="day-picker" id="day-picker"></div>
+        <button class="btn btn-pri" onclick="addQuest()">Adicionar</button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleAddForm()" style="margin-left:6px">Cancelar</button>
+      </div>
+      <button class="btn btn-pri btn-block" id="add-btn" onclick="toggleAddForm()" style="margin-top:10px">+ Nova Missão</button>
+    </div>
+  </div>
+
+  <!-- TAB: MASMORRAS -->
+  <div class="tab-panel" id="tab-raid">
+    <div class="panel"><div class="panel-title">👑 Boss — O Futuro</div><div id="boss-zone"></div><div style="text-align:center;margin-top:8px"><button class="btn btn-ghost btn-sm" onclick="clearBoss()">Trocar Boss</button></div></div>
+    <div class="panel">
+      <div class="panel-title">Masmorras Permanentes</div>
+      <div class="empty" style="padding:4px 0 12px;font-size:12px">Avance andares completando metas relevantes. Concluir uma masmorra = recompensa épica.</div>
+      <div id="dungeon-list"></div>
+      <div class="add-form" id="dg-form" style="display:none">
+        <div class="frow"><input class="finput" id="dg-name" placeholder="Nome da masmorra..."></div>
+        <div class="frow"><input class="finput" id="dg-icon" placeholder="Emoji" style="min-width:70px;max-width:90px"><input class="finput" id="dg-floors" type="number" placeholder="Andares (dias)" style="min-width:120px"></div>
+        <div class="frow"><input class="finput" id="dg-xp" type="number" placeholder="XP recompensa" style="min-width:120px"><input class="finput" id="dg-gold" type="number" placeholder="Ouro recompensa" style="min-width:120px"></div>
+        <button class="btn btn-pri" onclick="addDungeon()">Criar Masmorra</button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleDgForm()" style="margin-left:6px">Cancelar</button>
+      </div>
+      <button class="btn btn-pri btn-block" id="dg-add-btn" onclick="toggleDgForm()" style="margin-top:10px">+ Nova Masmorra Própria</button>
+    </div>
+  </div>
+
+  <!-- TAB: VIDA -->
+  <div class="tab-panel" id="tab-vida">
+    <!-- Relationship -->
+    <div class="panel">
+      <div class="panel-title">Áreas da Vida</div>
+      <div class="vida-section" id="sec-rel">
+        <div class="vida-header" onclick="toggleVida('rel')">
+          <div class="vida-header-ic">❤️</div>
+          <div class="vida-header-info"><div class="vida-header-nm">Relacionamento</div><div class="vida-header-lv" id="rel-lv">Nível 1 — Guardião do Amor</div></div>
+          <div class="vida-header-arrow" id="arrow-rel">▼</div>
+        </div>
+        <div class="vida-body" id="body-rel">
+          <div class="vida-bar"><div class="bar-top"><span class="bar-name" style="color:var(--pink)">EXP Amor</span><span id="rel-xp-txt">0/50</span></div><div class="vida-bar-track"><div class="vida-bar-fill" id="rel-xp-bar" style="width:0%;background:linear-gradient(90deg,#ff69b4,#ff9fcf)"></div></div></div>
+          <div id="rel-missions"></div>
+          <div class="add-form" id="rel-form" style="display:none">
+            <div class="frow"><input class="finput" id="rel-q-name" placeholder="Missão de amor..."></div>
+            <button class="btn btn-pri btn-sm" onclick="addRelMission()">Adicionar</button>
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('rel-form').style.display='none'" style="margin-left:6px">Cancelar</button>
+          </div>
+          <button class="btn btn-ghost btn-sm btn-block" onclick="document.getElementById('rel-form').style.display='block'" style="margin-top:8px">+ Missão de Amor</button>
+        </div>
+      </div>
+
+      <!-- Spiritual -->
+      <div class="vida-section" id="sec-spi">
+        <div class="vida-header" onclick="toggleVida('spi')">
+          <div class="vida-header-ic">🙏</div>
+          <div class="vida-header-info"><div class="vida-header-nm">Espiritual</div><div class="vida-header-lv" id="spi-lv">0 dias de constância</div></div>
+          <div class="vida-header-arrow" id="arrow-spi">▼</div>
+        </div>
+        <div class="vida-body" id="body-spi">
+          <div id="spi-missions"></div>
+          <div style="margin-top:8px">
+            <div class="cfg-label">Diário Espiritual</div>
+            <textarea class="finput" id="spi-diary" placeholder="Escreva sua reflexão de hoje..." style="min-height:60px;resize:vertical"></textarea>
+            <button class="btn btn-ghost btn-sm" onclick="saveDiary()">Salvar Reflexão</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Financial -->
+      <div class="vida-section" id="sec-fin">
+        <div class="vida-header" onclick="toggleVida('fin')">
+          <div class="vida-header-ic">💰</div>
+          <div class="vida-header-info"><div class="vida-header-nm">Financeiro</div><div class="vida-header-lv" id="fin-lv">R$ 0 guardados</div></div>
+          <div class="vida-header-arrow" id="arrow-fin">▼</div>
+        </div>
+        <div class="vida-body" id="body-fin">
+          <div id="fin-goals"></div>
+          <div class="frow" style="margin-top:10px">
+            <input class="finput" id="fin-add-val" type="number" placeholder="Valor guardado (R$)" style="max-width:180px">
+            <button class="btn btn-pri btn-sm" onclick="addSavedMoney()">Registrar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Library -->
+      <div class="vida-section" id="sec-lib">
+        <div class="vida-header" onclick="toggleVida('lib')">
+          <div class="vida-header-ic">📚</div>
+          <div class="vida-header-info"><div class="vida-header-nm">Biblioteca</div><div class="vida-header-lv" id="lib-lv">0 livros concluídos</div></div>
+          <div class="vida-header-arrow" id="arrow-lib">▼</div>
+        </div>
+        <div class="vida-body" id="body-lib">
+          <div id="book-list"></div>
+          <div class="add-form" id="book-form" style="display:none">
+            <div class="frow"><input class="finput" id="book-name" placeholder="Nome do livro..."></div>
+            <div class="frow">
+              <select class="fselect" id="book-stat"><option value="disc">Disciplina</option><option value="int">Inteligência</option><option value="per">Percepção</option><option value="fe">Fé</option><option value="honra">Honra</option><option value="amor">Amor</option></select>
+              <input class="finput" id="book-icon" placeholder="📘" style="max-width:70px">
+            </div>
+            <button class="btn btn-pri btn-sm" onclick="addBook()">Concluir Livro</button>
+            <button class="btn btn-ghost btn-sm" onclick="document.getElementById('book-form').style.display='none'" style="margin-left:6px">Cancelar</button>
+          </div>
+          <button class="btn btn-ghost btn-sm btn-block" onclick="document.getElementById('book-form').style.display='block'" style="margin-top:8px">+ Registrar Livro Concluído</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: PROGRESSO -->
+  <div class="tab-panel" id="tab-prog">
+    <div class="panel">
+      <div class="panel-title">Resumo Geral</div>
+      <div class="stat-summary">
+        <div class="ss-box"><div class="ss-val" id="ss-streak">0</div><div class="ss-lbl">Sequência 🔥</div></div>
+        <div class="ss-box"><div class="ss-val" id="ss-done">0</div><div class="ss-lbl">Missões</div></div>
+        <div class="ss-box"><div class="ss-val" id="ss-clean">0</div><div class="ss-lbl">Dias Limpos</div></div>
+        <div class="ss-box"><div class="ss-val" id="ss-honrar">0</div><div class="ss-lbl">Dias Honrados</div></div>
+      </div>
+      <div class="progress-mini">
+        <div class="pm-card"><div class="pm-val" id="pm-study">0h</div><div class="pm-lbl">Horas Estudadas</div></div>
+        <div class="pm-card"><div class="pm-val" id="pm-prayer">0</div><div class="pm-lbl">Dias de Oração</div></div>
+        <div class="pm-card"><div class="pm-val" id="pm-books">0</div><div class="pm-lbl">Livros Lidos</div></div>
+        <div class="pm-card"><div class="pm-val" id="pm-saved">R$0</div><div class="pm-lbl">Guardado</div></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">XP — Últimos 14 dias</div>
+      <div class="chart-wrap"><canvas id="xpChart" height="120"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Atributos (Radar)</div>
+      <div class="chart-wrap"><canvas id="radarChart" height="260"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Mapa de Constância</div>
+      <div class="heat-wrap"><div class="heat-grid" id="heat-grid"></div></div>
+      <div class="heat-legend">Menos <span class="heat-cell" style="background:rgba(86,140,255,0.06)"></span><span class="heat-cell" style="background:rgba(245,196,81,0.3)"></span><span class="heat-cell" style="background:rgba(245,196,81,0.55)"></span><span class="heat-cell" style="background:rgba(245,196,81,0.85)"></span> Mais</div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Boss — O Futuro</div>
+      <div id="boss-progress-chart"></div>
+    </div>
+    <div class="panel"><div class="panel-title">Registro do Sistema</div><div id="log-list"><div class="empty">Nenhuma atividade ainda.</div></div></div>
+  </div>
+
+  <!-- TAB: CONQUISTAS -->
+  <div class="tab-panel" id="tab-titles">
+    <div class="panel"><div class="panel-title">Títulos</div><div id="titles-list"></div></div>
+    <div class="panel"><div class="panel-title">Conquistas</div><div id="ach-list"></div></div>
+  </div>
+
+  <!-- TAB: ITENS -->
+  <div class="tab-panel" id="tab-itens">
+    <div class="panel"><div class="panel-title">Inventário</div><div id="inv-zone"></div></div>
+    <div class="panel"><div class="panel-title">Loja do Sistema</div><div id="sysshop-zone"></div></div>
+    <div class="panel">
+      <div class="panel-title">Recompensas (vida real)</div>
+      <div id="shop-list"></div>
+      <div class="add-form" id="shop-form" style="display:none">
+        <div class="frow"><input class="finput" id="s-name" placeholder="Ex: 1h de videogame, pizza..."></div>
+        <div class="frow"><input class="finput" id="s-icon" placeholder="Emoji (🍕)" style="min-width:70px;max-width:90px"><input class="finput" id="s-cost" type="number" placeholder="Custo em G" style="min-width:110px"></div>
+        <button class="btn btn-pri" onclick="addShopItem()">Adicionar</button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleShopForm()" style="margin-left:6px">Cancelar</button>
+      </div>
+      <button class="btn btn-pri btn-block" id="shop-add-btn" onclick="toggleShopForm()" style="margin-top:10px">+ Nova Recompensa</button>
+    </div>
+  </div>
+
+  <!-- TAB: CONFIG -->
+  <div class="tab-panel" id="tab-config">
+    <div class="panel">
+      <div class="panel-title">Configurações</div>
+      <div class="cfg-label">Nome do Jogador</div><input class="cfg-input" id="name-input" placeholder="Seu nome..." oninput="updateName()">
+      <div class="cfg-label">Horário do Reset Diário</div><input class="cfg-input" id="reset-time" type="time" value="00:00" onchange="updateResetTime()">
+      <div class="cfg-label">Horário de Dormir</div><input class="cfg-input" id="sleep-time" type="time" value="23:00" onchange="updateSleepTime()">
+      <div class="cfg-label">Início Rápido</div>
+      <button class="btn btn-pri btn-block" onclick="loadMonarcaRoutine()" style="margin-bottom:8px">👑 Carregar Rotina Monarca</button>
+      <button class="btn btn-ghost btn-block btn-sm" onclick="loadDefaults()" style="margin-bottom:16px">⚡ Carregar Rotina Genérica</button>
+      <div class="cfg-label" style="margin-top:14px">Dados</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="exportData()">Exportar</button><label class="btn btn-ghost btn-sm" style="cursor:pointer">Importar<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label><button class="btn btn-danger btn-sm" onclick="resetAll()">Reset Total</button></div>
+    </div>
+    <div class="panel"><div class="panel-title">Guia do Monarca</div><div style="font-size:13px;line-height:1.7;color:var(--text)">
+      <p style="margin-bottom:8px"><b style="color:var(--gold)">👑 Missão Principal:</b> Tudo que você faz contribui para se tornar o Homem de Valor. A barra global cresce com cada ação.</p>
+      <p style="margin-bottom:8px"><b style="color:#ff8c42">🏆 Honrar o Dia:</b> Complete algo de estudo + algo pelo amor + agradeça a Deus = missão especial completa. 100x = título oculto!</p>
+      <p style="margin-bottom:8px"><b style="color:var(--purple)">🌑 Exército das Sombras:</b> 21 dias seguidos de um hábito → Sombra Comum. 50 dias → Elite. 100 → General. 365 → Monarca!</p>
+      <p style="margin-bottom:8px"><b style="color:var(--pink)">❤️ Relacionamento:</b> Missões de amor constroem seu nível como parceiro. Encontros, gestos e conversas valem XP.</p>
+      <p style="margin-bottom:8px"><b style="color:#ffd700">🙏 Fé:</b> Oração, leitura bíblica e gratidão diária fortalecem sua alma e o atributo Fé.</p>
+      <p style="margin-bottom:8px"><b style="color:var(--green)">💰 Financeiro:</b> Registre quanto guardou e acompanhe suas metas. Cada passo rumo à casa própria!</p>
+      <p><b style="color:var(--sys-cyan)">📚 Biblioteca:</b> Livros concluídos viram artefatos com buffs permanentes de XP.</p>
+    </div></div>
+  </div>
+</div>
+
+<!-- TABS NAV -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('status',this)"><span class="ti">⬡</span>Status</button>
+  <button class="tab-btn" onclick="switchTab('quests',this)"><span class="ti">⚔</span>Missões</button>
+  <button class="tab-btn" onclick="switchTab('raid',this)"><span class="ti">🏰</span>Masmorras</button>
+  <button class="tab-btn" onclick="switchTab('vida',this)"><span class="ti">❤️</span>Vida</button>
+  <button class="tab-btn" onclick="switchTab('prog',this)"><span class="ti">📊</span>Progresso</button>
+  <button class="tab-btn" onclick="switchTab('titles',this)"><span class="ti">★</span>Conquistas</button>
+  <button class="tab-btn" onclick="switchTab('itens',this)"><span class="ti">🎒</span>Itens</button>
+  <button class="tab-btn" onclick="switchTab('config',this)"><span class="ti">⚙</span>Config</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// ██  CONFIG & CONSTANTS
+// ═══════════════════════════════════════════
+
+const STAT_DEF = {
+  forca:{label:'Força',icon:'💪',color:'#ff6b6b'},
+  agi:{label:'Agilidade',icon:'⚡',color:'#3ff0a0'},
+  int:{label:'Inteligência',icon:'🧠',color:'#4f8eff'},
+  vit:{label:'Vitalidade',icon:'❤️',color:'#ff9f43'},
+  per:{label:'Percepção',icon:'👁',color:'#5fd4ff'},
+  disc:{label:'Disciplina',icon:'🛡',color:'#b57bff'},
+  fe:{label:'Fé',icon:'✨',color:'#ffd700'},
+  amor:{label:'Amor',icon:'❤️',color:'#ff69b4'},
+  prosperidade:{label:'Prosperidade',icon:'💰',color:'#50fa7b'},
+  honra:{label:'Honra',icon:'🏛',color:'#bd93f9'}
+};
+const STAT_KEYS = Object.keys(STAT_DEF);
+const DIFF = {easy:{label:'Fácil',xp:10,gold:5,fat:5,sp:3},med:{label:'Médio',xp:25,gold:12,fat:10,sp:6},hard:{label:'Difícil',xp:50,gold:30,fat:18,sp:10},epic:{label:'Épico',xp:100,gold:70,fat:30,sp:16}};
+const TYPE_LABEL = {daily:'Diária',weekly:'Semanal',main:'Main Quest',penalty:'Penalidade',cls:'Quest de Classe'};
+const CLASSES = [
+  {name:'Aprendiz',icon:'👤',lvl:1},
+  {name:'Estudante Disciplinado',icon:'📚',lvl:5},
+  {name:'Analista de Dados',icon:'📊',lvl:10},
+  {name:'Cientista de Dados',icon:'💻',lvl:20},
+  {name:'Arquiteto de Dados',icon:'🏗',lvl:35},
+  {name:'Monarca',icon:'👑',lvl:50},
+  {name:'Homem de Valor',icon:'⭐',lvl:75}
+];
+const RANKS = [{name:'E',color:'#888',lvl:1},{name:'D',color:'#5c9e31',lvl:5},{name:'C',color:'#2f8ad4',lvl:10},{name:'B',color:'#7b5ea7',lvl:20},{name:'A',color:'#e87d2a',lvl:35},{name:'S',color:'#f5c451',lvl:50}];
+const DAY_LABELS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const DAY_SHORT = ['D','S','T','Q','Q','S','S'];
+const SHADOW_THRESHOLD = 21;
+const SHADOW_TIERS = [{days:21,tier:'Sombra Comum',rank:'🌑'},{days:50,tier:'Sombra Elite',rank:'⚔️'},{days:100,tier:'Sombra General',rank:'🛡️'},{days:365,tier:'Sombra Monarca',rank:'👑'}];
+
+const PERKS = [
+  {id:'scholar',ic:'📘',nm:'Erudito',desc:'+15% de XP em todas as missões',cost:2},
+  {id:'lucky',ic:'🍀',nm:'Sortudo',desc:'+25% de ouro ganho',cost:2},
+  {id:'titan',ic:'💪',nm:'Titã',desc:'Missões difíceis/épicas dão +1 atributo extra',cost:3},
+  {id:'enduring',ic:'🛡️',nm:'Resistente',desc:'Fadiga acumula 40% mais devagar',cost:3},
+  {id:'veteran',ic:'⭐',nm:'Veterano',desc:'+1 ponto de atributo por nível',cost:4},
+  {id:'ironmind',ic:'🧠',nm:'Mente de Aço',desc:'Penalidade de HP reduzida pela metade',cost:3},
+  {id:'commander',ic:'👥',nm:'Comandante',desc:'Exército das Sombras gera +50% XP passivo',cost:4},
+  {id:'faithful',ic:'✨',nm:'Fiel',desc:'+20% XP em missões de Fé',cost:3},
+  {id:'lover',ic:'💕',nm:'Amante Dedicado',desc:'+20% XP em missões de Amor',cost:3},
+  {id:'investor',ic:'💰',nm:'Investidor',desc:'+10% Gold em todas as missões',cost:3}
+];
+
+const ITEMS = {
+  xp_potion:{ic:'🧪',nm:'Poção de XP Duplo',desc:'XP em dobro até o fim do dia',cost:120},
+  penalty_shield:{ic:'🛡️',nm:'Escudo de Penalidade',desc:'Anula 1 falha de diária',cost:220},
+  rest_crystal:{ic:'💎',nm:'Cristal de Descanso',desc:'Remove 45 de fadiga (1 uso a cada 3 dias)',cost:180}
+};
+
+const TITLES = [
+  {id:'first',ic:'🌱',nm:'O Despertar',cond:'Complete sua 1ª missão',check:s=>s.meta.totalDone>=1},
+  {id:'streak3',ic:'🔥',nm:'Em Chamas',cond:'3 dias de sequência',check:s=>s.streak>=3},
+  {id:'streak7',ic:'⚡',nm:'Imparável',cond:'7 dias de sequência',check:s=>s.streak>=7},
+  {id:'streak30',ic:'💎',nm:'Diamante',cond:'30 dias de sequência',check:s=>s.streak>=30},
+  {id:'lvl10',ic:'📊',nm:'Analista de Dados',cond:'Alcance o nível 10',check:s=>s.level>=10},
+  {id:'lvl20',ic:'💻',nm:'Cientista de Dados',cond:'Alcance o nível 20',check:s=>s.level>=20},
+  {id:'lvl50',ic:'👑',nm:'Monarca',cond:'Alcance o nível 50',check:s=>s.level>=50},
+  {id:'loveGuard',ic:'❤️',nm:'Guardião do Amor',cond:'Nível 5 de relacionamento',check:s=>s.relLevel>=5},
+  {id:'loveUnshake',ic:'💍',nm:'Amor Inabalável',cond:'Nível 15 de relacionamento',check:s=>s.relLevel>=15},
+  {id:'faithful',ic:'🙏',nm:'Homem de Fé',cond:'30 dias de oração',check:s=>s.meta.prayerDays>=30},
+  {id:'servant',ic:'🕊',nm:'Servo Fiel',cond:'100 dias de oração',check:s=>s.meta.prayerDays>=100},
+  {id:'reader',ic:'📚',nm:'Devorador de Livros',cond:'Leia 10 livros',check:s=>s.books.length>=10},
+  {id:'dataApp',ic:'💻',nm:'Aprendiz de Dados',cond:'Complete Dungeon Cientista de Dados',check:s=>(s.dungeons.find(d=>d.key==='ds')||{}).done},
+  {id:'homeBuilder',ic:'🏠',nm:'Construtor de Lares',cond:'Guarde R$ 10.000',check:s=>s.savedMoney>=10000},
+  {id:'valorMan',ic:'👑',nm:'Homem de Valor',cond:'Nível 75',check:s=>s.level>=75},
+  {id:'rich',ic:'💰',nm:'Tesoureiro',cond:'Acumule 1000 G',check:s=>s.meta.totalGold>=1000},
+  {id:'grind',ic:'⚔️',nm:'Incansável',cond:'Complete 100 missões',check:s=>s.meta.totalDone>=100},
+  {id:'noPen',ic:'🛡️',nm:'Disciplinado',cond:'10 dias sem penalidade',check:s=>s.cleanDays>=10},
+  {id:'shadow3',ic:'🌑',nm:'Monarca das Sombras',cond:'Erga 3 soldados sombra',check:s=>s.shadows.length>=3},
+  {id:'honrar100',ic:'🏆',nm:'O Honrado (Título Oculto)',cond:'Honrar o Dia 100 vezes',check:s=>s.meta.honrarCount>=100,hidden:true}
+];
+
+const ACHIEVEMENTS = [
+  {cat:'Relacionamento',items:[
+    {id:'rel1m',ic:'❤️',nm:'Primeiro Mês',cond:'Nível 2 de amor',check:s=>s.relLevel>=2},
+    {id:'rel6m',ic:'💕',nm:'6 Meses',cond:'Nível 6 de amor',check:s=>s.relLevel>=6},
+    {id:'rel1y',ic:'💍',nm:'1 Ano',cond:'Nível 12 de amor',check:s=>s.relLevel>=12},
+    {id:'relNoiv',ic:'💎',nm:'Noivado',cond:'Nível 20 de amor',check:s=>s.relLevel>=20},
+    {id:'relCas',ic:'👑',nm:'Casamento',cond:'Nível 30 de amor',check:s=>s.relLevel>=30}
+  ]},
+  {cat:'Estudos',items:[
+    {id:'study10',ic:'📖',nm:'10 Horas',cond:'10h estudadas',check:s=>s.meta.studyHours>=10},
+    {id:'study50',ic:'📚',nm:'50 Horas',cond:'50h estudadas',check:s=>s.meta.studyHours>=50},
+    {id:'study100',ic:'🎓',nm:'100 Horas',cond:'100h estudadas',check:s=>s.meta.studyHours>=100},
+    {id:'study500',ic:'💻',nm:'500 Horas',cond:'500h estudadas',check:s=>s.meta.studyHours>=500},
+    {id:'study1000',ic:'👑',nm:'1000 Horas',cond:'1000h estudadas',check:s=>s.meta.studyHours>=1000}
+  ]},
+  {cat:'Leitura',items:[
+    {id:'book1',ic:'📖',nm:'Primeiro Livro',cond:'Leia 1 livro',check:s=>s.books.length>=1},
+    {id:'book5',ic:'📚',nm:'Leitor Ávido',cond:'Leia 5 livros',check:s=>s.books.length>=5},
+    {id:'book10',ic:'📘',nm:'Bibliófilo',cond:'Leia 10 livros',check:s=>s.books.length>=10},
+    {id:'book20',ic:'🏛',nm:'Erudito',cond:'Leia 20 livros',check:s=>s.books.length>=20}
+  ]},
+  {cat:'Academia',items:[
+    {id:'gym10',ic:'💪',nm:'10 Treinos',cond:'10 treinos',check:s=>s.meta.workouts>=10},
+    {id:'gym50',ic:'🏋️',nm:'50 Treinos',cond:'50 treinos',check:s=>s.meta.workouts>=50},
+    {id:'gym100',ic:'🔥',nm:'100 Treinos',cond:'100 treinos',check:s=>s.meta.workouts>=100},
+    {id:'gym365',ic:'⚡',nm:'365 Treinos',cond:'365 treinos',check:s=>s.meta.workouts>=365}
+  ]},
+  {cat:'Espiritual',items:[
+    {id:'pray7',ic:'🙏',nm:'7 Dias de Fé',cond:'7 dias orando',check:s=>s.meta.prayerDays>=7},
+    {id:'pray30',ic:'✨',nm:'30 Dias de Fé',cond:'30 dias orando',check:s=>s.meta.prayerDays>=30},
+    {id:'pray100',ic:'🕊',nm:'100 Dias de Fé',cond:'100 dias orando',check:s=>s.meta.prayerDays>=100},
+    {id:'pray365',ic:'👑',nm:'365 Dias de Fé',cond:'365 dias orando',check:s=>s.meta.prayerDays>=365}
+  ]}
+];
+
+const RANDOM_EVENTS = [
+  {text:'Faça 20 flexões agora!',ic:'💪',xp:15,gold:8,stat:'forca'},
+  {text:'Leia 5 páginas de um livro!',ic:'📖',xp:12,gold:6,stat:'int'},
+  {text:'Envie uma mensagem carinhosa para ela!',ic:'❤️',xp:10,gold:5,stat:'amor'},
+  {text:'Agradeça a Deus por 3 coisas agora!',ic:'🙏',xp:10,gold:5,stat:'fe'},
+  {text:'Beba um copo de água agora!',ic:'💧',xp:5,gold:3,stat:'vit'},
+  {text:'Faça 1 minuto de alongamento!',ic:'🧘',xp:8,gold:4,stat:'agi'},
+  {text:'Escreva 1 objetivo para amanhã!',ic:'📝',xp:10,gold:5,stat:'disc'},
+  {text:'Ore brevemente agora!',ic:'✨',xp:10,gold:5,stat:'fe'},
+  {text:'Revise algo que estudou hoje!',ic:'🧠',xp:12,gold:6,stat:'int'},
+  {text:'Faça 30 segundos de prancha!',ic:'🔥',xp:12,gold:6,stat:'forca'}
+];
+
+const INIT_DUNGEONS = [
+  {key:'ds',name:'Dungeon Cientista de Dados',icon:'🏰',floorNames:['Python','SQL','Excel','Power BI','Estatística','Machine Learning','Portfólio'],total:7,boss:'Primeira vaga na área',rewXp:500,rewGold:300},
+  {key:'eng',name:'Dungeon Engenharia',icon:'🎓',floorNames:['Matemática','Redes','Programação','Banco de Dados','Sistemas Operacionais'],total:5,boss:'Formatura',rewXp:600,rewGold:350},
+  {key:'ing',name:'Dungeon Inglês',icon:'🌎',floorNames:null,total:100,boss:'Conversação avançada',rewXp:800,rewGold:500},
+  {key:'bib',name:'Dungeon Biblioteca',icon:'📚',floorNames:null,total:50,boss:'1º livro técnico concluído',rewXp:400,rewGold:200},
+  {key:'love',name:'Dungeon Guardião do Amor',icon:'❤️',floorNames:null,total:365,boss:'1 ano de namoro',rewXp:1000,rewGold:600},
+  {key:'faith',name:'Dungeon Homem de Fé',icon:'🙏',floorNames:null,total:365,boss:'365 dias de constância',rewXp:1000,rewGold:600},
+  {key:'home',name:'Dungeon Casa Própria',icon:'🏠',floorNames:null,total:100,boss:'Entrada da casa/apartamento',rewXp:1500,rewGold:1000}
+];
+
+const XP_NEEDED = lvl => Math.floor(80 + lvl * 42 + Math.pow(lvl, 2) * 9);
+const REL_XP_NEEDED = lvl => 30 + lvl * 20;
+const BASE_POINTS = 3;
+const SHADOW_PASSIVE_CAP_RATIO = 0.3;
+const REST_CRYSTAL_COOLDOWN_DAYS = 3;
+const BOOK_BONUS_CAP = 0.25;
+
+// ═══════════════════════════════════════════
+// ██  STATE
+// ═══════════════════════════════════════════
+
+function defaultState() {
+  return {
+    name:'Aprendiz de Monarca', level:1, xp:0,
+    hp:100, hpMax:100, mp:50, mpMax:50, fatigue:0,
+    gold:0, points:0, skillPoints:0,
+    stats:{forca:5,agi:5,int:5,vit:5,per:5,disc:5,fe:5,amor:5,prosperidade:5,honra:5},
+    quests:[], shop:[], dungeons:[], shadows:[], perks:[],
+    inventory:{xp_potion:0,penalty_shield:0,rest_crystal:0},
+    itemUses:{},
+    buffs:{xpDoubleToday:false},
+    log:[], unlockedTitles:[], unlockedAch:[], activeTitle:null,
+    // Boss
+    boss:{name:'O Futuro',icon:'👑',hpMax:1000000,hp:1000000,totalDmg:0,defeated:false},
+    // Relationship
+    relXp:0, relLevel:1, relMissions:[],
+    // Spiritual
+    spiDiary:{},
+    // Financial
+    savedMoney:0,
+    finGoals:[
+      {name:'Reserva de Emergência',target:5000,current:0},
+      {name:'Entrada Casa/Apto',target:50000,current:0},
+      {name:'Investimentos',target:10000,current:0}
+    ],
+    // Library
+    books:[],
+    // History
+    history:{}, heat:{},
+    // Counters
+    nextQ:1, nextS:1, nextSh:1, nextDg:1, classQuestsSpawned:[],
+    resetTime:'00:00', sleepTime:'23:00',
+    lastDay:todayStr(), streak:0, cleanDays:0,
+    meta:{totalDone:0,totalGold:0,dungeonsCleared:0,bossKills:0,honrarCount:0,studyHours:0,prayerDays:0,workouts:0,relMissionsDone:0},
+    openSections:{rel:false,spi:false,fin:false,lib:false},
+    lastEventDay:'',
+    currentEvent:null
+  };
+}
+
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function getWeekNumber(dateStr) {
+  const date = new Date(dateStr + 'T12:00:00');
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+}
+function getShadowPower(s) {
+  const t = getShadowTier(s.daysTotal || 0);
+  let mult = 1.0;
+  if (t.tier === 'Sombra Elite') mult = 1.5;
+  else if (t.tier === 'Sombra General') mult = 2.5;
+  else if (t.tier === 'Sombra Monarca') mult = 4.0;
+  return Math.round((s.basePower || s.power || 3) * mult);
+}
+function weekdayOf(s) { return new Date(s+'T12:00:00').getDay(); }
+
+function migrate(s) {
+  const d = defaultState();
+  for (const k in d) if (s[k] === undefined) s[k] = d[k];
+  s.stats = Object.assign({}, d.stats, s.stats || {});
+  s.meta = Object.assign({}, d.meta, s.meta || {});
+  s.inventory = Object.assign({}, d.inventory, s.inventory || {});
+  s.itemUses = Object.assign({}, d.itemUses, s.itemUses || {});
+  s.buffs = Object.assign({}, d.buffs, s.buffs || {});
+  s.openSections = Object.assign({}, d.openSections, s.openSections || {});
+  if (!s.boss) s.boss = d.boss;
+  if (!s.finGoals) s.finGoals = d.finGoals;
+  if (!s.spiDiary) s.spiDiary = {};
+  // Ensure dungeons exist
+  if (!Array.isArray(s.dungeons)) s.dungeons = [];
+  // Ensure per-quest fields
+  (s.quests||[]).forEach(q => {
+    if (q.streak===undefined) q.streak=0;
+    if (q.best===undefined) q.best=0;
+    if (q.lastDoneDay===undefined) q.lastDoneDay='';
+    if (q.extracted===undefined) q.extracted=false;
+    if (q.days===undefined) q.days=[];
+    if (q.rewardClaims===undefined) q.rewardClaims={};
+    if (q.lastReward===undefined) q.lastReward=null;
+    if (q.priority===undefined) q.priority = q.type==='main'?'main':'secondary';
+  });
+  // Ensure shadow fields
+  (s.shadows||[]).forEach(sh => {
+    if (sh.daysTotal===undefined) sh.daysTotal = sh.days || 0;
+    if (sh.basePower===undefined) sh.basePower = sh.power || 3;
+  });
+  return s;
+}
+
+// ═══════════════════════════════════════════
+// ██  PERSISTENCIA (state + save)
+// ═══════════════════════════════════════════
+let soundOn = true, qFilter = 'today', pickedDays = [];
+let state = (() => {
+  try { const d = localStorage.getItem('projeto_monarca_v1'); return d ? migrate(JSON.parse(d)) : defaultState(); }
+  catch (e) { return defaultState(); }
+})();
+function save() {
+  try { localStorage.setItem('projeto_monarca_v1', JSON.stringify(state)); } catch (e) {}
+}
+
+// ═══════════════════════════════════════════
+// ██  SOUND
+// ═══════════════════════════════════════════
+let actx;
+function beep(f,d=.08,t='sine',v=.08){if(!soundOn)return;try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,actx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+d);o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+d);}catch(e){}}
+
+function sfxClick() {
+  if (!soundOn) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const now = actx.currentTime;
+    const playTone = (freq, time, dur) => {
+      const osc = actx.createOscillator();
+      const gain = actx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, time);
+      gain.gain.setValueAtTime(0.04, time);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+      osc.connect(gain);
+      gain.connect(actx.destination);
+      osc.start(time);
+      osc.stop(time + dur);
+    };
+    playTone(1800, now, 0.03);
+    playTone(2200, now + 0.02, 0.03);
+  } catch (e) {}
+}
+
+function sfxComplete() {
+  if (!soundOn) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const now = actx.currentTime;
+    const notes = [523.25, 659.25, 783.99, 1046.50];
+    notes.forEach((f, i) => {
+      const osc = actx.createOscillator();
+      const gain = actx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(f, now + i * 0.06);
+      gain.gain.setValueAtTime(0.05, now + i * 0.06);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.06 + 0.15);
+      osc.connect(gain);
+      gain.connect(actx.destination);
+      osc.start(now + i * 0.06);
+      osc.stop(now + i * 0.06 + 0.15);
+    });
+  } catch (e) {}
+}
+
+function sfxLevel() {
+  if (!soundOn) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const now = actx.currentTime;
+    const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98, 2093.00];
+    notes.forEach((f, i) => {
+      const osc = actx.createOscillator();
+      const gain = actx.createGain();
+      osc.type = i % 2 === 0 ? 'triangle' : 'sine';
+      osc.frequency.setValueAtTime(f, now + i * 0.06);
+      gain.gain.setValueAtTime(0.07, now + i * 0.06);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.06 + 0.3);
+      osc.connect(gain);
+      gain.connect(actx.destination);
+      osc.start(now + i * 0.06);
+      osc.stop(now + i * 0.06 + 0.3);
+    });
+    const subOsc = actx.createOscillator();
+    const subGain = actx.createGain();
+    subOsc.type = 'triangle';
+    subOsc.frequency.setValueAtTime(80, now);
+    subOsc.frequency.linearRampToValueAtTime(40, now + 0.8);
+    subGain.gain.setValueAtTime(0.25, now);
+    subGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+    subOsc.connect(subGain);
+    subGain.connect(actx.destination);
+    subOsc.start(now);
+    subOsc.stop(now + 0.8);
+  } catch (e) {}
+}
+
+function sfxPenalty() {
+  if (!soundOn) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const now = actx.currentTime;
+    const osc = actx.createOscillator();
+    const gain = actx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(140, now);
+    osc.frequency.linearRampToValueAtTime(70, now + 0.4);
+    gain.gain.setValueAtTime(0.08, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
+    
+    const alarm = actx.createOscillator();
+    const alarmGain = actx.createGain();
+    alarm.type = 'square';
+    alarm.frequency.setValueAtTime(600, now);
+    alarmGain.gain.setValueAtTime(0.02, now);
+    alarmGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.15);
+    
+    osc.connect(gain);
+    gain.connect(actx.destination);
+    alarm.connect(alarmGain);
+    alarmGain.connect(actx.destination);
+    
+    osc.start(now);
+    osc.stop(now + 0.4);
+    alarm.start(now);
+    alarm.stop(now + 0.15);
+    
+    const alarm2 = actx.createOscillator();
+    const alarmGain2 = actx.createGain();
+    alarm2.type = 'square';
+    alarm2.frequency.setValueAtTime(600, now + 0.2);
+    alarmGain2.gain.setValueAtTime(0.02, now + 0.2);
+    alarmGain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+    alarm2.connect(alarmGain2);
+    alarmGain2.connect(actx.destination);
+    alarm2.start(now + 0.2);
+    alarm2.stop(now + 0.35);
+  } catch (e) {}
+}
+
+function sfxBuy() {
+  if (!soundOn) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const now = actx.currentTime;
+    const playCoin = (freq, time, dur) => {
+      const osc = actx.createOscillator();
+      const gain = actx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, time);
+      gain.gain.setValueAtTime(0.06, time);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+      osc.connect(gain);
+      gain.connect(actx.destination);
+      osc.start(time);
+      osc.stop(time + dur);
+    };
+    playCoin(987.77, now, 0.08);
+    playCoin(1318.51, now + 0.05, 0.15);
+  } catch (e) {}
+}
+
+function sfxHit() {
+  if (!soundOn) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const now = actx.currentTime;
+    const osc = actx.createOscillator();
+    const gain = actx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(220, now);
+    osc.frequency.linearRampToValueAtTime(110, now + 0.08);
+    gain.gain.setValueAtTime(0.06, now);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
+    osc.connect(gain);
+    gain.connect(actx.destination);
+    osc.start(now);
+    osc.stop(now + 0.08);
+  } catch (e) {}
+}
+
+function sfxWin() {
+  if (!soundOn) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const now = actx.currentTime;
+    const notes = [392.00, 523.25, 659.25, 783.99, 1046.50, 1318.51];
+    notes.forEach((f, i) => {
+      const osc = actx.createOscillator();
+      const gain = actx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(f, now + i * 0.08);
+      gain.gain.setValueAtTime(0.06, now + i * 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 0.4);
+      osc.connect(gain);
+      gain.connect(actx.destination);
+      osc.start(now + i * 0.08);
+      osc.stop(now + i * 0.08 + 0.4);
+    });
+  } catch (e) {}
+}
+
+function sfxArise() {
+  if (!soundOn) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const now = actx.currentTime;
+    const sweep = actx.createOscillator();
+    const sweepGain = actx.createGain();
+    sweep.type = 'sawtooth';
+    sweep.frequency.setValueAtTime(50, now);
+    sweep.frequency.exponentialRampToValueAtTime(250, now + 1.2);
+    sweepGain.gain.setValueAtTime(0.12, now);
+    sweepGain.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
+    
+    const lowpass = actx.createBiquadFilter();
+    lowpass.type = 'lowpass';
+    lowpass.frequency.setValueAtTime(120, now);
+    lowpass.frequency.exponentialRampToValueAtTime(800, now + 1.2);
+    
+    sweep.connect(lowpass);
+    lowpass.connect(sweepGain);
+    sweepGain.connect(actx.destination);
+    
+    sweep.start(now);
+    sweep.stop(now + 1.2);
+    
+    const playGhost = (freq, time, dur) => {
+      const osc = actx.createOscillator();
+      const gain = actx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, time);
+      gain.gain.setValueAtTime(0.03, time);
+      gain.gain.exponentialRampToValueAtTime(0.0001, time + dur);
+      osc.connect(gain);
+      gain.connect(actx.destination);
+      osc.start(time);
+      osc.stop(time + dur);
+    };
+    playGhost(440, now + 0.3, 0.4);
+    playGhost(554, now + 0.6, 0.4);
+    playGhost(659, now + 0.9, 0.5);
+  } catch (e) {}
+}
+
+function sfxHonrar() {
+  if (!soundOn) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const now = actx.currentTime;
+    const playBell = (freq, delay) => {
+      const osc = actx.createOscillator();
+      const gain = actx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + delay);
+      gain.gain.setValueAtTime(0.04, now + delay);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + delay + 0.5);
+      osc.connect(gain);
+      gain.connect(actx.destination);
+      osc.start(now + delay);
+      osc.stop(now + delay + 0.5);
+    };
+    playBell(659.25, 0);
+    playBell(783.99, 0.06);
+    playBell(987.77, 0.12);
+    playBell(1174.66, 0.18);
+    playBell(1318.51, 0.24);
+  } catch (e) {}
+}
+
+function toggleSound(){soundOn=!soundOn;const b=document.getElementById('sound-btn');b.textContent=soundOn?'♪ ON':'♪ OFF';b.classList.toggle('on',soundOn);if(soundOn)sfxClick();}
+function sfxComplete(){beep(880,.07,'square',.05);setTimeout(()=>beep(1320,.1,'square',.05),70);}
+function sfxLevel(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.13,'triangle',.07),i*100));}
+function sfxPenalty(){beep(180,.25,'sawtooth',.08);setTimeout(()=>beep(120,.35,'sawtooth',.08),150);}
+function sfxClick(){beep(660,.04,'sine',.03);}
+function sfxBuy(){beep(1047,.06,'sine',.05);setTimeout(()=>beep(1568,.08,'sine',.05),60);}
+function sfxHit(){beep(300,.06,'sawtooth',.05);}
+function sfxWin(){[392,523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.16,'triangle',.08),i*120));}
+function sfxArise(){[140,180,260,360,520].forEach((f,i)=>setTimeout(()=>beep(f,.18,'sawtooth',.06),i*110));}
+function sfxHonrar(){[659,784,988,1175,1318].forEach((f,i)=>setTimeout(()=>beep(f,.12,'triangle',.06),i*90));}
+function toggleSound(){soundOn=!soundOn;const b=document.getElementById('sound-btn');b.textContent=soundOn?'♪ ON':'♪ OFF';b.classList.toggle('on',soundOn);if(soundOn)sfxClick();}
+
+// ═══════════════════════════════════════════
+// ██  HELPERS
+// ═══════════════════════════════════════════
+
+function getClass(l){let c=CLASSES[0];for(const x of CLASSES)if(l>=x.lvl)c=x;return c;}
+function getRank(l){let r=RANKS[0];for(const x of RANKS)if(l>=x.lvl)r=x;return r;}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function isToday(q){if(q.type!=='daily')return true;if(!q.days||q.days.length===0)return true;return q.days.includes(new Date().getDay());}
+function daysBadge(d){if(!d||d.length===0)return'Todo dia';return d.slice().sort().map(x=>DAY_LABELS[x]).join(' ');}
+function hasPerk(id){return state.perks.includes(id);}
+function ensureHist(){const t=todayStr();if(!state.history[t])state.history[t]={xp:0,done:0};if(state.heat[t]===undefined)state.heat[t]=0;}
+function getShadowTier(days){let t=SHADOW_TIERS[0];for(const x of SHADOW_TIERS)if(days>=x.days)t=x;return t;}
+function daysBetween(a,b){return Math.floor((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/86400000);}
+function rewardClaimKey(q,t){
+  if(q.type==='weekly'){const d=new Date(t+'T12:00:00');return d.getFullYear()+'-W'+getWeekNumber(t);}
+  if(q.type==='main')return'once';
+  return t;
+}
+function avgActiveXp(days=14){
+  const dates=lastNDates(days);
+  const vals=dates.map(d=>state.history[d]?.activeXp||0);
+  return vals.reduce((a,b)=>a+b,0)/Math.max(1,days);
+}
+function cappedShadowXp(raw){
+  const cap=Math.max(12,Math.round(avgActiveXp(14)*SHADOW_PASSIVE_CAP_RATIO));
+  return Math.min(raw,cap);
+}
+function systemNotice(title,body,variant=''){
+  try{
+    const audio=document.getElementById('system-audio');
+    if(soundOn&&audio){audio.currentTime=0;audio.volume=.55;audio.play().catch(()=>sfxComplete());}
+  }catch(e){sfxComplete();}
+  const box=document.getElementById('system-alert');
+  if(box){
+    document.getElementById('system-alert-title').textContent='◆ '+title;
+    document.getElementById('system-alert-body').textContent=body;
+    box.className='system-alert show '+variant;
+    clearTimeout(box._hideTimer);
+    box._hideTimer=setTimeout(()=>box.classList.remove('show'),3200);
+  }
+}
+function formatMoney(v){return 'R$ '+Number(v).toLocaleString('pt-BR');}
+function mainQuestPct(){
+  const parts=[
+    Math.min(100,(state.level/75)*100),
+    Math.min(100,(state.relLevel/30)*100),
+    Math.min(100,((state.meta.prayerDays||0)/365)*100),
+    Math.min(100,((state.meta.studyHours||0)/1000)*100),
+    Math.min(100,((state.meta.workouts||0)/365)*100),
+    Math.min(100,((state.savedMoney||0)/50000)*100),
+    Math.min(100,((state.stats.honra||0)/400)*100)
+  ];
+  return parts.reduce((a,b)=>a+b,0)/parts.length;
+}
+
+// ═══════════════════════════════════════════
+// ██  RENDER
+// ═══════════════════════════════════════════
+
+function render() {
+  // Player info
+  document.getElementById('p-name').textContent = state.name.toUpperCase();
+  const cls = getClass(state.level);
+  document.getElementById('p-class').textContent = cls.icon + ' ' + cls.name;
+  const at = state.activeTitle ? TITLES.find(t=>t.id===state.activeTitle) : null;
+  document.getElementById('p-title').textContent = at ? '« '+at.nm+' »' : '';
+  document.getElementById('p-level').textContent = state.level;
+  document.getElementById('p-rank').textContent = cls.icon;
+  document.getElementById('p-rank').style.color = 'var(--gold)';
+
+  // Bars
+  state.hpMax = 100 + (state.stats.vit-5)*10;
+  state.mpMax = 50 + (state.stats.int-5)*8;
+  if (state.hp > state.hpMax) state.hp = state.hpMax;
+  setBar('hp',state.hp,state.hpMax);
+  setBar('mp',state.mp,state.mpMax);
+  setBar('xp',state.xp,XP_NEEDED(state.level));
+  setBar('fat',state.fatigue,100);
+
+  // Main mission progress
+  const mmPct = Math.min(100, mainQuestPct());
+  document.getElementById('mm-fill').style.width = mmPct.toFixed(1)+'%';
+  document.getElementById('mm-pct').textContent = mmPct.toFixed(1)+'% — vida, fé, amor, carreira e honra';
+
+  document.getElementById('p-gold').textContent = state.gold;
+  document.getElementById('p-points').textContent = state.points;
+  document.getElementById('p-skill').textContent = state.skillPoints;
+  document.getElementById('skill-pts').textContent = state.skillPoints;
+
+  // Stats
+  const sg = document.getElementById('stats-grid'); sg.innerHTML = '';
+  for (const k of STAT_KEYS) {
+    const def = STAT_DEF[k], v = state.stats[k];
+    sg.innerHTML += '<div class="stat-cell"><div class="stat-top"><span class="stat-nm">'+def.icon+' '+def.label+'</span><span class="stat-vl" style="color:'+def.color+'">'+v+'</span></div><div class="stat-line"><div class="stat-line-fill" style="width:'+Math.min(100,v)+'%;background:'+def.color+'"></div></div><button class="stat-plus" onclick="allocStat(\''+k+'\')" '+(state.points<=0?'disabled':'')+'>+</button></div>';
+  }
+
+  // Perks
+  const pg = document.getElementById('perk-grid');
+  pg.innerHTML = PERKS.map(p => {
+    const owned = hasPerk(p.id);
+    return '<div class="perk '+(owned?'owned':'')+'"><div class="perk-ic">'+p.ic+'</div><div class="perk-nm">'+p.nm+'</div><div class="perk-desc">'+p.desc+'</div><button class="perk-buy" onclick="buyPerk(\''+p.id+'\')" '+(owned||state.skillPoints<p.cost?'disabled':'')+'>'+(owned?'ATIVO ✓':p.cost+' pts')+'</button></div>';
+  }).join('');
+
+  renderShadows(); renderQuests(); renderHonrar(); renderDungeons(); renderBoss(); renderRank();
+  renderInventory(); renderSysShop(); renderShop();
+  renderVida(); renderTitles(); renderAchievements(); renderLog(); renderProgress();
+
+  const ni = document.getElementById('name-input');
+  if (document.activeElement !== ni) ni.value = state.name;
+  document.getElementById('reset-time').value = state.resetTime;
+  document.getElementById('sleep-time').value = state.sleepTime || '23:00';
+  checkTitles(); checkAchievements(); save();
+}
+
+function setBar(id,v,m){v=Math.max(0,Math.round(v));document.getElementById(id+'-bar').style.width=Math.min(100,(v/m)*100)+'%';document.getElementById(id+'-txt').textContent=v+'/'+Math.round(m);}
+
+// ═══════════════════════════════════════════
+// ██  SHADOW ARMY
+// ═══════════════════════════════════════════
+
+function renderShadows() {
+  const az = document.getElementById('arise-zone');
+  const eligible = state.quests.filter(q => !q.extracted && q.streak >= SHADOW_THRESHOLD);
+  az.innerHTML = eligible.length ? eligible.map(q => {
+    const tier = getShadowTier(q.streak);
+    return '<div class="arise-item"><div class="shadow-ic">🌑</div><div class="shadow-info"><div class="shadow-nm">'+esc(q.name)+'</div><div class="shadow-pw">🔥 '+q.streak+' dias — '+tier.tier+'</div></div><button class="arise-btn" onclick="ariseShadow('+q.id+')">ARISE</button></div>';
+  }).join('') : '';
+
+  const sz = document.getElementById('shadow-zone');
+  if (state.shadows.length === 0) {
+    sz.innerHTML = az.innerHTML ? '' : '<div class="empty" style="padding:14px">Mantenha um hábito por '+SHADOW_THRESHOLD+' dias seguidos para erguer seu primeiro soldado.</div>';
+    return;
+  }
+  // Update shadow tiers
+  state.shadows.forEach(s => {
+    const t = getShadowTier(s.daysTotal || s.power*3);
+    s.tier = t.tier; s.rank = t.rank;
+  });
+  let rawPw = state.shadows.reduce((a,s)=>a+getShadowPower(s),0);
+  if (hasPerk('commander')) rawPw = Math.round(rawPw*1.5);
+  const totalPw = cappedShadowXp(rawPw);
+  const capNote = rawPw>totalPw ? ' <span style="color:var(--text-dim)">('+rawPw+' bruto, teto saudável aplicado)</span>' : '';
+  sz.innerHTML = '<div style="font-size:12px;color:var(--purple);margin-bottom:8px">⚡ XP passivo diário do exército: <b>+'+totalPw+'</b>'+capNote+'</div>' +
+    state.shadows.map(s => {
+      const tierClass = s.tier.includes('Elite')?'elite':s.tier.includes('General')?'general':s.tier.includes('Monarca')?'monarca':'';
+      return '<div class="shadow-card '+tierClass+'"><div class="shadow-ic">'+(s.rank||'🌑')+'</div><div class="shadow-info"><div class="shadow-nm">'+esc(s.name)+'</div><div class="shadow-pw">Poder '+getShadowPower(s)+' XP/dia · '+s.tier+'</div></div></div>';
+    }).join('');
+}
+
+// ═══════════════════════════════════════════
+// ██  QUESTS
+// ═══════════════════════════════════════════
+
+function renderQuests() {
+  let qs = state.quests.slice();
+  if (qFilter==='today')         qs = qs.filter(q=>isToday(q)||q.type==='penalty'||q.type==='cls');
+  else if (qFilter==='priority-main') qs = qs.filter(q=>q.priority==='main');
+  else if (qFilter==='daily')    qs = qs.filter(q=>q.type==='daily');
+  else if (qFilter!=='all')      qs = qs.filter(q=>q.type===qFilter);
+
+  // Warn zone — contagem separada por prioridade
+  const wz = document.getElementById('warn-zone');
+  const todayDailies = state.quests.filter(q=>q.type==='daily'&&isToday(q));
+  const pendMain = todayDailies.filter(q=>!q.done&&q.priority==='main').length;
+  const pendSec  = todayDailies.filter(q=>!q.done&&q.priority==='secondary').length;
+  let warnHtml = '';
+  if (pendMain>0) warnHtml += '<div class="warn-main pulse-red">⚠️ <span><b>'+pendMain+' missão(ões) PRINCIPAL(is)</b> pendente(s) — falhar gera penalidade!</span></div>';
+  if (pendSec>0)  warnHtml += '<div class="warn-secondary">📋 <span>'+pendSec+' missão(ões) secundária(s) pendente(s).</span></div>';
+  wz.innerHTML = warnHtml;
+
+  const ql = document.getElementById('quest-list');
+  if (qs.length===0) { ql.innerHTML='<div class="empty">Nenhuma missão aqui.<br>Carregue a Rotina Monarca em Config ou adicione abaixo.</div>'; return; }
+
+  function makeCard(q) {
+    const d=DIFF[q.diff], today=isToday(q);
+    const prio = q.priority||'secondary';
+    const catCl = q.type==='penalty'?'penalty':q.cat==='amor'?'rel':q.cat==='fe'?'spi':'';
+    const prioCl = 'priority-'+prio;
+    const bonusTag = prio==='bonus' ? '<span style="color:var(--green);font-size:9px;font-weight:700">BÔNUS</span>' : '';
+    const penTag   = prio==='main'  ? '<span style="color:var(--red);font-size:9px;font-weight:700">⚠ PRINCIPAL</span>' : '';
+    return '<div class="quest '+(q.done?'done':'')+' '+catCl+' '+prioCl+' '+(!today?'notToday':'')+'" onclick="toggleQuest('+q.id+')">'
+      +'<div class="q-check">'+(q.done?'✓':'')+'</div>'
+      +'<div class="q-info"><div class="q-name">'+esc(q.name)+'</div>'
+      +'<div class="q-meta"><span class="q-tag t-'+q.diff+'">'+d.label+'</span>'
+      +'<span style="color:var(--text-dim)">'+TYPE_LABEL[q.type]+'</span>'
+      +'<span class="q-stat-tag">'+(STAT_DEF[q.stat]?.label||q.stat)+'</span>'
+      +'<span class="q-xp">+'+d.xp+'XP</span><span class="q-reward">+'+d.gold+'G</span>'
+      +(q.streak>0?'<span class="q-streak">🔥'+q.streak+'</span>':'')
+      +penTag+bonusTag
+      +(q.type==='daily'?'<span style="color:var(--text-dim);font-size:9px">'+daysBadge(q.days)+'</span>':'')
+      +'</div></div>'
+      +'<button class="q-del" onclick="delQuest(event,'+q.id+')">×</button></div>';
+  }
+
+  // Se filtro "hoje", "diárias" ou "principais", agrupar por prioridade
+  if (qFilter==='today'||qFilter==='daily'||qFilter==='priority-main') {
+    const mainQs  = qs.filter(q=>q.priority==='main'||q.type==='penalty'||q.type==='cls');
+    const secQs   = qs.filter(q=>q.priority==='secondary'&&q.type!=='penalty'&&q.type!=='cls');
+    const bonusQs = qs.filter(q=>q.priority==='bonus');
+    let html = '';
+    if (mainQs.length)  html += '<div class="priority-section"><div class="priority-header ph-main">⚔ Missões Principais<span class="ph-badge">'+mainQs.filter(q=>!q.done&&isToday(q)).length+' pendentes</span></div>'+mainQs.map(makeCard).join('')+'</div>';
+    if (secQs.length)   html += '<div class="priority-section"><div class="priority-header ph-secondary">📋 Missões Secundárias<span class="ph-badge">'+secQs.filter(q=>!q.done&&isToday(q)).length+' pendentes</span></div>'+secQs.map(makeCard).join('')+'</div>';
+    if (bonusQs.length) html += '<div class="priority-section"><div class="priority-header ph-bonus">⭐ Missões Bônus / Extras<span class="ph-badge">sem penalidade</span></div>'+bonusQs.map(makeCard).join('')+'</div>';
+    ql.innerHTML = html || '<div class="empty">Nenhuma missão para hoje.</div>';
+  } else {
+    ql.innerHTML = qs.map(makeCard).join('');
+  }
+}
+
+// ═══════════════════════════════════════════
+// ██  HONRAR O DIA
+// ═══════════════════════════════════════════
+
+function renderHonrar() {
+  const hz = document.getElementById('honrar-zone');
+  const todayQ = state.quests.filter(q=>q.done && q.lastDoneDay===todayStr());
+  const hasEstudo = todayQ.some(q=>q.cat==='estudo'||q.cat==='carreira');
+  const hasAmor = todayQ.some(q=>q.cat==='amor');
+  const hasFe = todayQ.some(q=>q.cat==='fe');
+  const allMet = hasEstudo && hasAmor && hasFe;
+
+  hz.innerHTML = '<div class="honrar-card"><div class="honrar-title">🏆 HONRAR O DIA</div><div class="honrar-checks">' +
+    '<div class="honrar-check '+(hasEstudo?'met':'')+'"><div class="hc-icon">'+(hasEstudo?'✓':'')+'</div>Estudar algo</div>' +
+    '<div class="honrar-check '+(hasAmor?'met':'')+'"><div class="hc-icon">'+(hasAmor?'✓':'')+'</div>Fazer algo por quem ama</div>' +
+    '<div class="honrar-check '+(hasFe?'met':'')+'"><div class="hc-icon">'+(hasFe?'✓':'')+'</div>Agradecer a Deus</div>' +
+    '</div>' +
+    (allMet ? '<div class="honrar-reward">✨ DIA HONRADO! +30 XP · +15 G · +1 Honra</div>' : '<div class="honrar-reward" style="color:var(--text-dim)">Complete os 3 objetivos para honrar o dia.</div>') +
+    '<div class="honrar-count">Dias honrados: '+state.meta.honrarCount+'</div></div>';
+
+  // Auto-complete
+  const honrarToday = state.history[todayStr()]?.honrarDone;
+  if (allMet && !honrarToday) {
+    ensureHist();
+    state.history[todayStr()].honrarDone = true;
+    state.meta.honrarCount++;
+    state.stats.honra = (state.stats.honra||5) + 1;
+    state.gold += 15;
+    state.meta.totalGold += 15;
+    state.history[todayStr()].activeXp = (state.history[todayStr()].activeXp||0)+30;
+    addXP(30);
+    log('🏆 DIA HONRADO! Estudo + Amor + Fé',{xp:30,gold:15});
+    sfxHonrar();
+    systemNotice('DIA HONRADO','Você estudou, amou e agradeceu. +30 XP, +15 G, +1 Honra.');
+    notif('🏆 DIA HONRADO','Você estudou, amou e agradeceu. +30 XP, +15 G, +1 Honra!',false,'green');
+  }
+}
+
+// ═══════════════════════════════════════════
+// ██  BOSS
+// ═══════════════════════════════════════════
+
+function renderBoss() {
+  const bz = document.getElementById('boss-zone');
+  const b = state.boss;
+  const pct = Math.max(0,(b.hp/b.hpMax)*100);
+  const dmgStr = Number(b.totalDmg||0).toLocaleString('pt-BR');
+  const hpStr = Number(Math.max(0,Math.round(b.hp))).toLocaleString('pt-BR');
+  const maxStr = Number(b.hpMax).toLocaleString('pt-BR');
+  bz.innerHTML = '<div class="boss-card legendary"><div class="boss-top"><div class="boss-emoji">'+b.icon+'</div><div><div class="boss-name">'+esc(b.name)+'</div><div class="boss-sub">BOSS PERMANENTE — CONSTRUA SUA VIDA</div></div></div>' +
+    '<div class="boss-hp-top"><span style="color:var(--red)">HP</span><span>'+hpStr+' / '+maxStr+'</span></div>' +
+    '<div class="boss-hp-track"><div class="boss-hp-fill" style="width:'+pct+'%"></div></div>' +
+    '<div class="boss-dmg">⚔️ Dano total causado: '+dmgStr+'</div>' +
+    '<div class="boss-reward">Cada missão, estudo, treino, oração e gesto de amor causa dano. Construa a vida que deseja!</div></div>';
+
+  // Boss progress in Progress tab
+  const bpc = document.getElementById('boss-progress-chart');
+  if (bpc) {
+    const progPct = ((b.totalDmg||0)/b.hpMax*100).toFixed(2);
+    bpc.innerHTML = '<div style="text-align:center;padding:10px"><div style="font-family:Orbitron;font-size:18px;color:var(--gold)">'+progPct+'%</div><div style="font-size:12px;color:var(--text-dim);margin:4px 0 10px">do Boss derrotado</div>' +
+      '<div class="boss-hp-track"><div class="boss-hp-fill" style="width:'+(100-parseFloat(progPct))+'%;background:linear-gradient(90deg,#ff2d4f,#ff7a90)"></div></div>' +
+      '<div style="font-size:11px;color:var(--text-dim);margin-top:6px">Dano total: '+dmgStr+' / '+maxStr+'</div></div>';
+  }
+}
+
+// ═══════════════════════════════════════════
+// ██  DUNGEONS
+// ═══════════════════════════════════════════
+
+function renderDungeons() {
+  const dl = document.getElementById('dungeon-list');
+  dl.innerHTML = state.dungeons.map(dg => {
+    const pct = (dg.cleared/dg.total)*100;
+    let bt='Avançar Andar', dis=false;
+    
+    // Identificar masmorras de progresso automatizado por sistemas de vida
+    const isAutomated = ['home', 'bib', 'love', 'faith'].includes(dg.key);
+    
+    if (dg.done) { 
+      bt='Concluída ✓'; 
+      dis=true; 
+    } else if (isAutomated) {
+      if (dg.key === 'home') bt = 'Automático (Finanças)';
+      else if (dg.key === 'bib') bt = 'Automático (Biblioteca)';
+      else if (dg.key === 'love') bt = 'Automático (Amor)';
+      else if (dg.key === 'faith') bt = 'Automático (Fé)';
+      dis = true;
+    } else if (dg.lastDay===todayStr()) { 
+      bt='Volte amanhã'; 
+      dis=true; 
+    }
+    
+    const floorName = dg.floorNames && dg.cleared < dg.total ? '<div class="dg-floor-name">Andar atual: '+dg.floorNames[dg.cleared]+'</div>' : '';
+    return '<div class="dungeon '+(dg.done?'complete':'')+'"><div class="dg-top"><div class="dg-icon">'+dg.icon+'</div><div class="dg-info"><div class="dg-name">'+esc(dg.name)+'</div><div class="dg-floors">Andar '+dg.cleared+' / '+dg.total+'</div><div class="dg-boss">Boss: '+esc(dg.boss)+'</div></div>'+(String(dg.key)[0]==='c'?'<button class="q-del" onclick="delDungeon(\''+dg.key+'\')">×</button>':'')+'</div>'+floorName+'<div class="dg-prog-track"><div class="dg-prog-fill" style="width:'+pct+'%"></div></div><div class="dg-actions"><div class="dg-rew">Recompensa: <b>'+dg.rewXp+' XP</b> + <b>'+dg.rewGold+' G</b></div><button class="dg-clear" onclick="advanceDungeon(\''+dg.key+'\')" '+(dis?'disabled':'')+'>'+bt+'</button></div></div>';
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+// ██  VIDA (Relationship, Spiritual, Financial, Library)
+// ═══════════════════════════════════════════
+
+function renderVida() {
+  // Relationship
+  document.getElementById('rel-lv').textContent = 'Nível '+state.relLevel+' — '+(state.relLevel>=15?'Amor Inabalável':state.relLevel>=5?'Guardião do Amor':'Companheiro');
+  const relXpN = REL_XP_NEEDED(state.relLevel);
+  document.getElementById('rel-xp-txt').textContent = state.relXp+'/'+relXpN;
+  document.getElementById('rel-xp-bar').style.width = (state.relXp/relXpN*100)+'%';
+
+  const rm = document.getElementById('rel-missions');
+  const defaultRelMissions = [
+    {name:'❤️ Encontro especial',done:false},
+    {name:'❤️ Conversa profunda',done:false},
+    {name:'❤️ Pequeno gesto de carinho',done:false},
+    {name:'❤️ Planejamento do futuro',done:false},
+    {name:'❤️ Resolver conflito com maturidade',done:false}
+  ];
+  if (state.relMissions.length===0) state.relMissions = defaultRelMissions.map((m,i)=>({id:i+1,...m,lastDay:''}));
+  rm.innerHTML = state.relMissions.map(m => {
+    const done = m.lastDay===todayStr();
+    return '<div class="quest rel '+(done?'done':'')+'" onclick="completeRelMission('+m.id+')"><div class="q-check">'+(done?'✓':'')+'</div><div class="q-info"><div class="q-name">'+esc(m.name)+'</div><div class="q-meta"><span class="q-xp">+15 RelXP</span></div></div></div>';
+  }).join('');
+
+  // Spiritual
+  document.getElementById('spi-lv').textContent = state.meta.prayerDays+' dias de constância';
+  const sm = document.getElementById('spi-missions');
+  const spiList = [
+    {key:'prayer',name:'🙏 Oração',cat:'fe',stat:'fe'},
+    {key:'bible',name:'📖 Leitura bíblica',cat:'fe',stat:'fe'},
+    {key:'gratitude',name:'🙌 Gratidão',cat:'fe',stat:'fe'},
+    {key:'diary',name:'✍️ Diário espiritual',cat:'fe',stat:'per'}
+  ];
+  const spiToday = state.history[todayStr()]?.spiDone || {};
+  sm.innerHTML = spiList.map(s => {
+    const done = spiToday[s.key];
+    return '<div class="quest spi '+(done?'done':'')+'" onclick="completeSpiMission(\''+s.key+'\')"><div class="q-check">'+(done?'✓':'')+'</div><div class="q-info"><div class="q-name">'+s.name+'</div><div class="q-meta"><span class="q-xp">+12 XP</span><span class="q-stat-tag">'+STAT_DEF[s.stat].label+'</span></div></div></div>';
+  }).join('');
+  // Load diary
+  const diaryEl = document.getElementById('spi-diary');
+  if (document.activeElement !== diaryEl) diaryEl.value = state.spiDiary[todayStr()] || '';
+
+  // Financial
+  document.getElementById('fin-lv').textContent = formatMoney(state.savedMoney)+' guardados';
+  const fg = document.getElementById('fin-goals');
+  fg.innerHTML = state.finGoals.map((g,i) => {
+    const pct = Math.min(100,(g.current/g.target)*100);
+    return '<div class="fin-goal"><div class="fin-goal-top"><div class="fin-goal-nm">'+esc(g.name)+'</div><div class="fin-goal-val">'+formatMoney(g.current)+' / '+formatMoney(g.target)+'</div></div><div class="vida-bar-track"><div class="vida-bar-fill" style="width:'+pct+'%;background:linear-gradient(90deg,#50fa7b,#3ff0a0)"></div></div></div>';
+  }).join('');
+
+  // Library
+  document.getElementById('lib-lv').textContent = state.books.length+' livros concluídos';
+  const bl = document.getElementById('book-list');
+  if (state.books.length===0) {
+    bl.innerHTML='<div class="empty" style="padding:10px">Nenhum livro concluído ainda. Registre abaixo!</div>';
+  } else {
+    bl.innerHTML = state.books.map(b => '<div class="book-item"><div class="book-icon">'+(b.icon||'📘')+'</div><div class="book-info"><div class="book-nm">'+esc(b.name)+'</div><div class="book-effect">'+b.effect+'</div></div></div>').join('');
+  }
+
+  // Open/close state
+  ['rel','spi','fin','lib'].forEach(k => {
+    const body = document.getElementById('body-'+k);
+    const arrow = document.getElementById('arrow-'+k);
+    if (state.openSections[k]) { body.classList.add('open'); arrow.classList.add('open'); }
+    else { body.classList.remove('open'); arrow.classList.remove('open'); }
+  });
+}
+
+function toggleVida(key) {
+  state.openSections[key] = !state.openSections[key];
+  sfxClick();
+  renderVida();
+}
+
+// ═══════════════════════════════════════════
+// ██  TITLES & ACHIEVEMENTS
+// ═══════════════════════════════════════════
+
+function renderTitles() {
+  document.getElementById('titles-list').innerHTML = TITLES.filter(t=>!t.hidden||state.unlockedTitles.includes(t.id)).map(t => {
+    const u = state.unlockedTitles.includes(t.id), a = state.activeTitle===t.id;
+    return '<div class="title-item '+(u?'':'locked')+' '+(a?'active-title':'')+'"><div class="title-ic">'+t.ic+'</div><div class="title-tx"><div class="title-nm">'+t.nm+'</div><div class="title-cond">'+(u?'Desbloqueado':t.cond)+'</div></div>'+(u?'<button class="title-use" onclick="setTitle(\''+t.id+'\')" '+(a?'disabled':'')+' >'+(a?'Ativo':'Usar')+'</button>':'')+'</div>';
+  }).join('');
+}
+
+function renderAchievements() {
+  const al = document.getElementById('ach-list');
+  al.innerHTML = ACHIEVEMENTS.map(cat => {
+    return '<div class="ach-category">'+cat.cat+'</div>' + cat.items.map(a => {
+      const u = state.unlockedAch.includes(a.id);
+      return '<div class="ach-item '+(u?'unlocked':'')+'"><div class="ach-ic">'+a.ic+'</div><div class="ach-tx">'+a.nm+' — <span style="font-size:11px;color:var(--text-dim)">'+a.cond+'</span></div><div class="ach-status">'+(u?'✓':'🔒')+'</div></div>';
+    }).join('');
+  }).join('');
+}
+
+// ═══════════════════════════════════════════
+// ██  INVENTORY & SHOP
+// ═══════════════════════════════════════════
+
+function renderInventory(){const iz=document.getElementById('inv-zone');const owned=Object.entries(state.inventory).filter(([k,v])=>v>0);if(owned.length===0){iz.innerHTML='<div class="empty" style="padding:14px">Inventário vazio. Compre na Loja abaixo.</div>';return;}iz.innerHTML=(state.buffs.xpDoubleToday?'<div style="font-size:12px;color:var(--gold);margin-bottom:8px">🧪 XP DUPLO ativo!</div>':'')+owned.map(([k,v])=>{const it=ITEMS[k];return'<div class="shop-item"><div class="shop-icon">'+it.ic+'</div><div class="shop-info"><div class="shop-name">'+it.nm+'</div><div class="shop-desc">'+it.desc+'</div></div><div class="shop-buy"><span class="item-count">x'+v+'</span><button class="use-btn" onclick="useItem(\''+k+'\')">Usar</button></div></div>';}).join('');}
+
+function renderSysShop(){document.getElementById('sysshop-zone').innerHTML=Object.entries(ITEMS).map(([k,it])=>'<div class="shop-item"><div class="shop-icon">'+it.ic+'</div><div class="shop-info"><div class="shop-name">'+it.nm+'</div><div class="shop-desc">'+it.desc+'</div></div><div class="shop-buy"><span class="shop-cost">⬡ '+it.cost+' G</span><button class="buy-btn" onclick="buyItem(\''+k+'\')" '+(state.gold<it.cost?'disabled':'')+'>Comprar</button></div></div>').join('');}
+
+function renderShop(){const sl=document.getElementById('shop-list');if(state.shop.length===0){sl.innerHTML='<div class="empty">Nenhuma recompensa.<br>Adicione abaixo.</div>';return;}sl.innerHTML=state.shop.map(item=>'<div class="shop-item"><div class="shop-icon">'+(item.icon||'🎁')+'</div><div class="shop-info"><div class="shop-name">'+esc(item.name)+'</div><div class="shop-desc">Recompensa pessoal</div></div><div class="shop-buy"><span class="shop-cost">⬡ '+item.cost+' G</span><button class="buy-btn" onclick="redeemReward('+item.id+')" '+(state.gold<item.cost?'disabled':'')+'>Resgatar</button></div><button class="q-del" onclick="delShop('+item.id+')">×</button></div>').join('');}
+
+// ═══════════════════════════════════════════
+// ██  LOG & PROGRESS
+// ═══════════════════════════════════════════
+
+function renderLog(){const ll=document.getElementById('log-list');if(state.log.length===0){ll.innerHTML='<div class="empty">Nenhuma atividade ainda.</div>';return;}ll.innerHTML=[...state.log].reverse().slice(0,60).map(l=>{let a='';if(l.xp)a='<span class="log-amt" style="color:var(--green)">+'+l.xp+'XP</span>';else if(l.gold!=null)a='<span class="log-amt" style="color:'+(l.gold<0?'var(--red)':'var(--gold)')+'">'+(l.gold>0?'+':'')+l.gold+'G</span>';else if(l.hp)a='<span class="log-amt" style="color:var(--red)">'+l.hp+'HP</span>';return'<div class="log-row"><span class="log-t">'+l.time+'</span><span class="log-x">'+esc(l.text)+'</span>'+a+'</div>';}).join('');}
+
+function renderProgress() {
+  document.getElementById('ss-streak').textContent = state.streak;
+  document.getElementById('ss-done').textContent = state.meta.totalDone;
+  document.getElementById('ss-clean').textContent = state.cleanDays;
+  document.getElementById('ss-honrar').textContent = state.meta.honrarCount;
+  document.getElementById('pm-study').textContent = state.meta.studyHours+'h';
+  document.getElementById('pm-prayer').textContent = state.meta.prayerDays;
+  document.getElementById('pm-books').textContent = state.books.length;
+  document.getElementById('pm-saved').textContent = formatMoney(state.savedMoney);
+  drawXpChart(); drawRadar(); drawHeatmap();
+}
+
+function lastNDates(n){const arr=[];const d=new Date();for(let i=n-1;i>=0;i--){const x=new Date(d);x.setDate(d.getDate()-i);arr.push(x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'));}return arr;}
+
+function drawXpChart(){const c=document.getElementById('xpChart');if(!c)return;const w=c.clientWidth||320;c.width=w;c.height=120;const ctx=c.getContext('2d');ctx.clearRect(0,0,w,120);const dates=lastNDates(14);const vals=dates.map(d=>state.history[d]?state.history[d].xp:0);const max=Math.max(10,...vals);const bw=w/dates.length;dates.forEach((d,i)=>{const v=vals[i];const h=(v/max)*90;const x=i*bw+bw*0.18,bwid=bw*0.64,y=105-h;const g=ctx.createLinearGradient(0,y,0,105);g.addColorStop(0,'#f5c451');g.addColorStop(1,'#b8860b');ctx.fillStyle=g;ctx.fillRect(x,y,bwid,h);if(i%2===0||i===dates.length-1){ctx.fillStyle='#5b6a98';ctx.font='9px Rajdhani';ctx.textAlign='center';ctx.fillText(d.slice(8),x+bwid/2,118);}});ctx.fillStyle='#5b6a98';ctx.font='9px Rajdhani';ctx.textAlign='left';ctx.fillText('máx '+max,2,10);}
+
+function drawRadar(){const c=document.getElementById('radarChart');if(!c)return;const w=c.clientWidth||320;c.width=w;c.height=260;const ctx=c.getContext('2d');ctx.clearRect(0,0,w,260);const cx=w/2,cy=130,R=90;const N=STAT_KEYS.length;const maxStat=Math.max(10,...STAT_KEYS.map(k=>state.stats[k]));
+  for(let ring=1;ring<=3;ring++){ctx.beginPath();for(let i=0;i<=N;i++){const a=-Math.PI/2+i*2*Math.PI/N;const r=R*ring/3;const x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.strokeStyle='rgba(86,140,255,0.12)';ctx.stroke();}
+  ctx.beginPath();STAT_KEYS.forEach((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/N;const r=R*(state.stats[k]/maxStat);const x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.closePath();ctx.fillStyle='rgba(245,196,81,0.2)';ctx.fill();ctx.strokeStyle='#f5c451';ctx.lineWidth=2;ctx.stroke();
+  STAT_KEYS.forEach((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/N;const x=cx+(R+20)*Math.cos(a),y=cy+(R+20)*Math.sin(a);ctx.fillStyle=STAT_DEF[k].color;ctx.font='bold 9px Rajdhani';ctx.textAlign='center';ctx.fillText(STAT_DEF[k].icon+' '+state.stats[k],x,y+3);});}
+
+function drawHeatmap(){const g=document.getElementById('heat-grid');if(!g)return;const dates=lastNDates(119);g.innerHTML=dates.map(d=>{const v=state.heat[d]||0;let bg='rgba(86,140,255,0.06)';if(v>=5)bg='rgba(245,196,81,0.85)';else if(v>=3)bg='rgba(245,196,81,0.55)';else if(v>=1)bg='rgba(245,196,81,0.3)';return'<div class="heat-cell" title="'+d+': '+v+'" style="background:'+bg+'"></div>';}).join('');}
+
+// ═══════════════════════════════════════════
+// ██  ACTIONS
+// ═══════════════════════════════════════════
+
+function addXP(amount) {
+  state.xp += amount;
+  let lv = false, g = 0;
+  while (state.xp >= XP_NEEDED(state.level)) {
+    state.xp -= XP_NEEDED(state.level);
+    state.level++; g++;
+    state.points += BASE_POINTS + (hasPerk('veteran')?1:0);
+    state.skillPoints += 1;
+    state.hp = state.hpMax;
+    lv = true;
+  }
+  if (lv) { checkClassQuests(); showLevelUp(g); }
+}
+
+function damageBoss(a) {
+  if (!state.boss || state.boss.defeated) return;
+  state.boss.hp -= a;
+  state.boss.totalDmg = (state.boss.totalDmg||0) + a;
+  sfxHit();
+  if (state.boss.hp <= 0) {
+    state.boss.hp = 0;
+    state.boss.defeated = true;
+    state.meta.bossKills++;
+    log('👑 O FUTURO FOI CONQUISTADO!',{xp:5000});
+    addXP(5000);
+    state.gold += 2000;
+    state.meta.totalGold += 2000;
+    sfxWin();
+    document.getElementById('bw-msg').textContent = 'Você construiu a vida que sonhou! O Futuro foi derrotado. +5000 XP, +2000 G.';
+    setTimeout(()=>document.getElementById('bossWin').classList.add('show'),300);
+  }
+}
+
+function toggleQuest(id) {
+  const q = state.quests.find(x=>x.id===id);
+  if (!q) return;
+  const d = DIFF[q.diff]; ensureHist(); const t = todayStr();
+  q.rewardClaims = q.rewardClaims || {};
+  const claimKey = rewardClaimKey(q,t);
+  if (q.done) {
+    q.done = false;
+    const r = q.lastReward || {xp:d.xp,gold:d.gold,stat:q.stat,statBoost:0,boss:d.xp};
+    state.xp = Math.max(0, state.xp-r.xp);
+    state.gold = Math.max(0, state.gold-r.gold);
+    if(r.stat&&r.statBoost) state.stats[r.stat] = Math.max(0,(state.stats[r.stat]||0)-r.statBoost);
+    healBoss(r.boss||r.xp);
+    if (q.lastDoneDay===t) { q.streak = Math.max(0,q.streak-1); q.lastDoneDay=''; }
+    state.history[t].xp = Math.max(0,state.history[t].xp-r.xp);
+    state.history[t].activeXp = Math.max(0,(state.history[t].activeXp||0)-r.xp);
+    state.history[t].done = Math.max(0,state.history[t].done-1);
+    state.heat[t] = Math.max(0,(state.heat[t]||0)-1);
+    state.meta.totalDone = Math.max(0,state.meta.totalDone-1);
+    q.lastReward = null;
+    log('Revertida: '+q.name,{gold:-r.gold});
+    notif('REVERTIDO','Recompensa removida. Esta missão não pode ser farmada novamente neste ciclo.',false,'purple');
+  } else {
+    if (q.rewardClaims[claimKey]) {
+      q.done = true;
+      q.lastDoneDay = t;
+      notif('RECOMPENSA JÁ COLETADA','Missão marcada, mas XP/Ouro deste ciclo já foram recebidos.',false,'purple');
+      render();
+      return;
+    }
+    if (state.fatigue>=90 && (q.diff==='hard'||q.diff==='epic')) {
+      systemNotice('FADIGA CRÍTICA','Missões difíceis e épicas bloqueadas. Descanse ou reduza a carga antes de continuar.');
+      return;
+    }
+    q.done = true;
+    if (q.lastDoneDay!==t) { q.streak=(q.streak||0)+1; q.lastDoneDay=t; if(q.streak>q.best)q.best=q.streak; }
+    
+    // Atualizar streak/daysTotal do soldado sombra correspondente para permitir evolução
+    const shadow = state.shadows.find(s => s.name === q.name);
+    if (shadow) {
+      shadow.daysTotal = Math.max(shadow.daysTotal || 0, q.streak);
+    }
+
+    const boost = (q.diff==='epic'?3:q.diff==='hard'?2:1)+((hasPerk('titan')&&(q.diff==='hard'||q.diff==='epic'))?1:0);
+    state.stats[q.stat] = (state.stats[q.stat]||5) + boost;
+    let m = 1;
+    if (hasPerk('scholar')) m *= 1.15;
+    if (state.buffs.xpDoubleToday) m *= 2;
+    if (hasPerk('faithful') && q.cat==='fe') m *= 1.2;
+    if (hasPerk('lover') && q.cat==='amor') m *= 1.2;
+    
+    // Aplicar bônus dos livros da biblioteca (+5% XP na categoria/atributo correspondente)
+    if (state.books && state.books.length > 0) {
+      let bookBonus = 0;
+      state.books.forEach(b => {
+        if (b.stat === q.stat) {
+          bookBonus += b.bonus || 0.05;
+        }
+      });
+      m += Math.min(BOOK_BONUS_CAP, bookBonus);
+    }
+
+    if (state.fatigue>=85) m *= 0.55; else if (state.fatigue>=70) m *= 0.75; else if (state.fatigue>=55) m *= 0.9;
+    const xpGain = Math.round(d.xp * m);
+    let goldGain = d.gold;
+    if (hasPerk('lucky')) goldGain = Math.round(goldGain*1.25);
+    if (hasPerk('investor')) goldGain = Math.round(goldGain*1.1);
+    if (state.fatigue>=85) goldGain = Math.round(goldGain*0.45); else if (state.fatigue>=70) goldGain = Math.round(goldGain*0.65);
+    let fatAdd = d.fat;
+    if (hasPerk('enduring')) fatAdd = Math.round(fatAdd*0.6);
+    state.gold += goldGain; state.fatigue = Math.min(100,state.fatigue+fatAdd);
+    state.meta.totalDone++; state.meta.totalGold += goldGain;
+    state.history[t].xp += xpGain; state.history[t].activeXp = (state.history[t].activeXp||0)+xpGain; state.history[t].done++; state.heat[t] = (state.heat[t]||0)+1;
+    q.rewardClaims[claimKey] = true;
+    q.lastReward = {xp:xpGain,gold:goldGain,stat:q.stat,statBoost:boost,boss:xpGain,day:t};
+    // Track categories
+    if (q.cat==='estudo'||q.cat==='carreira') state.meta.studyHours = (state.meta.studyHours||0) + (q.diff==='epic'?1.5:q.diff==='hard'?1:q.diff==='med'?0.5:0.25);
+    if (q.cat==='saude' && (q.name.toLowerCase().includes('acad') || q.name.toLowerCase().includes('exerc') || q.name.toLowerCase().includes('trein'))) state.meta.workouts = (state.meta.workouts||0)+1;
+    log('✓ '+q.name+(q.streak>1?' (🔥'+q.streak+')':''),{xp:xpGain,gold:goldGain});
+    addXP(xpGain); damageBoss(xpGain); sfxComplete();
+    systemNotice('QUEST COMPLETA',q.name+' — +'+xpGain+'XP, +'+goldGain+'G');
+    notif('MISSÃO COMPLETA',q.name+' — +'+xpGain+'XP, +'+goldGain+'G');
+    if (q.type==='penalty'||q.type==='cls') setTimeout(()=>{state.quests=state.quests.filter(x=>x.id!==id);render();},800);
+  }
+  render();
+}
+
+function ariseShadow(id) {
+  const q = state.quests.find(x=>x.id===id);
+  if (!q || q.extracted || q.streak < SHADOW_THRESHOLD) return;
+  q.extracted = true;
+  const pw = DIFF[q.diff].sp;
+  const tier = getShadowTier(q.streak);
+  const icons = ['🌑','👤','🥷','⚔️','🛡️'];
+  state.shadows.push({id:state.nextSh++, name:q.name, icon:icons[Math.floor(Math.random()*icons.length)], power:pw, basePower:pw, tier:tier.tier, rank:tier.rank, daysTotal:q.streak});
+  log('🌑 ARISE! Sombra erguida: '+q.name);
+  sfxArise();
+  document.getElementById('ar-msg').textContent = '« '+q.name+' » se ergue das sombras como '+tier.tier+'! +'+pw+' XP passivo todo dia.';
+  document.getElementById('arise').classList.add('show');
+  render();
+}
+
+function buyPerk(id){const p=PERKS.find(x=>x.id===id);if(!p||hasPerk(id)||state.skillPoints<p.cost)return;state.skillPoints-=p.cost;state.perks.push(id);log('🌟 Perk desbloqueado: '+p.nm);notif('PERK DESBLOQUEADO',p.ic+' '+p.nm,false,'green');sfxBuy();render();}
+function allocStat(k){if(state.points<=0)return;state.points--;state.stats[k]++;sfxClick();render();}
+function delQuest(e,id){e.stopPropagation();state.quests=state.quests.filter(q=>q.id!==id);render();}
+
+function addQuest(){
+  const name=document.getElementById('q-name').value.trim();
+  if(!name){notif('ERRO','Digite um nome.',true);return;}
+  const type=document.getElementById('q-type').value;
+  const priority=document.getElementById('q-priority').value;
+  state.quests.push({
+    id:state.nextQ++, name,
+    stat:document.getElementById('q-stat').value,
+    diff:document.getElementById('q-diff').value,
+    type, cat:document.getElementById('q-cat').value,
+    priority,
+    days:type==='daily'?pickedDays.slice():[],
+    done:false, streak:0, best:0, lastDoneDay:'', extracted:false
+  });
+  document.getElementById('q-name').value='';
+  pickedDays=[];
+  toggleAddForm();
+  render();
+}
+
+function buildDayPicker(){const dp=document.getElementById('day-picker');dp.innerHTML='';DAY_SHORT.forEach((l,i)=>{const c=document.createElement('div');c.className='day-chip'+(pickedDays.includes(i)?' on':'');c.textContent=l;c.title=DAY_LABELS[i];c.onclick=()=>{if(pickedDays.includes(i))pickedDays=pickedDays.filter(d=>d!==i);else pickedDays.push(i);buildDayPicker();sfxClick();};dp.appendChild(c);});}
+
+function toggleAddForm(){const f=document.getElementById('add-form'),b=document.getElementById('add-btn');const s=f.style.display==='none';f.style.display=s?'block':'none';b.style.display=s?'none':'block';if(s){pickedDays=[];buildDayPicker();}}
+function setFilter(f,btn){qFilter=f;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderQuests();}
+
+// ═══ DUNGEONS ═══
+function advanceDungeon(key) {
+  const dg = state.dungeons.find(d=>d.key===key);
+  if (!dg||dg.done) return;
+  if (dg.lastDay===todayStr()) { notif('MASMORRA','Você já avançou hoje. Volte amanhã!'); return; }
+  ensureHist(); const t = todayStr();
+  dg.cleared++; dg.lastDay = t;
+  const fx = Math.round(dg.rewXp/dg.total/2)+5;
+  state.history[t].xp += fx;
+  state.history[t].activeXp = (state.history[t].activeXp||0)+fx;
+  log('🏰 '+dg.name+' — Andar '+dg.cleared+'/'+dg.total,{xp:fx});
+  addXP(fx); damageBoss(fx); sfxComplete();
+  if (dg.cleared >= dg.total) {
+    dg.done = true;
+    state.gold += dg.rewGold; state.meta.totalGold += dg.rewGold;
+    state.meta.dungeonsCleared++;
+    log('🏰 MASMORRA CONCLUÍDA: '+dg.name,{xp:dg.rewXp,gold:dg.rewGold});
+    state.history[t].activeXp = (state.history[t].activeXp||0)+dg.rewXp;
+    addXP(dg.rewXp); damageBoss(dg.rewXp);
+    notif('MASMORRA CONCLUÍDA',dg.name+'! +'+dg.rewXp+'XP +'+dg.rewGold+'G',false,'green');
+    sfxWin();
+  } else {
+    const floorNm = dg.floorNames ? ' ('+dg.floorNames[dg.cleared-1]+')' : '';
+    notif('ANDAR LIMPO',dg.name+floorNm+' — '+dg.cleared+'/'+dg.total+' • +'+fx+'XP');
+  }
+  render();
+}
+
+// ═══ RELATIONSHIP ═══
+function completeRelMission(id) {
+  const m = state.relMissions.find(x=>x.id===id);
+  if (!m) return;
+  const t = todayStr();
+  if (m.lastDay===t) { m.lastDay=''; state.relXp=Math.max(0,state.relXp-15); render(); return; }
+  m.lastDay = t;
+  state.relXp += 15;
+  state.meta.relMissionsDone++;
+  state.stats.amor = (state.stats.amor||5) + 1;
+  // Level up relationship
+  while (state.relXp >= REL_XP_NEEDED(state.relLevel)) {
+    state.relXp -= REL_XP_NEEDED(state.relLevel);
+    state.relLevel++;
+    notif('❤️ NÍVEL DE AMOR','Relacionamento nível '+state.relLevel+'!',false,'green');
+  }
+  addXP(12); damageBoss(12);
+  ensureHist(); state.history[t].xp += 12; state.history[t].activeXp = (state.history[t].activeXp||0)+12;
+  
+  // Avanço automático da Masmorra Guardião do Amor (love)
+  const loveDg = state.dungeons.find(d => d.key === 'love');
+  if (loveDg && !loveDg.done && loveDg.lastDay !== t) {
+    loveDg.cleared++;
+    loveDg.lastDay = t;
+    const fx = Math.round(loveDg.rewXp/loveDg.total/2)+5;
+    ensureHist();
+    state.history[t].xp += fx;
+    state.history[t].activeXp = (state.history[t].activeXp||0)+fx;
+    addXP(fx); damageBoss(fx);
+    if (loveDg.cleared >= loveDg.total) {
+      loveDg.done = true;
+      state.gold += loveDg.rewGold; state.meta.totalGold += loveDg.rewGold;
+      state.meta.dungeonsCleared++;
+      log('🏰 MASMORRA CONCLUÍDA: '+loveDg.name,{xp:loveDg.rewXp,gold:loveDg.rewGold});
+      state.history[t].activeXp = (state.history[t].activeXp||0)+loveDg.rewXp;
+      addXP(loveDg.rewXp); damageBoss(loveDg.rewXp);
+      notif('MASMORRA CONCLUÍDA',loveDg.name+'! +'+loveDg.rewXp+'XP +'+loveDg.rewGold+'G',false,'green');
+    } else {
+      notif('MASMORRA DO AMOR','Sua dedicação fortalece os laços. Andar '+loveDg.cleared+'/'+loveDg.total+' • +'+fx+'XP');
+    }
+  }
+  
+  log('❤️ '+m.name,{xp:12});
+  sfxComplete(); render();
+}
+
+function addRelMission() {
+  const name = document.getElementById('rel-q-name').value.trim();
+  if (!name) return;
+  const maxId = state.relMissions.reduce((m,x)=>Math.max(m,x.id),0);
+  state.relMissions.push({id:maxId+1,name:'❤️ '+name,done:false,lastDay:''});
+  document.getElementById('rel-q-name').value = '';
+  document.getElementById('rel-form').style.display = 'none';
+  render();
+}
+
+// ═══ SPIRITUAL ═══
+function completeSpiMission(key) {
+  ensureHist(); const t = todayStr();
+  if (!state.history[t].spiDone) state.history[t].spiDone = {};
+  if (state.history[t].spiDone[key]) {
+    state.history[t].spiDone[key] = false;
+    render(); return;
+  }
+  state.history[t].spiDone[key] = true;
+  state.stats.fe = (state.stats.fe||5) + 1;
+  addXP(12); damageBoss(8);
+  state.history[t].xp += 12; state.history[t].activeXp = (state.history[t].activeXp||0)+12;
+  // Count unique prayer days
+  const allDays = Object.keys(state.history).filter(d=>state.history[d].spiDone?.prayer);
+  state.meta.prayerDays = allDays.length;
+  state.heat[t] = (state.heat[t]||0) + 1;
+  
+  // Avanço automático da Masmorra Homem de Fé (faith)
+  const faithDg = state.dungeons.find(d => d.key === 'faith');
+  if (faithDg && !faithDg.done && faithDg.lastDay !== t) {
+    faithDg.cleared++;
+    faithDg.lastDay = t;
+    const fx = Math.round(faithDg.rewXp/faithDg.total/2)+5;
+    state.history[t].xp += fx;
+    state.history[t].activeXp = (state.history[t].activeXp||0)+fx;
+    addXP(fx); damageBoss(fx);
+    if (faithDg.cleared >= faithDg.total) {
+      faithDg.done = true;
+      state.gold += faithDg.rewGold; state.meta.totalGold += faithDg.rewGold;
+      state.meta.dungeonsCleared++;
+      log('🏰 MASMORRA CONCLUÍDA: '+faithDg.name,{xp:faithDg.rewXp,gold:faithDg.rewGold});
+      state.history[t].activeXp = (state.history[t].activeXp||0)+faithDg.rewXp;
+      addXP(faithDg.rewXp); damageBoss(faithDg.rewXp);
+      notif('MASMORRA CONCLUÍDA',faithDg.name+'! +'+faithDg.rewXp+'XP +'+faithDg.rewGold+'G',false,'green');
+    } else {
+      notif('MASMORRA DA FÉ','Sua devoção se fortalece. Andar '+faithDg.cleared+'/'+faithDg.total+' • +'+fx+'XP');
+    }
+  }
+  
+  log('🙏 '+key.charAt(0).toUpperCase()+key.slice(1)+' realizado(a)',{xp:12});
+  sfxComplete(); render();
+}
+
+function saveDiary() {
+  const text = document.getElementById('spi-diary').value.trim();
+  if (!text) return;
+  state.spiDiary[todayStr()] = text;
+  notif('DIÁRIO','Reflexão salva com sucesso!',false,'green');
+  save();
+}
+
+// ═══ FINANCIAL ═══
+function addSavedMoney() {
+  const val = parseFloat(document.getElementById('fin-add-val').value);
+  if (!val || val <= 0) { notif('ERRO','Digite um valor válido.',true); return; }
+  state.savedMoney += val;
+  state.stats.prosperidade = (state.stats.prosperidade||5) + Math.floor(val/100);
+  // Distribute proportionally to goals
+  state.finGoals.forEach(g => {
+    if (g.current < g.target) {
+      const add = Math.min(val * (g.target / state.finGoals.reduce((a,x)=>a+x.target,0)), g.target - g.current);
+      g.current += add;
+    }
+  });
+  // Advance dungeon Casa Própria
+  const homeDg = state.dungeons.find(d=>d.key==='home');
+  if (homeDg && !homeDg.done) {
+    const newFloor = Math.min(homeDg.total, Math.floor(state.savedMoney / (50000/homeDg.total)));
+    if (newFloor > homeDg.cleared) {
+      homeDg.cleared = newFloor;
+      if (homeDg.cleared >= homeDg.total) {
+        homeDg.done = true;
+        state.meta.dungeonsCleared++;
+        state.gold += homeDg.rewGold;
+        state.meta.totalGold += homeDg.rewGold;
+        ensureHist(); state.history[todayStr()].xp += homeDg.rewXp; state.history[todayStr()].activeXp = (state.history[todayStr()].activeXp||0)+homeDg.rewXp;
+        addXP(homeDg.rewXp);
+        notif('🏠 MASMORRA CONCLUÍDA','Casa Própria! +'+homeDg.rewXp+'XP +'+homeDg.rewGold+'G',false,'green');
+      }
+    }
+  }
+  ensureHist();
+  const finXp = Math.round(18 * Math.log10(1 + val));
+  state.history[todayStr()].xp += finXp;
+  state.history[todayStr()].activeXp = (state.history[todayStr()].activeXp||0)+finXp;
+  addXP(finXp); damageBoss(Math.round(finXp*1.4));
+  log('💰 Guardou '+formatMoney(val),{xp:finXp});
+  document.getElementById('fin-add-val').value = '';
+  sfxBuy(); render();
+}
+
+// ═══ LIBRARY ═══
+function addBook() {
+  const name = document.getElementById('book-name').value.trim();
+  if (!name) { notif('ERRO','Digite o nome do livro.',true); return; }
+  const stat = document.getElementById('book-stat').value;
+  const icon = document.getElementById('book-icon').value.trim() || '📘';
+  const effect = '+5% XP em '+STAT_DEF[stat].label;
+  state.books.push({name, icon, stat, effect, bonus:0.05});
+  state.stats[stat] = (state.stats[stat]||5) + 3;
+  state.stats.int = (state.stats.int||5) + 2;
+  // Advance library dungeon
+  const libDg = state.dungeons.find(d=>d.key==='bib');
+  if (libDg && !libDg.done && libDg.cleared < libDg.total) {
+    libDg.cleared++;
+    if (libDg.cleared >= libDg.total) {
+      libDg.done = true; state.meta.dungeonsCleared++;
+      state.gold += libDg.rewGold; state.meta.totalGold += libDg.rewGold;
+      ensureHist(); state.history[todayStr()].xp += libDg.rewXp; state.history[todayStr()].activeXp = (state.history[todayStr()].activeXp||0)+libDg.rewXp;
+      addXP(libDg.rewXp);
+      notif('📚 MASMORRA CONCLUÍDA','Biblioteca! +'+libDg.rewXp+'XP',false,'green');
+    }
+  }
+  ensureHist(); state.history[todayStr()].xp += 40; state.history[todayStr()].activeXp = (state.history[todayStr()].activeXp||0)+40;
+  addXP(40); damageBoss(40); state.gold += 20; state.meta.totalGold += 20;
+  log('📚 Livro concluído: '+name+' — Artefato: '+effect,{xp:40,gold:20});
+  notif('📚 ARTEFATO OBTIDO',icon+' '+name+' — '+effect,false,'green');
+  document.getElementById('book-name').value = '';
+  document.getElementById('book-form').style.display = 'none';
+  sfxWin(); render();
+}
+
+// ═══ ITEMS ═══
+function buyItem(k){const it=ITEMS[k];if(!it||state.gold<it.cost)return;state.gold-=it.cost;state.inventory[k]=(state.inventory[k]||0)+1;log('🛒 Comprou: '+it.nm,{gold:-it.cost});sfxBuy();notif('ITEM COMPRADO',it.ic+' '+it.nm);render();}
+function useItem(k){
+  if(!state.inventory[k]||state.inventory[k]<=0)return;
+  const it=ITEMS[k], t=todayStr();
+  state.itemUses = state.itemUses || {};
+  if(k==='xp_potion'){
+    if(state.itemUses.xp_potion===t){notif('LIMITE DIÁRIO','A poção de XP já foi usada hoje.',true);return;}
+    state.buffs.xpDoubleToday=true;state.itemUses.xp_potion=t;systemNotice('BUFF ATIVADO','XP em dobro até o reset diário.');notif('XP DUPLO','Ativo até o fim do dia! 🧪',false,'green');
+  }else if(k==='rest_crystal'){
+    const last=state.itemUses.rest_crystal;
+    if(last&&daysBetween(last,t)<REST_CRYSTAL_COOLDOWN_DAYS){notif('COOLDOWN','Cristal disponível novamente em '+(REST_CRYSTAL_COOLDOWN_DAYS-daysBetween(last,t))+' dia(s).',true);return;}
+    state.fatigue=Math.max(0,state.fatigue-45);state.itemUses.rest_crystal=t;systemNotice('RECUPERAÇÃO','Fadiga reduzida em 45. Retome com calma.');
+  }else if(k==='penalty_shield'){notif('ESCUDO','Será usado automaticamente. 🛡️');return;}
+  state.inventory[k]--;log('Usou: '+it.nm);sfxBuy();render();
+}
+
+// ═══ SHOP ═══
+function addShopItem(){const name=document.getElementById('s-name').value.trim();const cost=parseInt(document.getElementById('s-cost').value)||0;if(!name||cost<=0){notif('ERRO','Preencha nome e custo.',true);return;}state.shop.push({id:state.nextS++,name,icon:document.getElementById('s-icon').value.trim()||'🎁',cost});document.getElementById('s-name').value='';document.getElementById('s-cost').value='';document.getElementById('s-icon').value='';toggleShopForm();render();}
+function toggleShopForm(){const f=document.getElementById('shop-form'),b=document.getElementById('shop-add-btn');const s=f.style.display==='none';f.style.display=s?'block':'none';b.style.display=s?'none':'block';}
+function delShop(id){state.shop=state.shop.filter(i=>i.id!==id);render();}
+function redeemReward(id){const item=state.shop.find(i=>i.id===id);if(!item||state.gold<item.cost)return;state.gold-=item.cost;state.fatigue=Math.max(0,state.fatigue-15);log('🎁 Resgatado: '+item.name,{gold:-item.cost});sfxBuy();notif('RECOMPENSA',item.icon+' '+item.name+'. Aproveite!',false,'green');render();}
+
+// ═══ TITLES ═══
+function setTitle(id){state.activeTitle=id;sfxClick();render();}
+function checkTitles(){for(const t of TITLES){if(!state.unlockedTitles.includes(t.id)&&t.check(state)){state.unlockedTitles.push(t.id);notif('TÍTULO DESBLOQUEADO',t.ic+' « '+t.nm+' »',false,'green');sfxBuy();}}}
+function checkAchievements(){for(const cat of ACHIEVEMENTS){for(const a of cat.items){if(!state.unlockedAch.includes(a.id)&&a.check(state)){state.unlockedAch.push(a.id);notif('CONQUISTA',a.ic+' '+a.nm+' — '+cat.cat,false,'green');sfxBuy();}}}}
+
+function updateName(){state.name=document.getElementById('name-input').value||'Aprendiz de Monarca';document.getElementById('p-name').textContent=state.name.toUpperCase();save();}
+function updateResetTime(){state.resetTime=document.getElementById('reset-time').value;save();}
+function updateSleepTime(){state.sleepTime=document.getElementById('sleep-time').value;save();}
+function log(text,extra={}){const now=new Date();const time=now.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});state.log.push(Object.assign({time,text},extra));if(state.log.length>300)state.log=state.log.slice(-300);}
+
+// ═══════════════════════════════════════════
+// ██  RANDOM EVENTS
+// ═══════════════════════════════════════════
+
+function triggerRandomEvent() {
+  if (state.lastEventDay === todayStr()) return;
+  if (Math.random() > 0.6) return; // 60% chance
+  const ev = RANDOM_EVENTS[Math.floor(Math.random()*RANDOM_EVENTS.length)];
+  state.currentEvent = ev;
+  document.getElementById('ev-ic').textContent = ev.ic;
+  document.getElementById('ev-text').textContent = ev.text;
+  document.getElementById('ev-reward').textContent = '+'+ev.xp+' XP · +'+ev.gold+' G · +1 '+STAT_DEF[ev.stat].label;
+  document.getElementById('event-modal').classList.add('show');
+}
+
+function completeEvent() {
+  const ev = state.currentEvent;
+  if (!ev) return;
+  state.lastEventDay = todayStr();
+  state.stats[ev.stat] = (state.stats[ev.stat]||5) + 1;
+  state.gold += ev.gold; state.meta.totalGold += ev.gold;
+  ensureHist(); state.history[todayStr()].xp += ev.xp; state.history[todayStr()].activeXp = (state.history[todayStr()].activeXp||0)+ev.xp;
+  addXP(ev.xp); damageBoss(ev.xp);
+  log('⚡ Evento: '+ev.text,{xp:ev.xp,gold:ev.gold});
+  sfxComplete();
+  document.getElementById('event-modal').classList.remove('show');
+  state.currentEvent = null;
+  render();
+}
+
+function dismissEvent() {
+  state.lastEventDay = todayStr();
+  state.currentEvent = null;
+  document.getElementById('event-modal').classList.remove('show');
+  sfxClick();
+}
+
+// ═══════════════════════════════════════════
+// ██  DAY CHANGE / PENALTY
+// ═══════════════════════════════════════════
+
+function checkDayChange() {
+  const today = todayStr();
+  if (state.lastDay === today) return;
+  ensureHist(); const lastWd = weekdayOf(state.lastDay);
+  const due = state.quests.filter(q=>q.type==='daily'&&(!q.days||q.days.length===0||q.days.includes(lastWd)));
+  let failed = due.filter(q=>!q.done);
+  failed.forEach(q=>{q.streak=0;});
+
+  // Escudo só protege missões principais
+  let failedMain = failed.filter(q=>(q.priority||'secondary')==='main');
+  const failedSec  = failed.filter(q=>(q.priority||'secondary')==='secondary');
+  // bônus nunca penaliza
+  if (failedMain.length>0 && state.inventory.penalty_shield>0) {
+    const used = Math.min(state.inventory.penalty_shield, failedMain.length);
+    state.inventory.penalty_shield -= used;
+    failedMain = failedMain.slice(used);
+    if (used>0) notif('ESCUDO USADO','🛡️ '+used+' missão(ões) principal(is) protegida(s)!',false,'green');
+  }
+
+  const anyMainFailed = failedMain.length > 0;
+  const mainDue = due.filter(q=>(q.priority||'secondary')==='main');
+
+  if (anyMainFailed) {
+    applyPenalty(failedMain, failedSec);
+    state.streak=0; state.cleanDays=0;
+  } else if (failedSec.length > 0) {
+    applySecondaryPenalty(failedSec);
+    // streak só mantém se cumpriu todas as principais
+    if (mainDue.length > 0) { state.streak++; state.cleanDays++; }
+  } else if (due.length>0) {
+    state.streak++; state.cleanDays++;
+    state.fatigue=Math.max(0,state.fatigue-30);
+    notif('DIA PERFEITO ✨','Todas as missões cumpridas! Sequência: '+state.streak+' dia(s)!',false,'green');
+  }
+  // Shadow passive XP
+  if (state.shadows.length>0) {
+    let pw = state.shadows.reduce((a,s)=>a+getShadowPower(s),0);
+    if (hasPerk('commander')) pw = Math.round(pw*1.5);
+    const rawPw = pw;
+    pw = cappedShadowXp(rawPw);
+    if (!state.history[today]) state.history[today]={xp:0,done:0};
+    state.history[today].xp += pw;
+    state.history[today].passiveXp = (state.history[today].passiveXp||0)+pw;
+    log('🌑 Exército treinou durante a noite'+(rawPw>pw?' (teto saudável aplicado)':''),{xp:pw});
+    addXP(pw); damageBoss(pw);
+    systemNotice('SHADOW ARMY','Seus soldados renderam +'+pw+' XP'+(rawPw>pw?' de '+rawPw+' bruto':'')+'.');
+    notif('EXÉRCITO DAS SOMBRAS','Seus soldados renderam +'+pw+' XP!',false,'purple');
+  }
+  
+  // Reset de missões semanais se mudou de semana
+  if (state.lastDay) {
+    const lastWk = getWeekNumber(state.lastDay);
+    const currWk = getWeekNumber(today);
+    const lastYr = new Date(state.lastDay + 'T12:00:00').getFullYear();
+    const currYr = new Date(today + 'T12:00:00').getFullYear();
+    if (lastWk !== currWk || lastYr !== currYr) {
+      state.quests.forEach(q => { if (q.type === 'weekly') q.done = false; });
+      log('📅 Nova semana iniciada! Missões semanais resetadas.');
+      notif('SISTEMA','Nova semana iniciada! Missões semanais resetadas.',false,'gold');
+    }
+  }
+
+  state.quests.forEach(q=>{if(q.type==='daily')q.done=false;});
+  state.quests = state.quests.filter(q=>q.type!=='penalty');
+  state.buffs.xpDoubleToday = false;
+  state.lastDay = today; state.fatigue = Math.max(0,state.fatigue-20); state.mp = state.mpMax; save();
+}
+
+function applyPenalty(failedMain, failedSec=[]) {
+  // ── Penalidade GRAVE — missões principais ─────────────────────────
+  let hpLoss = failedMain.length * 20;
+  if (hasPerk('ironmind')) hpLoss = Math.round(hpLoss/2);
+  const goldLoss = Math.min(state.gold, failedMain.length * 12);
+  const fatGain  = failedMain.length * 15 + failedSec.length * 5;
+  state.hp       = Math.max(0, state.hp - hpLoss);
+  state.gold    -= goldLoss;
+  state.fatigue  = Math.min(100, state.fatigue + fatGain);
+  log('⚠ PENALIDADE GRAVE: '+failedMain.length+' principal(is) + '+failedSec.length+' secundária(s) falhada(s)',{hp:-hpLoss});
+
+  const items = [];
+  if (failedMain.length) {
+    items.push('❌ Principais falhadas: '+failedMain.map(q=>q.name).join(', '));
+    items.push('— -'+hpLoss+' HP · -'+goldLoss+' Ouro · +'+fatGain+' Fadiga');
+    items.push('— 🔥 Sequência global zerada');
+  }
+  if (failedSec.length) {
+    items.push('📋 Secundárias falhadas: '+failedSec.map(q=>q.name).join(', '));
+    items.push('— 🔥 Streak dessas missões zerado');
+  }
+  if (state.hp <= 0) {
+    state.hp = Math.floor(state.hpMax * 0.3);
+    state.quests.push({
+      id:state.nextQ++, priority:'main',
+      name:'⚠ QUEST DE PENALIDADE — Recupere-se (1 missão difícil hoje)',
+      stat:'disc', diff:'hard', type:'penalty', cat:'geral',
+      days:[], done:false, streak:0, best:0, lastDoneDay:'', extracted:false
+    });
+    items.push('☠ HP ZERADO — Quest de Penalidade gerada! Resgate-se hoje.');
+  }
+  showPenalty(failedMain.length + failedSec.length, items);
+  sfxPenalty();
+}
+
+function applySecondaryPenalty(failedSec) {
+  // ── Penalidade LEVE — só missões secundárias ──────────────────────
+  const fatGain = failedSec.length * 5;
+  state.fatigue = Math.min(100, state.fatigue + fatGain);
+  log('📋 Missões secundárias falhadas: '+failedSec.map(q=>q.name).join(', '));
+  notif('MISSÕES SECUNDÁRIAS','Você falhou '+failedSec.length+' secundária(s). +'+fatGain+' Fadiga. Streaks zerados.',true);
+}
+
+// ═══════════════════════════════════════════
+// ██  OVERLAYS
+// ═══════════════════════════════════════════
+
+function showLevelUp(lv) {
+  sfxLevel();
+  const cls = getClass(state.level);
+  document.getElementById('lu-sub').textContent = 'LV. '+state.level+' — '+cls.icon+' '+cls.name;
+  document.getElementById('lu-detail').textContent = '+'+(lv*(BASE_POINTS+(hasPerk('veteran')?1:0)))+' atributos · +'+lv+' skill point(s) · HP restaurado';
+  document.getElementById('levelup').classList.add('show');
+  setTimeout(()=>document.getElementById('levelup').classList.remove('show'),2800);
+}
+
+let pendingPenalty = null;
+function showPenalty(c,items){pendingPenalty={c,items};}
+function actuallyShowPenalty(){if(!pendingPenalty)return;document.getElementById('pen-msg').textContent='Você falhou em '+pendingPenalty.c+' missão(ões). Consequências:';document.getElementById('pen-list').innerHTML=pendingPenalty.items.map(i=>'<div>▸ '+i+'</div>').join('');document.getElementById('penalty').classList.add('show');pendingPenalty=null;}
+function closeOv(id){document.getElementById(id).classList.remove('show');sfxClick();if(id==='bossWin')render();}
+function notif(title,body,danger=false,variant=''){const wrap=document.getElementById('notif-wrap');const el=document.createElement('div');el.className='notif'+(danger?' danger':'')+(variant?' '+variant:'');el.innerHTML='<div class="notif-h"></div><div class="notif-b">'+esc(body)+'</div>';el.querySelector('.notif-h').textContent='◆ '+title;wrap.appendChild(el);requestAnimationFrame(()=>el.classList.add('show'));setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),350);},3400);}
+
+// ═══════════════════════════════════════════
+// ██  COUNTDOWN
+// ═══════════════════════════════════════════
+
+function updateCountdown(){const[h,m]=state.resetTime.split(':').map(Number);const now=new Date();const reset=new Date();reset.setHours(h,m,0,0);if(reset<=now)reset.setDate(reset.getDate()+1);const diff=reset-now;const hh=String(Math.floor(diff/3600000)).padStart(2,'0');const mm=String(Math.floor(diff%3600000/60000)).padStart(2,'0');const ss=String(Math.floor(diff%60000/1000)).padStart(2,'0');const el=document.getElementById('countdown');if(el)el.textContent=hh+':'+mm+':'+ss;}
+
+// ═══════════════════════════════════════════
+// ██  ROUTINE LOADER
+// ═══════════════════════════════════════════
+
+function loadMonarcaRoutine() {
+  if (state.quests.length > 0 && !confirm('Isto adicionará a rotina Monarca personalizada. Suas missões atuais serão mantidas. Continuar?')) return;
+
+  // ── DIÁRIAS PRINCIPAIS — Todo dia (penalidade se falhar) ──────────
+  const mainDailies = [
+    {name:'🙏 Orar e agradecer a Deus (5min)',             stat:'fe',           diff:'easy', cat:'fe',       days:[]},
+    {name:'❤️ Mandar mensagem carinhosa para ela',         stat:'amor',         diff:'easy', cat:'amor',     days:[]},
+    {name:'😴 Dormir antes das 23h',                       stat:'vit',          diff:'med',  cat:'saude',    days:[]},
+    {name:'💻 Estudar Data Science — Udemy (30min)',       stat:'int',          diff:'hard', cat:'carreira', days:[1,2,3,4,5]},
+  ];
+
+  // ── DIÁRIAS SECUNDÁRIAS — Todo dia (penalidade leve) ──────────────
+  const secDailies = [
+    {name:'📖 Ler pelo menos 10 páginas',                  stat:'per',          diff:'easy', cat:'estudo',   days:[]},
+    {name:'💧 Beber 2 litros de água',                     stat:'vit',          diff:'easy', cat:'saude',    days:[]},
+    {name:'🌎 Praticar inglês (Duolingo / app, 15min)',    stat:'int',          diff:'easy', cat:'estudo',   days:[1,2,3,4,5]},
+    {name:'🌎 Aula de inglês (8h–12h) ✓ marcar presença', stat:'int',          diff:'med',  cat:'estudo',   days:[6]},
+    {name:'💻 Estudar Data Science (sessão longa 1h)',     stat:'int',          diff:'hard', cat:'carreira', days:[6,0]},
+  ];
+
+  // ── DIÁRIAS BÔNUS — Fim de semana (sem penalidade, só ganho) ──────
+  const bonusDailies = [
+    {name:'🏋️ Academia / Exercício físico',                stat:'forca',        diff:'hard', cat:'saude',    days:[5,6,0]},
+    {name:'👑 [BÔNUS] Ela está aqui — prioridade total ❤️',stat:'amor',        diff:'easy', cat:'amor',     days:[]},
+    {name:'📜 Leitura bíblica (além da oração)',           stat:'fe',           diff:'easy', cat:'fe',       days:[]},
+  ];
+
+  // ── SEMANAIS ──────────────────────────────────────────────────────
+  const semanais = [
+    {name:'❤️ Momento especial com ela (date/atividade)', stat:'amor',         diff:'med',  cat:'amor',     priority:'main'},
+    {name:'👨‍👩‍👦 Ligar ou visitar os pais',                  stat:'honra',        diff:'easy', cat:'geral',    priority:'secondary'},
+    {name:'📚 Avançar pelo menos 1 módulo no curso Udemy',stat:'int',          diff:'hard', cat:'carreira', priority:'secondary'},
+    {name:'🪞 Reflexão semanal — o que evoluí?',          stat:'per',          diff:'easy', cat:'geral',    priority:'bonus'},
+  ];
+
+  // ── MAIN QUESTS ───────────────────────────────────────────────────
+  const mains = [
+    {name:'💻 Concluir o curso de Data Science (Udemy)',   stat:'int',         diff:'epic', cat:'carreira'},
+    {name:'💼 Conseguir vaga como Data Analyst / Junior DS',stat:'int',        diff:'epic', cat:'carreira'},
+    {name:'💪 Ganhar massa muscular e ficar mais forte',   stat:'forca',       diff:'epic', cat:'saude'},
+    {name:'🏠 Juntar para nossa casa e nosso futuro',      stat:'prosperidade',diff:'epic', cat:'carreira'},
+    {name:'💍 Ser o homem que ela merece e casar com ela', stat:'amor',        diff:'epic', cat:'amor'},
+    {name:'👨‍👩‍👦 Ser filho que dá orgulho aos pais',         stat:'honra',       diff:'epic', cat:'geral'},
+  ];
+
+  const pushDaily = (arr, priority) => arr.forEach(q =>
+    state.quests.push({id:state.nextQ++, name:q.name, stat:q.stat, diff:q.diff,
+      cat:q.cat||'geral', type:'daily', priority, days:q.days||[],
+      done:false, streak:0, best:0, lastDoneDay:'', extracted:false})
+  );
+
+  pushDaily(mainDailies,  'main');
+  pushDaily(secDailies,   'secondary');
+  pushDaily(bonusDailies, 'bonus');
+
+  semanais.forEach(q => state.quests.push({id:state.nextQ++, ...q,
+    type:'weekly', days:[], done:false, streak:0, best:0, lastDoneDay:'', extracted:false}));
+  mains.forEach(q => state.quests.push({id:state.nextQ++, ...q,
+    priority:'main', type:'main', days:[], done:false, streak:0, best:0, lastDoneDay:'', extracted:false}));
+
+  // ── MASMORRAS ─────────────────────────────────────────────────────
+  if (!state.nextDg) state.nextDg = 1;
+  [
+    {name:'Masmorra do Data Scientist',   icon:'💻', boss:'A Mediocridade Profissional', total:30, rewXp:500, rewGold:260},
+    {name:'Forja do Corpo',               icon:'🏋️', boss:'A Fraqueza Física',           total:12, rewXp:300, rewGold:150},
+    {name:'Caminho da Fluência',          icon:'🗣️', boss:'A Barreira do Idioma',         total:24, rewXp:400, rewGold:200},
+    {name:'Arquiteto do Amor',            icon:'❤️', boss:'O Distanciamento',             total:21, rewXp:300, rewGold:160},
+    {name:'Fortaleza da Fé',              icon:'🙏', boss:'A Dúvida',                     total:21, rewXp:250, rewGold:130},
+  ].forEach(d => state.dungeons.push({key:'c'+(state.nextDg++), cleared:0, lastDay:'', done:false, floorNames:null, ...d}));
+
+  // ── BOSS DO MÊS ───────────────────────────────────────────────────
+  if (!state.boss) state.boss = {
+    name:'Boss do Mês: A Versão Medíocre de Mim',
+    icon:'☠️', hpMax:1200, hp:1200, totalDmg:0, defeated:false, rewXp:500, rewGold:250
+  };
+
+  // ── RECOMPENSAS DA LOJA ───────────────────────────────────────────
+  [
+    {name:'1h de videogame',              icon:'🎮', cost:40},
+    {name:'Episódio de série',            icon:'📺', cost:30},
+    {name:'Comida favorita',              icon:'🍕', cost:80},
+    {name:'Date especial com ela ❤️',    icon:'❤️', cost:150},
+    {name:'Comprinha pra mim',            icon:'🛒', cost:120},
+    {name:'Dia de descanso total',        icon:'🛌', cost:200},
+    {name:'Jogo novo / item desejado',    icon:'🎁', cost:300},
+  ].forEach(i => state.shop.push({id:state.nextS++, ...i}));
+
+  log('👑 Rotina Monarca carregada — bora construir o futuro!');
+  notif('👑 ROTINA CARREGADA','Missões, masmorras e boss prontos. Vai ser Monarca!',false,'green');
+  switchTab('quests', document.querySelectorAll('.tab-btn')[1]);
+  render();
+}
+
+function loadDefaults() {
+  if (state.quests.length > 0 && !confirm('Adicionar rotina genérica? Suas missões atuais serão mantidas.')) return;
+  [
+    {name:'Exercício 30 min',stat:'forca',diff:'med'},
+    {name:'Beber 2L de água',stat:'vit',diff:'easy'},
+    {name:'Ler 20 min',stat:'per',diff:'easy'},
+    {name:'Estudar 1h',stat:'int',diff:'hard'},
+    {name:'Meditar 10 min',stat:'disc',diff:'easy'},
+    {name:'Dormir cedo',stat:'vit',diff:'med'}
+  ].forEach(q=>state.quests.push({id:state.nextQ++,...q,type:'daily',cat:'geral',days:[],done:false,streak:0,best:0,lastDoneDay:'',extracted:false}));
+  [{name:'1h de videogame',icon:'🎮',cost:40},{name:'Comida favorita',icon:'🍕',cost:80},{name:'Dia de folga',icon:'🛌',cost:200}].forEach(i=>state.shop.push({id:state.nextS++,...i}));
+  notif('CARREGADO','Rotina genérica adicionada!',false,'green');
+  switchTab('quests',document.querySelectorAll('.tab-btn')[1]);
+  render();
+}
+
+// ═══════════════════════════════════════════
+// ██  DATA MANAGEMENT
+// ═══════════════════════════════════════════
+
+function exportData(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='projeto_monarca_'+state.name.replace(/\s+/g,'_')+'.json';a.click();}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{state=migrate(JSON.parse(ev.target.result));save();render();notif('IMPORTADO','Dados restaurados!');}catch{notif('ERRO','Arquivo inválido',true);}};r.readAsText(f);}
+function resetAll(){if(confirm('⚠️ Apagar TODOS os dados do Projeto Monarca?')){state=defaultState();save();render();notif('RESET','Sistema reiniciado.');}}
+
+// ═══════════════════════════════════════════
+// ██  TABS
+// ═══════════════════════════════════════════
+
+function switchTab(name,btn){
+  sfxClick();
+  const tabs=['status','quests','raid','vida','prog','titles','itens','config'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===name));
+  tabs.forEach(t=>{const el=document.getElementById('tab-'+t);if(el)el.classList.toggle('active',t===name);});
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(name==='prog')setTimeout(renderProgress,60);
+}
+
+// ═══════════════════════════════════════════
+// ██  BOOT
+// ═══════════════════════════════════════════
+
+const bootMsgs = [
+  'Conectando ao Projeto Monarca...',
+  'Carregando perfil do Aprendiz...',
+  'Sincronizando masmorras...',
+  'Convocando exército das sombras...',
+  'Verificando o caminho do Monarca...',
+  'Honrando a jornada...',
+  'Bem-vindo, '+state.name+'.'
+];
+
+function checkClassQuests(){
+  if(!state.classQuestsSpawned) state.classQuestsSpawned=[];
+  for(const c of CLASSES){
+    if(c.lvl>1 && state.level>=c.lvl && !state.classQuestsSpawned.includes(c.lvl)){
+      state.classQuestsSpawned.push(c.lvl);
+      state.quests.push({id:state.nextQ++,name:'Prova de Classe: torne-se '+c.name,stat:'disc',diff:'epic',type:'cls',cat:'carreira',days:[],done:false,streak:0,best:0,lastDoneDay:'',extracted:false});
+      notif('QUEST DE CLASSE','Prova desbloqueada: torne-se '+c.name+'! '+c.icon,false,'purple');
+    }
+  }
+}
+function renderRank(){
+  const rg=document.getElementById('rank-grid'); if(!rg) return;
+  const rank=getRank(state.level);
+  rg.innerHTML=RANKS.map(r=>{const cur=r.name===rank.name;return '<div class="stat-cell" style="text-align:center;'+(cur?'border-color:var(--gold);background:rgba(245,196,81,.06)':'')+'"><div class="stat-vl" style="color:'+r.color+';font-size:22px">'+r.name+'</div><div class="stat-nm" style="margin-top:2px">Lv '+r.lvl+'+</div>'+(cur?'<div style="font-size:9px;color:var(--gold);letter-spacing:1px;margin-top:3px">VOCE</div>':'')+'</div>';}).join('');
+}
+function toggleDgForm(){const f=document.getElementById('dg-form'),b=document.getElementById('dg-add-btn');const s=f.style.display==='none';f.style.display=s?'block':'none';b.style.display=s?'none':'block';}
+function addDungeon(){
+  const name=document.getElementById('dg-name').value.trim();
+  const fl=parseInt(document.getElementById('dg-floors').value)||0;
+  if(!name||fl<=0){notif('ERRO','Preencha nome e numero de andares.',true);return;}
+  if(!state.nextDg) state.nextDg=1;
+  state.dungeons.push({key:'c'+(state.nextDg++),name,icon:document.getElementById('dg-icon').value.trim()||'\U0001F3F0',boss:'Desafio Pessoal',total:fl,cleared:0,lastDay:'',rewXp:parseInt(document.getElementById('dg-xp').value)||fl*15,rewGold:parseInt(document.getElementById('dg-gold').value)||fl*8,done:false,floorNames:null});
+  ['dg-name','dg-icon','dg-floors','dg-xp','dg-gold'].forEach(i=>document.getElementById(i).value='');
+  toggleDgForm();render();
+}
+function delDungeon(key){if(confirm('Remover esta masmorra?')){state.dungeons=state.dungeons.filter(d=>d.key!==key);render();}}
+function clearBoss(){
+  const name=prompt('Nome do novo Boss (objetivo grande):', state.boss?state.boss.name:'O Futuro');
+  if(name===null) return;
+  const hp=parseInt(prompt('Vida do boss (ex: 1200):','1200'))||1200;
+  state.boss={name:name||'Boss',icon:'\u2620\ufe0f',hpMax:hp,hp:hp,totalDmg:0,defeated:false,rewXp:Math.round(hp*0.4),rewGold:Math.round(hp*0.2)};
+  log('Novo Boss invocado: '+state.boss.name);
+  notif('NOVO BOSS','novo desafio: '+state.boss.name,true);
+  render();
+}
+function healBoss(a){ if(state.boss&&!state.boss.defeated){ state.boss.hp=Math.min(state.boss.hpMax,state.boss.hp+a); state.boss.totalDmg=Math.max(0,(state.boss.totalDmg||0)-a);} }
+
+function boot() {
+  let i = 0;
+  const sub = document.getElementById('boot-sub');
+  const iv = setInterval(() => {
+    sub.textContent = bootMsgs[Math.min(i, bootMsgs.length-1)];
+    beep(440+i*70,.05,'sine',.04);
+    i++;
+    if (i >= bootMsgs.length) { clearInterval(iv); setTimeout(finishBoot,500); }
+  }, 350);
+}
+
+function finishBoot() {
+  document.getElementById('boot').classList.add('hide');
+  checkDayChange();
+  render();
+  if (pendingPenalty) setTimeout(actuallyShowPenalty, 400);
+  setTimeout(()=>{
+    document.getElementById('boot').style.display='none';
+    // Trigger random event
+    setTimeout(triggerRandomEvent, 1500);
+  }, 700);
+}
+
+// ─── INICIALIZAÇÃO À PROVA DE TELA PRETA ───
+function forceHideBoot(){
+  var b=document.getElementById('boot');
+  if(b){ b.classList.add('hide'); setTimeout(function(){ if(b) b.style.display='none'; },650); }
+}
+function showFatal(msg){
+  forceHideBoot();
+  var d=document.createElement('div');
+  d.style.cssText='position:fixed;inset:0;z-index:99999;background:#04060d;color:#b8c8f0;font-family:Rajdhani,sans-serif;padding:26px 20px;overflow:auto;-webkit-overflow-scrolling:touch';
+  d.innerHTML='<div style="font-family:Orbitron,sans-serif;color:#5fd4ff;font-size:18px;letter-spacing:2px;margin-bottom:12px">⚠ ERRO AO INICIAR</div>'
+    +'<p style="line-height:1.5;margin-bottom:14px">O app encontrou um problema ao carregar (provavelmente dados salvos antigos). Toque abaixo para recomeçar do zero — isso resolve, mas apaga o progresso salvo neste navegador.</p>'
+    +'<button style="padding:12px 18px;background:linear-gradient(135deg,#2a4dd0,#4f8eff);color:#fff;border:none;border-radius:6px;font-size:15px;font-weight:700;letter-spacing:1px;width:100%;margin-bottom:16px" '
+    +'onclick="try{localStorage.removeItem(String.fromCharCode(112)+\u0027rojeto_monarca_v1\u0027)}catch(e){};location.reload()">RECOMEÇAR DO ZERO</button>'
+    +'<details style="color:#5b6a98;font-size:11px"><summary>Detalhes técnicos</summary><pre style="white-space:pre-wrap;color:#ff5470">'+(msg||'').replace(/</g,'&lt;')+'</pre></details>';
+  document.body.appendChild(d);
+}
+window.addEventListener('error',function(){ forceHideBoot(); });
+try {
+  ensureHist(); checkDayChange(); render();
+} catch(initErr) {
+  try { ensureHist(); render(); }        // tenta de novo
+  catch(e2){ showFatal((initErr&&initErr.stack)||String(initErr)); }
+}
+window.addEventListener('load',function(){
+  try { boot(); } catch(e){ forceHideBoot(); }
+  try { updateCountdown(); setInterval(updateCountdown,1000); } catch(e){}
+});
+window.addEventListener('resize',function(){
+  try { if(document.getElementById('tab-prog').classList.contains('active')) renderProgress(); } catch(e){}
+});
+// failsafe: a tela de boot NUNCA fica presa mais de 6s
+setTimeout(forceHideBoot,6000);
+</script>
+</body>
+</html>

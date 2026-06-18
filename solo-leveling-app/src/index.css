@@ -1,0 +1,157 @@
+@import "tailwindcss";
+
+@theme {
+  --font-rajdhani:   'Rajdhani', sans-serif;
+  --font-share-mono: 'Share Tech Mono', monospace;
+}
+
+/* ── Variáveis do sistema ─────────────────────────────────────────────── */
+:root {
+  --bg:             #04060f;
+  --surface:        #020818;
+  --surface-hover:  #060e2a;
+  --card:           #04103a;
+
+  --neon:           #3a8fff;
+  --neon-bright:    #7dc8ff;
+  --neon-dim:       rgba(40,140,255,0.55);
+  --neon-glow:      0 0 12px rgba(58,143,255,0.6);
+
+  --text-primary:   #e8f4ff;
+  --text-secondary: rgba(180,220,255,0.75);
+  --text-muted:     rgba(100,160,255,0.5);
+  --text-mono:      #c8deff;
+
+  --stat-str:  #dc6464;
+  --stat-vit:  #40c870;
+  --stat-agi:  #c8a030;
+  --stat-int:  #9080e8;
+  --stat-per:  #40c8d8;
+  --stat-ap:   #e08040;
+
+  --hp:        #40e080;
+  --mp:        #3a8fff;
+  --success:   #40e080;
+  --danger:    #e04040;
+  --gold:      #f0c040;
+
+  --border:    rgba(40,140,255,0.55);
+  --border-dim:rgba(40,100,200,0.25);
+}
+
+/* ── Base ────────────────────────────────────────────────────────────── */
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  min-height: 100vh;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+#root { min-height: 100vh; }
+
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--neon-dim); }
+
+/* ── Tipografia helpers ──────────────────────────────────────────────── */
+.font-rajdhani  { font-family: 'Rajdhani', sans-serif; }
+.font-share-mono{ font-family: 'Share Tech Mono', monospace; }
+
+/* ── Animações globais ──────────────────────────────────────────────── */
+@keyframes floatUp {
+  0%   { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-60px); }
+}
+
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
+@keyframes scanMove {
+  0%   { top: -2px; }
+  100% { top: 100%; }
+}
+
+@keyframes pulse-neon {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes rankUp {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.08); }
+}
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%     { transform: translateX(-5px); }
+  40%     { transform: translateX(5px); }
+  60%     { transform: translateX(-3px); }
+  80%     { transform: translateX(3px); }
+}
+
+/* ── Classes utilitárias do sistema ─────────────────────────────────── */
+.sl-glow-text {
+  text-shadow: 0 0 8px var(--neon), 0 0 20px rgba(58,143,255,0.4);
+}
+
+.sl-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--neon-dim), transparent);
+  margin: 8px 0;
+}
+
+.xp-float {
+  animation: floatUp 1.2s ease-out forwards;
+  pointer-events: none;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 16px;
+  color: #50e890;
+  text-shadow: 0 0 8px #40e080;
+}
+
+.fade-in-up { animation: fadeInUp 0.3s ease-out forwards; }
+.shake-anim { animation: shake 0.4s ease-in-out; }
+.rank-up-anim { animation: rankUp 0.4s ease-in-out; }
+
+/* Botão primário (Encerrar Dia) — respiração de glow para chamar atenção */
+@keyframes breathe {
+  0%, 100% { box-shadow: 0 0 18px rgba(58,143,255,0.30), inset 0 0 20px rgba(58,143,255,0.06); }
+  50%      { box-shadow: 0 0 34px rgba(58,143,255,0.55), inset 0 0 28px rgba(58,143,255,0.12); }
+}
+.end-day-btn { animation: breathe 2.4s ease-in-out infinite; transition: transform 0.12s ease; }
+.end-day-btn:active { transform: scale(0.98); }
+
+/* Glitch sutil para headers do Sistema em eventos */
+@keyframes glitch {
+  0%, 100% { transform: translate(0); opacity: 1; }
+  20%      { transform: translate(-1px, 1px); opacity: 0.85; }
+  40%      { transform: translate(1px, -1px); opacity: 1; }
+  60%      { transform: translate(-1px, 0); opacity: 0.9; }
+  80%      { transform: translate(1px, 1px); opacity: 1; }
+}
+.glitch-anim { animation: glitch 0.3s steps(2) 1; }
+
+/* Cantos do SLFrame "desenhando" ao surgir */
+@keyframes drawCorner {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Engenharia / Steampunk: engrenagens girando ─────────────────────── */
+@keyframes gearSpin     { from { transform: rotate(0deg);   } to { transform: rotate(360deg);  } }
+@keyframes gearSpinRev  { from { transform: rotate(360deg); } to { transform: rotate(0deg);    } }
+.gear-spin     { animation: gearSpin     linear infinite; transform-origin: 50% 50%; }
+.gear-spin-rev { animation: gearSpinRev  linear infinite; transform-origin: 50% 50%; }

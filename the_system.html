@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>THE SYSTEM — Evolução Pessoal</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+  :root{--bg:#04060d;--bg2:#070a16;--panel:rgba(13,22,48,0.55);--panel-solid:#0a1024;--border:rgba(86,140,255,0.25);--border-bright:rgba(120,180,255,0.6);--sys-cyan:#5fd4ff;--sys-blue:#4f8eff;--sys-deep:#2a4dd0;--gold:#f5c451;--green:#3ff0a0;--red:#ff5470;--purple:#b57bff;--text:#b8c8f0;--text-dim:#5b6a98;--text-bright:#eaf2ff;}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{background:#000;}
+  body{color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;position:relative;background:radial-gradient(ellipse 100% 60% at 50% -10%,rgba(40,80,220,0.15) 0%,transparent 55%),radial-gradient(ellipse 80% 50% at 50% 110%,rgba(60,40,180,0.12) 0%,transparent 55%),var(--bg);}
+  .backdrop{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(86,140,255,0.035) 1px,transparent 1px),linear-gradient(90deg,rgba(86,140,255,0.035) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 90% 90% at 50% 40%,black 30%,transparent 80%);}
+  .scanlines{position:fixed;inset:0;z-index:50;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0px,rgba(0,0,0,0) 2px,rgba(0,8,20,0.18) 3px);opacity:0.4;}
+  #boot{position:fixed;inset:0;z-index:9999;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center;transition:opacity .6s ease;}
+  #boot.hide{opacity:0;pointer-events:none;}
+  .boot-ring{width:90px;height:90px;border:2px solid rgba(95,212,255,0.2);border-top-color:var(--sys-cyan);border-radius:50%;animation:spin .9s linear infinite;box-shadow:0 0 30px rgba(95,212,255,0.4);}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .boot-text{font-family:'Orbitron',sans-serif;font-size:13px;letter-spacing:4px;color:var(--sys-cyan);text-shadow:0 0 12px rgba(95,212,255,0.6);}
+  .boot-sub{font-size:12px;color:var(--text-dim);letter-spacing:2px;min-height:18px;}
+  .container{position:relative;z-index:2;max-width:860px;margin:0 auto;padding:18px 14px 92px;}
+  .top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding:4px 2px;}
+  .sys-logo{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:3px;color:var(--sys-cyan);text-shadow:0 0 10px rgba(95,212,255,0.5);}
+  .sound-toggle{background:var(--panel);border:1px solid var(--border);color:var(--text-dim);padding:5px 10px;border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;cursor:pointer;transition:all .2s;}
+  .sound-toggle.on{color:var(--sys-cyan);border-color:var(--border-bright);}
+  .sys-window{background:var(--panel);backdrop-filter:blur(8px);border:1px solid var(--border-bright);border-radius:6px;position:relative;padding:18px 16px 16px;margin-bottom:16px;box-shadow:0 0 30px rgba(40,80,220,0.15),inset 0 0 40px rgba(40,80,220,0.04);}
+  .sys-window::before,.sys-window::after{content:'';position:absolute;width:14px;height:14px;border-color:var(--sys-cyan);border-style:solid;}
+  .sys-window::before{top:-1px;left:-1px;border-width:2px 0 0 2px;}
+  .sys-window::after{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
+  .win-corner-tr,.win-corner-bl{position:absolute;width:14px;height:14px;border-color:var(--sys-cyan);border-style:solid;}
+  .win-corner-tr{top:-1px;right:-1px;border-width:2px 2px 0 0;}
+  .win-corner-bl{bottom:-1px;left:-1px;border-width:0 0 2px 2px;}
+  .win-tag{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--bg2);padding:1px 16px;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:4px;color:var(--sys-cyan);text-shadow:0 0 8px rgba(95,212,255,0.5);border:1px solid var(--border);border-radius:3px;}
+  .player-head{text-align:center;margin-bottom:14px;}
+  .player-name{font-family:'Orbitron',sans-serif;font-size:clamp(20px,5vw,30px);font-weight:800;color:var(--text-bright);letter-spacing:2px;text-shadow:0 0 24px rgba(95,212,255,0.4);}
+  .player-class{font-size:12px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;margin-top:2px;}
+  .player-title{font-size:12px;color:var(--gold);letter-spacing:1px;margin-top:3px;font-style:italic;}
+  .lvl-rank-row{display:flex;justify-content:center;gap:10px;margin:12px 0 14px;}
+  .lr-box{flex:1;max-width:140px;text-align:center;padding:8px;background:rgba(86,140,255,0.06);border:1px solid var(--border);border-radius:4px;}
+  .lr-label{font-size:9px;letter-spacing:2px;color:var(--text-dim);text-transform:uppercase;}
+  .lr-val{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;line-height:1.1;}
+  .bar-block{margin-bottom:9px;}
+  .bar-top{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;letter-spacing:1px;}
+  .bar-name{color:var(--text-dim);text-transform:uppercase;font-weight:600;}
+  .bar-track{height:9px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:3px;overflow:hidden;position:relative;}
+  .bar-fill{height:100%;border-radius:2px;transition:width .5s cubic-bezier(.2,.8,.2,1);position:relative;}
+  .bar-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.35),transparent 60%);}
+  .hp-fill{background:linear-gradient(90deg,#ff3a5e,#ff7a90);}
+  .mp-fill{background:linear-gradient(90deg,#2a7dff,#5fd4ff);}
+  .xp-fill{background:linear-gradient(90deg,#f5c451,#ffe9a8);}
+  .fatigue-fill{background:linear-gradient(90deg,#8b5cff,#c4a0ff);}
+  .gold-row{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);}
+  .gold-disp{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;color:var(--gold);text-shadow:0 0 10px rgba(245,196,81,0.4);}
+  .points-disp{font-size:13px;color:var(--green);font-weight:600;}
+  .points-disp b{font-family:'Orbitron',sans-serif;}
+  .tabs{position:fixed;bottom:0;left:0;right:0;z-index:40;display:flex;background:rgba(7,10,22,0.92);backdrop-filter:blur(10px);border-top:1px solid var(--border-bright);padding:6px 1px calc(6px + env(safe-area-inset-bottom));}
+  .tab-btn{flex:1;background:none;border:none;color:var(--text-dim);font-family:'Rajdhani',sans-serif;font-size:8.5px;font-weight:600;letter-spacing:.3px;cursor:pointer;padding:6px 0;text-transform:uppercase;transition:color .2s;display:flex;flex-direction:column;align-items:center;gap:3px;}
+  .tab-btn .ti{font-size:16px;line-height:1;}
+  .tab-btn.active{color:var(--sys-cyan);text-shadow:0 0 10px rgba(95,212,255,0.5);}
+  .tab-panel{display:none;animation:fadeUp .35s ease;}
+  .tab-panel.active{display:block;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .panel{background:var(--panel);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:6px;padding:14px;margin-bottom:14px;position:relative;}
+  .panel-title{font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;color:var(--sys-cyan);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+  .panel-title::before{content:'◈';color:var(--sys-blue);}
+  .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;}
+  .stat-cell{background:rgba(86,140,255,0.05);border:1px solid var(--border);border-radius:4px;padding:9px 11px;}
+  .stat-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}
+  .stat-nm{font-size:10px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;}
+  .stat-vl{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:700;}
+  .stat-line{height:3px;background:rgba(0,0,0,.4);border-radius:2px;overflow:hidden;}
+  .stat-line-fill{height:100%;border-radius:2px;transition:width .5s;}
+  .stat-plus{margin-top:6px;width:100%;padding:3px;background:rgba(63,240,160,0.08);border:1px solid rgba(63,240,160,0.25);color:var(--green);border-radius:3px;cursor:pointer;font-size:13px;font-weight:700;transition:all .15s;font-family:'Orbitron',sans-serif;}
+  .stat-plus:hover:not(:disabled){background:rgba(63,240,160,0.18);}
+  .stat-plus:disabled{opacity:.25;cursor:not-allowed;}
+  .q-deadline{display:flex;justify-content:space-between;align-items:center;background:rgba(255,84,112,0.07);border:1px solid rgba(255,84,112,0.25);border-radius:5px;padding:9px 12px;margin-bottom:12px;}
+  .q-deadline-txt{font-size:11px;color:var(--red);letter-spacing:1px;}
+  .q-deadline-time{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;color:var(--red);}
+  .warn-banner{background:rgba(255,84,112,0.1);border:1px solid rgba(255,84,112,0.4);border-radius:5px;padding:10px 12px;margin-bottom:12px;font-size:12px;color:var(--red);display:flex;gap:8px;align-items:center;}
+  .q-filters{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+  .fbtn{padding:4px 11px;background:rgba(86,140,255,0.05);border:1px solid var(--border);color:var(--text-dim);font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;cursor:pointer;border-radius:3px;transition:all .15s;}
+  .fbtn.active{border-color:var(--border-bright);color:var(--sys-cyan);background:rgba(95,212,255,0.1);}
+  .quest{background:rgba(86,140,255,0.04);border:1px solid var(--border);border-left:3px solid var(--sys-blue);border-radius:4px;padding:11px 13px;margin-bottom:8px;display:flex;align-items:center;gap:11px;cursor:pointer;transition:all .2s;}
+  .quest:hover{border-left-color:var(--sys-cyan);background:rgba(86,140,255,0.08);}
+  .quest.done{opacity:.45;border-left-color:var(--green);}
+  .quest.done .q-name{text-decoration:line-through;}
+  .quest.penalty{border-left-color:var(--red);background:rgba(255,84,112,0.05);}
+  .quest.cls{border-left-color:var(--purple);background:rgba(181,123,255,0.05);}
+  .quest.notToday{opacity:.4;border-left-color:var(--text-dim);}
+  .q-check{width:22px;height:22px;border:2px solid var(--border-bright);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--green);font-size:14px;font-weight:700;transition:all .2s;}
+  .quest.done .q-check{background:rgba(63,240,160,.12);border-color:var(--green);}
+  .q-info{flex:1;min-width:0;}
+  .q-name{font-size:14px;font-weight:600;color:var(--text-bright);margin-bottom:3px;}
+  .q-meta{display:flex;gap:8px;flex-wrap:wrap;font-size:10px;align-items:center;}
+  .q-tag{padding:1px 7px;border-radius:3px;font-weight:700;letter-spacing:.5px;}
+  .t-easy{background:rgba(63,240,160,.1);color:var(--green);border:1px solid rgba(63,240,160,.3);}
+  .t-med{background:rgba(79,142,255,.1);color:var(--sys-blue);border:1px solid rgba(79,142,255,.3);}
+  .t-hard{background:rgba(245,196,81,.1);color:var(--gold);border:1px solid rgba(245,196,81,.3);}
+  .t-epic{background:rgba(255,84,112,.1);color:var(--red);border:1px solid rgba(255,84,112,.3);}
+  .q-stat-tag{color:var(--sys-cyan);}
+  .q-reward{color:var(--gold);font-weight:700;}
+  .q-xp{color:var(--green);font-weight:700;}
+  .q-days{color:var(--purple);font-weight:600;letter-spacing:.5px;}
+  .q-streak{color:#ff8c42;font-weight:700;}
+  .q-del{background:rgba(255,84,112,.1);border:1px solid rgba(255,84,112,.25);color:var(--red);width:24px;height:24px;border-radius:4px;cursor:pointer;flex-shrink:0;font-size:13px;line-height:1;}
+  .add-form{background:rgba(86,140,255,0.04);border:1px dashed var(--border-bright);border-radius:5px;padding:13px;margin-top:12px;}
+  .frow{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+  .finput,.fselect{background:var(--panel-solid);border:1px solid var(--border);color:var(--text-bright);font-family:'Rajdhani',sans-serif;font-size:13px;padding:8px 11px;border-radius:4px;outline:none;transition:border-color .15s;}
+  .finput:focus,.fselect:focus{border-color:var(--sys-cyan);}
+  .finput{flex:1;min-width:140px;}
+  .fselect option{background:var(--panel-solid);}
+  .day-picker{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+  .day-chip{width:34px;height:32px;display:flex;align-items:center;justify-content:center;background:var(--panel-solid);border:1px solid var(--border);border-radius:4px;font-size:12px;font-weight:600;color:var(--text-dim);cursor:pointer;user-select:none;transition:all .15s;}
+  .day-chip.on{background:rgba(95,212,255,0.12);border-color:var(--sys-cyan);color:var(--sys-cyan);}
+  .btn{padding:9px 16px;border:none;border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .15s;text-transform:uppercase;}
+  .btn-pri{background:linear-gradient(135deg,var(--sys-deep),var(--sys-blue));color:#fff;border:1px solid var(--border-bright);box-shadow:0 0 16px rgba(79,142,255,.25);}
+  .btn-pri:hover{filter:brightness(1.15);transform:translateY(-1px);}
+  .btn-danger{background:rgba(255,84,112,.12);color:var(--red);border:1px solid rgba(255,84,112,.3);}
+  .btn-ghost{background:rgba(86,140,255,.06);color:var(--text-dim);border:1px solid var(--border);}
+  .btn-sm{padding:6px 11px;font-size:11px;}
+  .btn-block{width:100%;}
+  .shop-item{background:rgba(86,140,255,0.04);border:1px solid var(--border);border-radius:5px;padding:12px;margin-bottom:9px;display:flex;align-items:center;gap:12px;}
+  .shop-icon{font-size:26px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(245,196,81,0.08);border:1px solid rgba(245,196,81,0.2);border-radius:6px;flex-shrink:0;}
+  .shop-info{flex:1;min-width:0;}
+  .shop-name{font-size:14px;font-weight:600;color:var(--text-bright);}
+  .shop-desc{font-size:11px;color:var(--text-dim);margin-top:1px;}
+  .shop-buy{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
+  .shop-cost{font-family:'Orbitron',sans-serif;font-size:13px;color:var(--gold);font-weight:700;}
+  .buy-btn{padding:5px 13px;background:linear-gradient(135deg,#b8860b,var(--gold));color:#2a1a00;border:none;border-radius:4px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;transition:all .15s;}
+  .buy-btn:hover:not(:disabled){filter:brightness(1.1);}
+  .buy-btn:disabled{opacity:.35;cursor:not-allowed;}
+  .use-btn{padding:5px 13px;background:linear-gradient(135deg,var(--sys-deep),var(--sys-blue));color:#fff;border:1px solid var(--border-bright);border-radius:4px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;}
+  .use-btn:disabled{opacity:.35;cursor:not-allowed;}
+  .item-count{font-family:'Orbitron',sans-serif;font-size:13px;color:var(--sys-cyan);font-weight:700;}
+  /* boss/dungeon */
+  .boss-card{background:linear-gradient(160deg,rgba(255,84,112,0.08),rgba(13,22,48,0.5));border:1px solid rgba(255,84,112,0.4);border-radius:7px;padding:16px;margin-bottom:16px;position:relative;overflow:hidden;box-shadow:0 0 28px rgba(255,84,112,0.15);}
+  .boss-card.defeated{border-color:var(--gold);background:linear-gradient(160deg,rgba(245,196,81,0.08),rgba(13,22,48,0.5));box-shadow:0 0 28px rgba(245,196,81,0.15);}
+  .boss-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+  .boss-emoji{font-size:42px;filter:drop-shadow(0 0 12px rgba(255,84,112,0.5));}
+  .boss-name{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:800;color:var(--text-bright);letter-spacing:1px;}
+  .boss-sub{font-size:11px;color:var(--red);letter-spacing:2px;text-transform:uppercase;margin-top:2px;}
+  .boss-card.defeated .boss-sub{color:var(--gold);}
+  .boss-hp-top{display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;}
+  .boss-hp-track{height:14px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,84,112,0.3);border-radius:4px;overflow:hidden;}
+  .boss-hp-fill{height:100%;background:linear-gradient(90deg,#ff2d4f,#ff7a90);transition:width .6s cubic-bezier(.2,.8,.2,1);}
+  .boss-reward{font-size:11px;color:var(--text-dim);margin-top:10px;text-align:center;}
+  .boss-reward b{color:var(--gold);}
+  .dungeon{background:rgba(86,140,255,0.04);border:1px solid var(--border);border-radius:6px;padding:13px;margin-bottom:11px;position:relative;}
+  .dungeon.complete{border-color:var(--green);background:rgba(63,240,160,0.05);}
+  .dg-top{display:flex;align-items:center;gap:11px;margin-bottom:10px;}
+  .dg-icon{font-size:28px;width:46px;height:46px;display:flex;align-items:center;justify-content:center;background:rgba(95,212,255,0.07);border:1px solid var(--border);border-radius:7px;flex-shrink:0;}
+  .dg-info{flex:1;min-width:0;}
+  .dg-name{font-size:15px;font-weight:700;color:var(--text-bright);}
+  .dg-floors{font-size:11px;color:var(--text-dim);margin-top:1px;}
+  .dg-prog-track{height:8px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:3px;overflow:hidden;margin-bottom:10px;}
+  .dg-prog-fill{height:100%;background:linear-gradient(90deg,var(--sys-deep),var(--sys-cyan));transition:width .5s;border-radius:2px;}
+  .dg-actions{display:flex;gap:8px;align-items:center;}
+  .dg-rew{font-size:11px;color:var(--text-dim);flex:1;}
+  .dg-rew b{color:var(--gold);}
+  .dg-clear{padding:7px 14px;background:linear-gradient(135deg,var(--sys-deep),var(--sys-blue));color:#fff;border:1px solid var(--border-bright);border-radius:5px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:1px;cursor:pointer;transition:all .15s;}
+  .dg-clear:hover:not(:disabled){filter:brightness(1.15);}
+  .dg-clear:disabled{opacity:.4;cursor:not-allowed;background:rgba(86,140,255,0.1);border-color:var(--border);color:var(--text-dim);}
+  /* shadow army */
+  .shadow-card{display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,rgba(123,94,167,0.12),rgba(13,22,48,0.4));border:1px solid rgba(181,123,255,0.3);border-radius:5px;padding:10px 12px;margin-bottom:8px;}
+  .shadow-ic{font-size:24px;filter:drop-shadow(0 0 8px rgba(181,123,255,0.6));}
+  .shadow-info{flex:1;min-width:0;}
+  .shadow-nm{font-size:13px;font-weight:600;color:var(--purple);}
+  .shadow-pw{font-size:11px;color:var(--text-dim);}
+  .arise-item{display:flex;align-items:center;gap:10px;background:rgba(181,123,255,0.06);border:1px dashed rgba(181,123,255,0.4);border-radius:5px;padding:10px 12px;margin-bottom:8px;}
+  .arise-btn{padding:6px 14px;background:linear-gradient(135deg,#6a3fb0,var(--purple));color:#fff;border:none;border-radius:5px;font-family:'Orbitron',sans-serif;font-weight:700;font-size:11px;letter-spacing:2px;cursor:pointer;animation:pulsePurple 1.6s infinite;}
+  @keyframes pulsePurple{0%,100%{box-shadow:0 0 0 0 rgba(181,123,255,.4);}50%{box-shadow:0 0 0 6px rgba(181,123,255,0);}}
+  /* skill tree */
+  .perk-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;}
+  .perk{background:rgba(86,140,255,0.04);border:1px solid var(--border);border-radius:5px;padding:11px;}
+  .perk.owned{border-color:var(--green);background:rgba(63,240,160,0.05);}
+  .perk-ic{font-size:22px;}
+  .perk-nm{font-size:13px;font-weight:700;color:var(--text-bright);margin:4px 0 2px;}
+  .perk-desc{font-size:11px;color:var(--text-dim);line-height:1.4;min-height:30px;}
+  .perk-buy{margin-top:8px;width:100%;padding:5px;border-radius:4px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;letter-spacing:1px;cursor:pointer;border:1px solid var(--green);background:rgba(63,240,160,0.1);color:var(--green);}
+  .perk-buy:disabled{opacity:.35;cursor:not-allowed;}
+  .perk.owned .perk-buy{border-color:var(--green);background:rgba(63,240,160,0.2);color:var(--green);cursor:default;}
+  /* titles */
+  .title-item{display:flex;align-items:center;gap:11px;padding:10px 12px;background:rgba(86,140,255,0.04);border:1px solid var(--border);border-radius:5px;margin-bottom:8px;}
+  .title-item.locked{opacity:.4;}
+  .title-item.active-title{border-color:var(--gold);background:rgba(245,196,81,0.06);}
+  .title-ic{font-size:22px;width:40px;text-align:center;flex-shrink:0;}
+  .title-tx{flex:1;}
+  .title-nm{font-size:14px;font-weight:600;color:var(--gold);}
+  .title-cond{font-size:11px;color:var(--text-dim);margin-top:1px;}
+  .title-use{padding:4px 10px;background:rgba(245,196,81,0.1);border:1px solid rgba(245,196,81,0.3);color:var(--gold);border-radius:4px;font-size:11px;font-weight:700;cursor:pointer;}
+  .title-use:disabled{opacity:.4;cursor:default;}
+  /* progress charts */
+  .chart-wrap{background:rgba(0,0,0,0.25);border:1px solid var(--border);border-radius:5px;padding:10px;margin-bottom:10px;}
+  .chart-cap{font-size:11px;color:var(--text-dim);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+  canvas{width:100%;display:block;}
+  .heat-wrap{overflow-x:auto;padding-bottom:6px;}
+  .heat-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:3px;min-width:max-content;}
+  .heat-cell{width:13px;height:13px;border-radius:2px;background:rgba(86,140,255,0.06);}
+  .heat-legend{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-dim);margin-top:8px;justify-content:flex-end;}
+  .heat-legend .heat-cell{width:11px;height:11px;}
+  .stat-summary{display:flex;justify-content:space-around;text-align:center;margin-bottom:12px;}
+  .ss-box .ss-val{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:800;color:var(--sys-cyan);}
+  .ss-box .ss-lbl{font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;}
+  .log-row{padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;display:flex;gap:10px;align-items:center;}
+  .log-t{color:var(--text-dim);font-size:10px;min-width:78px;flex-shrink:0;}
+  .log-x{flex:1;}
+  .log-amt{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;flex-shrink:0;}
+  .cfg-label{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+  .cfg-input{width:100%;background:var(--panel-solid);border:1px solid var(--border);color:var(--text-bright);font-family:'Rajdhani',sans-serif;font-size:14px;padding:9px 12px;border-radius:4px;outline:none;margin-bottom:14px;}
+  .cfg-input:focus{border-color:var(--sys-cyan);}
+  .empty{text-align:center;padding:28px 10px;color:var(--text-dim);font-size:13px;line-height:1.5;}
+  #notif-wrap{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:200;width:90%;max-width:340px;pointer-events:none;}
+  .notif{background:rgba(10,16,36,0.95);backdrop-filter:blur(8px);border:1px solid var(--sys-cyan);border-radius:5px;padding:12px 16px;margin-bottom:8px;box-shadow:0 0 24px rgba(95,212,255,.35);opacity:0;transform:translateY(-16px) scale(.96);transition:all .3s cubic-bezier(.2,.9,.3,1);position:relative;overflow:hidden;}
+  .notif.show{opacity:1;transform:translateY(0) scale(1);}
+  .notif::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--sys-cyan);}
+  .notif-h{font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:3px;color:var(--sys-cyan);margin-bottom:3px;}
+  .notif-b{font-size:13px;color:var(--text-bright);}
+  .notif.danger{border-color:var(--red);box-shadow:0 0 24px rgba(255,84,112,.35);}
+  .notif.danger::before{background:var(--red);}
+  .notif.danger .notif-h{color:var(--red);}
+  .notif.gold{border-color:var(--gold);box-shadow:0 0 24px rgba(245,196,81,.3);}
+  .notif.gold::before{background:var(--gold);}
+  .notif.gold .notif-h{color:var(--gold);}
+  .notif.purple{border-color:var(--purple);box-shadow:0 0 24px rgba(181,123,255,.35);}
+  .notif.purple::before{background:var(--purple);}
+  .notif.purple .notif-h{color:var(--purple);}
+  #levelup,#penalty,#bossWin,#arise{position:fixed;inset:0;z-index:300;display:none;align-items:center;justify-content:center;}
+  #levelup{background:radial-gradient(ellipse at center,rgba(20,40,120,0.5),rgba(0,0,0,0.85));}
+  #penalty{background:radial-gradient(ellipse at center,rgba(120,10,30,0.55),rgba(0,0,0,0.92));}
+  #bossWin{background:radial-gradient(ellipse at center,rgba(120,90,10,0.5),rgba(0,0,0,0.9));}
+  #arise{background:radial-gradient(ellipse at center,rgba(60,20,120,0.6),rgba(0,0,0,0.92));}
+  .show{display:flex !important;animation:fadeUp .3s;}
+  .lu-card,.pen-card,.bw-card,.ar-card{text-align:center;max-width:340px;padding:0 20px;animation:luPop .6s cubic-bezier(.2,1.2,.3,1);}
+  @keyframes luPop{0%{transform:scale(.4);opacity:0;}60%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+  .lu-text{font-family:'Orbitron',sans-serif;font-size:clamp(32px,9vw,56px);font-weight:900;color:#fff;letter-spacing:4px;text-shadow:0 0 40px rgba(95,212,255,.9),0 0 80px rgba(79,142,255,.6);}
+  .lu-sub{font-family:'Orbitron',sans-serif;font-size:18px;color:var(--sys-cyan);margin-top:6px;letter-spacing:6px;}
+  .lu-detail{margin-top:18px;font-size:14px;color:var(--text-bright);letter-spacing:1px;}
+  .lu-rays{position:absolute;inset:0;pointer-events:none;background:conic-gradient(from 0deg,transparent 0deg,rgba(95,212,255,.08) 20deg,transparent 40deg,transparent 60deg,rgba(95,212,255,.06) 80deg,transparent 100deg);animation:spin 8s linear infinite;}
+  .pen-icon,.bw-icon,.ar-icon{font-size:54px;margin-bottom:10px;}
+  .pen-icon{filter:drop-shadow(0 0 20px rgba(255,84,112,.7));}
+  .bw-icon{filter:drop-shadow(0 0 22px rgba(245,196,81,.7));}
+  .ar-icon{filter:drop-shadow(0 0 22px rgba(181,123,255,.8));}
+  .pen-text{font-family:'Orbitron',sans-serif;font-size:clamp(26px,7vw,40px);font-weight:900;color:var(--red);letter-spacing:3px;text-shadow:0 0 30px rgba(255,84,112,.8);}
+  .bw-text{font-family:'Orbitron',sans-serif;font-size:clamp(26px,7vw,42px);font-weight:900;color:var(--gold);letter-spacing:3px;text-shadow:0 0 30px rgba(245,196,81,.8);}
+  .ar-text{font-family:'Orbitron',sans-serif;font-size:clamp(34px,10vw,60px);font-weight:900;color:var(--purple);letter-spacing:6px;text-shadow:0 0 40px rgba(181,123,255,.9);}
+  .pen-msg,.bw-msg,.ar-msg{font-size:14px;color:var(--text-bright);margin:14px 0 20px;line-height:1.6;}
+  .pen-list{text-align:left;font-size:13px;color:var(--red);margin-bottom:20px;}
+  .pen-list div{padding:3px 0;}
+  .pulse-red{animation:pulseRed 1.5s infinite;}
+  @keyframes pulseRed{0%,100%{box-shadow:0 0 0 0 rgba(255,84,112,.3);}50%{box-shadow:0 0 0 6px rgba(255,84,112,0);}}
+</style>
+</head>
+<body>
+<div class="backdrop"></div>
+<div class="scanlines"></div>
+<div id="boot"><div class="boot-ring"></div><div class="boot-text">THE SYSTEM</div><div class="boot-sub" id="boot-sub">Inicializando...</div></div>
+<div id="notif-wrap"></div>
+
+<div id="levelup"><div class="lu-rays"></div><div class="lu-card"><div class="lu-text">LEVEL UP</div><div class="lu-sub" id="lu-sub">LV. 2</div><div class="lu-detail" id="lu-detail"></div></div></div>
+<div id="penalty"><div class="pen-card"><div class="pen-icon">⚠️</div><div class="pen-text">PENALIDADE</div><div class="pen-msg" id="pen-msg"></div><div class="pen-list" id="pen-list"></div><button class="btn btn-danger btn-block" onclick="closeOv('penalty')">Aceitar Consequências</button></div></div>
+<div id="bossWin"><div class="bw-card"><div class="bw-icon">👑</div><div class="bw-text">BOSS DERROTADO</div><div class="bw-msg" id="bw-msg"></div><button class="btn btn-pri btn-block" onclick="closeOv('bossWin')">Reivindicar Recompensa</button></div></div>
+<div id="arise"><div class="ar-card"><div class="ar-icon">🌑</div><div class="ar-text">ARISE</div><div class="ar-msg" id="ar-msg"></div><button class="btn btn-pri btn-block" style="background:linear-gradient(135deg,#6a3fb0,var(--purple))" onclick="closeOv('arise')">Erguer Sombra</button></div></div>
+
+<div class="container">
+  <div class="top-bar"><span class="sys-logo">◆ THE SYSTEM</span><button class="sound-toggle on" id="sound-btn" onclick="toggleSound()">♪ SOM ON</button></div>
+
+  <!-- STATUS -->
+  <div class="tab-panel active" id="tab-status">
+    <div class="sys-window">
+      <span class="win-corner-tr"></span><span class="win-corner-bl"></span>
+      <div class="win-tag">STATUS</div>
+      <div class="player-head"><div class="player-name" id="p-name">HUNTER</div><div class="player-class" id="p-class">Sem Classe</div><div class="player-title" id="p-title"></div></div>
+      <div class="lvl-rank-row"><div class="lr-box"><div class="lr-label">Nível</div><div class="lr-val" style="color:var(--sys-cyan)" id="p-level">1</div></div><div class="lr-box"><div class="lr-label">Rank</div><div class="lr-val" id="p-rank" style="color:#888">E</div></div></div>
+      <div class="bar-block"><div class="bar-top"><span class="bar-name">HP</span><span id="hp-txt">100/100</span></div><div class="bar-track"><div class="bar-fill hp-fill" id="hp-bar" style="width:100%"></div></div></div>
+      <div class="bar-block"><div class="bar-top"><span class="bar-name">MP</span><span id="mp-txt">50/50</span></div><div class="bar-track"><div class="bar-fill mp-fill" id="mp-bar" style="width:100%"></div></div></div>
+      <div class="bar-block"><div class="bar-top"><span class="bar-name">EXP</span><span id="xp-txt">0/100</span></div><div class="bar-track"><div class="bar-fill xp-fill" id="xp-bar" style="width:0%"></div></div></div>
+      <div class="bar-block"><div class="bar-top"><span class="bar-name">Fadiga</span><span id="fat-txt">0/100</span></div><div class="bar-track"><div class="bar-fill fatigue-fill" id="fat-bar" style="width:0%"></div></div></div>
+      <div class="gold-row"><span class="gold-disp">⬡ <span id="p-gold">0</span> G</span><span class="points-disp">Pontos: <b id="p-points">0</b> · Skills: <b id="p-skill">0</b></span></div>
+    </div>
+    <div class="panel"><div class="panel-title">Atributos</div><div class="stats-grid" id="stats-grid"></div></div>
+    <div class="panel"><div class="panel-title">Árvore de Habilidades <span style="margin-left:auto;font-family:Rajdhani;font-size:11px;color:var(--green);letter-spacing:0">Pontos: <b id="skill-pts">0</b></span></div><div class="perk-grid" id="perk-grid"></div></div>
+    <div class="panel"><div class="panel-title">Exército das Sombras</div><div id="arise-zone"></div><div id="shadow-zone"></div></div>
+    <div class="panel"><div class="panel-title">Ranking de Hunters</div><div class="stats-grid" id="rank-grid" style="grid-template-columns:repeat(3,1fr)"></div></div>
+  </div>
+
+  <!-- QUESTS -->
+  <div class="tab-panel" id="tab-quests">
+    <div class="panel">
+      <div class="panel-title">Missões</div>
+      <div class="q-deadline"><span class="q-deadline-txt">⏳ Reset diário em</span><span class="q-deadline-time" id="countdown">--:--:--</span></div>
+      <div id="warn-zone"></div>
+      <div class="q-filters">
+        <button class="fbtn active" onclick="setFilter('today',this)">Hoje</button>
+        <button class="fbtn" onclick="setFilter('all',this)">Todas</button>
+        <button class="fbtn" onclick="setFilter('daily',this)">Diárias</button>
+        <button class="fbtn" onclick="setFilter('weekly',this)">Semanais</button>
+        <button class="fbtn" onclick="setFilter('main',this)">Main</button>
+      </div>
+      <div id="quest-list"></div>
+      <div class="add-form" id="add-form" style="display:none">
+        <div class="frow"><input class="finput" id="q-name" placeholder="Nome da missão..."></div>
+        <div class="frow">
+          <select class="fselect" id="q-stat"><option value="forca">Força</option><option value="agi">Agilidade</option><option value="int">Inteligência</option><option value="vit">Vitalidade</option><option value="per">Percepção</option><option value="disc">Disciplina</option></select>
+          <select class="fselect" id="q-diff"><option value="easy">Fácil</option><option value="med">Médio</option><option value="hard">Difícil</option><option value="epic">Épico</option></select>
+          <select class="fselect" id="q-type"><option value="daily">Diária</option><option value="weekly">Semanal</option><option value="main">Main Quest</option></select>
+        </div>
+        <div class="cfg-label" style="margin-bottom:5px">Dias da semana (vazio = todos)</div>
+        <div class="day-picker" id="day-picker"></div>
+        <button class="btn btn-pri" onclick="addQuest()">Adicionar</button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleAddForm()" style="margin-left:6px">Cancelar</button>
+      </div>
+      <button class="btn btn-pri btn-block" id="add-btn" onclick="toggleAddForm()" style="margin-top:10px">+ Nova Missão</button>
+    </div>
+  </div>
+
+  <!-- RAID -->
+  <div class="tab-panel" id="tab-raid">
+    <div class="panel"><div class="panel-title">Boss do Mês</div><div id="boss-zone"></div></div>
+    <div class="panel">
+      <div class="panel-title">Masmorras</div>
+      <div class="empty" style="padding:4px 0 12px;font-size:12px">Avance 1 andar por dia cumprindo a meta. Concluir = recompensa grande.</div>
+      <div id="dungeon-list"></div>
+      <div class="add-form" id="dg-form" style="display:none">
+        <div class="frow"><input class="finput" id="dg-name" placeholder="Nome da masmorra..."></div>
+        <div class="frow"><input class="finput" id="dg-icon" placeholder="Emoji (📚)" style="min-width:70px;max-width:90px"><input class="finput" id="dg-floors" type="number" placeholder="Andares (dias)" style="min-width:120px"></div>
+        <div class="frow"><input class="finput" id="dg-xp" type="number" placeholder="XP recompensa" style="min-width:120px"><input class="finput" id="dg-gold" type="number" placeholder="Ouro recompensa" style="min-width:120px"></div>
+        <button class="btn btn-pri" onclick="addDungeon()">Criar Masmorra</button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleDgForm()" style="margin-left:6px">Cancelar</button>
+      </div>
+      <button class="btn btn-pri btn-block" id="dg-add-btn" onclick="toggleDgForm()" style="margin-top:10px">+ Nova Masmorra</button>
+    </div>
+  </div>
+
+  <!-- ITENS -->
+  <div class="tab-panel" id="tab-itens">
+    <div class="panel"><div class="panel-title">Inventário</div><div id="inv-zone"></div></div>
+    <div class="panel"><div class="panel-title">Loja do Sistema (itens)</div><div id="sysshop-zone"></div></div>
+    <div class="panel">
+      <div class="panel-title">Recompensas (vida real)</div>
+      <div id="shop-list"></div>
+      <div class="add-form" id="shop-form" style="display:none">
+        <div class="frow"><input class="finput" id="s-name" placeholder="Ex: 1h de videogame, pizza..."></div>
+        <div class="frow"><input class="finput" id="s-icon" placeholder="Emoji (🍕)" style="min-width:70px;max-width:90px"><input class="finput" id="s-cost" type="number" placeholder="Custo em G" style="min-width:110px"></div>
+        <button class="btn btn-pri" onclick="addShopItem()">Adicionar Recompensa</button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleShopForm()" style="margin-left:6px">Cancelar</button>
+      </div>
+      <button class="btn btn-pri btn-block" id="shop-add-btn" onclick="toggleShopForm()" style="margin-top:10px">+ Nova Recompensa</button>
+    </div>
+  </div>
+
+  <!-- PROGRESSO -->
+  <div class="tab-panel" id="tab-prog">
+    <div class="panel">
+      <div class="panel-title">Resumo</div>
+      <div class="stat-summary">
+        <div class="ss-box"><div class="ss-val" id="ss-streak">0</div><div class="ss-lbl">Sequência 🔥</div></div>
+        <div class="ss-box"><div class="ss-val" id="ss-done">0</div><div class="ss-lbl">Missões feitas</div></div>
+        <div class="ss-box"><div class="ss-val" id="ss-clean">0</div><div class="ss-lbl">Dias limpos</div></div>
+      </div>
+      <div class="chart-wrap"><div class="chart-cap">XP nos últimos 14 dias</div><canvas id="xpChart" height="120"></canvas></div>
+      <div class="chart-wrap"><div class="chart-cap">Atributos (hexágono)</div><canvas id="radarChart" height="220"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Mapa de Constância</div>
+      <div class="heat-wrap"><div class="heat-grid" id="heat-grid"></div></div>
+      <div class="heat-legend">Menos <span class="heat-cell" style="background:rgba(86,140,255,0.06)"></span><span class="heat-cell" style="background:rgba(63,240,160,0.3)"></span><span class="heat-cell" style="background:rgba(63,240,160,0.55)"></span><span class="heat-cell" style="background:rgba(63,240,160,0.85)"></span> Mais</div>
+    </div>
+    <div class="panel"><div class="panel-title">Registro do Sistema</div><div id="log-list"><div class="empty">Nenhuma atividade ainda.</div></div></div>
+  </div>
+
+  <!-- TÍTULOS -->
+  <div class="tab-panel" id="tab-titles"><div class="panel"><div class="panel-title">Títulos & Conquistas</div><div id="titles-list"></div></div></div>
+
+  <!-- CONFIG -->
+  <div class="tab-panel" id="tab-config">
+    <div class="panel">
+      <div class="panel-title">Configurações</div>
+      <div class="cfg-label">Nome do Hunter</div><input class="cfg-input" id="name-input" placeholder="Seu nome..." oninput="updateName()">
+      <div class="cfg-label">Horário do Reset Diário</div><input class="cfg-input" id="reset-time" type="time" value="00:00" onchange="updateResetTime()">
+      <div class="cfg-label">Início Rápido</div>
+      <button class="btn btn-pri btn-block" onclick="loadMyRoutine()" style="margin-bottom:8px">⚡ Carregar MINHA Rotina</button>
+      <button class="btn btn-ghost btn-block btn-sm" onclick="loadDefaults()" style="margin-bottom:16px">Carregar rotina genérica</button>
+      <div class="cfg-label">Dados</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="exportData()">Exportar</button><label class="btn btn-ghost btn-sm" style="cursor:pointer">Importar<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label><button class="btn btn-danger btn-sm" onclick="resetAll()">Reset Total</button></div>
+    </div>
+    <div class="panel"><div class="panel-title">Guia Rápido</div><div style="font-size:13px;line-height:1.7;color:var(--text)">
+      <p style="margin-bottom:8px"><b style="color:#ff8c42">Streak 🔥</b> por missão: cada hábito acumula dias seguidos. Falhar zera aquele hábito.</p>
+      <p style="margin-bottom:8px"><b style="color:var(--purple)">Exército das Sombras:</b> quando um hábito chega a 7 dias seguidos, surge o botão ARISE. Erga-o como soldado — ele dá XP passivo todo dia, pra sempre.</p>
+      <p style="margin-bottom:8px"><b style="color:var(--sys-cyan)">Itens & Buffs:</b> compre poções na Loja do Sistema. XP Duplo, Escudo de Penalidade, Cristal de Descanso.</p>
+      <p style="margin-bottom:8px"><b style="color:var(--green)">Skills:</b> a cada nível você ganha pontos pra desbloquear perks passivos.</p>
+      <p><b style="color:var(--gold)">Fadiga alta</b> reduz XP e ouro — descanse ou use um Cristal.</p>
+    </div></div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('status',this)"><span class="ti">⬡</span>Status</button>
+  <button class="tab-btn" onclick="switchTab('quests',this)"><span class="ti">⚔</span>Quests</button>
+  <button class="tab-btn" onclick="switchTab('raid',this)"><span class="ti">♜</span>Raid</button>
+  <button class="tab-btn" onclick="switchTab('itens',this)"><span class="ti">🎒</span>Itens</button>
+  <button class="tab-btn" onclick="switchTab('prog',this)"><span class="ti">📊</span>Progresso</button>
+  <button class="tab-btn" onclick="switchTab('titles',this)"><span class="ti">★</span>Títulos</button>
+  <button class="tab-btn" onclick="switchTab('config',this)"><span class="ti">⚙</span>Config</button>
+</div>
+
+<script>
+// ═════ CONFIG ═════
+const STAT_DEF={forca:{label:'Força',color:'#ff6b6b'},agi:{label:'Agilidade',color:'#3ff0a0'},int:{label:'Inteligência',color:'#4f8eff'},vit:{label:'Vitalidade',color:'#ff9f43'},per:{label:'Percepção',color:'#5fd4ff'},disc:{label:'Disciplina',color:'#b57bff'}};
+const STAT_KEYS=Object.keys(STAT_DEF);
+const DIFF={easy:{label:'Fácil',xp:10,gold:5,fat:5,sp:3},med:{label:'Médio',xp:25,gold:12,fat:10,sp:6},hard:{label:'Difícil',xp:50,gold:30,fat:18,sp:10},epic:{label:'Épico',xp:100,gold:70,fat:30,sp:16}};
+const TYPE_LABEL={daily:'Diária',weekly:'Semanal',main:'Main Quest',penalty:'Penalidade',cls:'Quest de Classe'};
+const RANKS=[{name:'E',color:'#888',lvl:1},{name:'D',color:'#5c9e31',lvl:5},{name:'C',color:'#2f8ad4',lvl:10},{name:'B',color:'#7b5ea7',lvl:20},{name:'A',color:'#e87d2a',lvl:35},{name:'S',color:'#f5c451',lvl:50}];
+const CLASSES=[{name:'Sem Classe',lvl:1},{name:'Aprendiz',lvl:3},{name:'Lutador',lvl:8},{name:'Guerreiro',lvl:15},{name:'Cavaleiro',lvl:25},{name:'Monarca',lvl:40}];
+const DAY_LABELS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];const DAY_SHORT=['D','S','T','Q','Q','S','S'];
+const SHADOW_THRESHOLD=7;
+const PERKS=[
+  {id:'scholar',ic:'📘',nm:'Erudito',desc:'+15% de XP em todas as missões',cost:2},
+  {id:'lucky',ic:'🍀',nm:'Sortudo',desc:'+25% de ouro ganho',cost:2},
+  {id:'titan',ic:'💪',nm:'Titã',desc:'Missões difíceis/épicas dão +1 atributo extra',cost:3},
+  {id:'enduring',ic:'🛡️',nm:'Resistente',desc:'Fadiga acumula 40% mais devagar',cost:3},
+  {id:'veteran',ic:'⭐',nm:'Veterano',desc:'+1 ponto de atributo por nível',cost:4},
+  {id:'ironmind',ic:'🧠',nm:'Mente de Aço',desc:'Penalidade de HP reduzida pela metade',cost:3},
+  {id:'commander',ic:'👥',nm:'Comandante',desc:'Exército das Sombras gera +50% XP passivo',cost:4}
+];
+const ITEMS={
+  xp_potion:{ic:'🧪',nm:'Poção de XP Duplo',desc:'XP em dobro até o fim do dia',cost:60},
+  penalty_shield:{ic:'🛡️',nm:'Escudo de Penalidade',desc:'Anula 1 falha de diária automaticamente',cost:90},
+  rest_crystal:{ic:'💎',nm:'Cristal de Descanso',desc:'Zera a fadiga na hora',cost:50}
+};
+const TITLES=[
+  {id:'first',ic:'🌱',nm:'O Despertar',cond:'Complete sua 1ª missão',check:s=>s.stats_meta.totalDone>=1},
+  {id:'streak3',ic:'🔥',nm:'Em Chamas',cond:'3 dias de sequência',check:s=>s.streak>=3},
+  {id:'streak7',ic:'⚡',nm:'Imparável',cond:'7 dias de sequência',check:s=>s.streak>=7},
+  {id:'lvl10',ic:'🗡️',nm:'Caçador Real',cond:'Alcance o nível 10',check:s=>s.level>=10},
+  {id:'lvl25',ic:'👑',nm:'O Soberano',cond:'Alcance o nível 25',check:s=>s.level>=25},
+  {id:'rich',ic:'💰',nm:'Tesoureiro',cond:'Acumule 1000 de ouro total',check:s=>s.stats_meta.totalGold>=1000},
+  {id:'grind',ic:'⚔️',nm:'Workaholic',cond:'Complete 100 missões',check:s=>s.stats_meta.totalDone>=100},
+  {id:'noPen',ic:'🛡️',nm:'Disciplinado',cond:'5 dias sem penalidade',check:s=>s.cleanDays>=5},
+  {id:'dungeon',ic:'🏰',nm:'Conquistador',cond:'Complete uma masmorra',check:s=>s.stats_meta.dungeonsCleared>=1},
+  {id:'boss',ic:'☠️',nm:'Caçador de Chefes',cond:'Derrote um Boss do Mês',check:s=>s.stats_meta.bossKills>=1},
+  {id:'shadow',ic:'🌑',nm:'Monarca das Sombras',cond:'Erga 3 soldados sombra',check:s=>s.shadows.length>=3}
+];
+const XP_NEEDED=lvl=>Math.floor(100*Math.pow(1.35,lvl-1));
+const BASE_POINTS=3;
+
+// ═════ STATE ═════
+function defaultState(){return{name:'Hunter',level:1,xp:0,hp:100,hpMax:100,mp:50,mpMax:50,fatigue:0,gold:0,points:0,skillPoints:0,stats:{forca:5,agi:5,int:5,vit:5,per:5,disc:5},quests:[],shop:[],dungeons:[],boss:null,shadows:[],perks:[],inventory:{xp_potion:0,penalty_shield:0,rest_crystal:0},buffs:{xpDoubleToday:false},log:[],unlockedTitles:[],activeTitle:null,classQuestsSpawned:[],history:{},heat:{},nextQ:1,nextS:1,nextD:1,nextSh:1,resetTime:'00:00',lastDay:todayStr(),streak:0,cleanDays:0,stats_meta:{totalDone:0,totalGold:0,dungeonsCleared:0,bossKills:0}};}
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function weekdayOf(s){return new Date(s+'T12:00:00').getDay();}
+function migrate(s){const d=defaultState();for(const k in d)if(s[k]===undefined)s[k]=d[k];s.stats_meta=Object.assign(d.stats_meta,s.stats_meta||{});s.inventory=Object.assign(d.inventory,s.inventory||{});s.buffs=Object.assign(d.buffs,s.buffs||{});(s.quests||[]).forEach(q=>{if(q.streak===undefined)q.streak=0;if(q.best===undefined)q.best=0;if(q.lastDoneDay===undefined)q.lastDoneDay='';if(q.extracted===undefined)q.extracted=false;if(q.days===undefined)q.days=[];});return s;}
+let state=(()=>{try{const d=localStorage.getItem('the_system_v2');return d?migrate(JSON.parse(d)):defaultState();}catch{return defaultState();}})();
+let qFilter='today',soundOn=true,pickedDays=[];
+function save(){localStorage.setItem('the_system_v2',JSON.stringify(state));}
+
+// ═════ SOUND ═════
+let actx;
+function beep(f,d=.08,t='sine',v=.08){if(!soundOn)return;try{actx=actx||new(window.AudioContext||window.webkitAudioContext)();const o=actx.createOscillator(),g=actx.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(v,actx.currentTime);g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+d);o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+d);}catch(e){}}
+function sfxComplete(){beep(880,.07,'square',.05);setTimeout(()=>beep(1320,.1,'square',.05),70);}
+function sfxLevel(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.13,'triangle',.07),i*100));}
+function sfxPenalty(){beep(180,.25,'sawtooth',.08);setTimeout(()=>beep(120,.35,'sawtooth',.08),150);}
+function sfxClick(){beep(660,.04,'sine',.03);}
+function sfxBuy(){beep(1047,.06,'sine',.05);setTimeout(()=>beep(1568,.08,'sine',.05),60);}
+function sfxHit(){beep(300,.06,'sawtooth',.05);}
+function sfxWin(){[392,523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.16,'triangle',.08),i*120));}
+function sfxArise(){[140,180,260,360,520].forEach((f,i)=>setTimeout(()=>beep(f,.18,'sawtooth',.06),i*110));}
+function toggleSound(){soundOn=!soundOn;const b=document.getElementById('sound-btn');b.textContent=soundOn?'♪ SOM ON':'♪ SOM OFF';b.classList.toggle('on',soundOn);if(soundOn)sfxClick();}
+
+// ═════ HELPERS ═════
+function getRank(l){let r=RANKS[0];for(const x of RANKS)if(l>=x.lvl)r=x;return r;}
+function getClass(l){let c=CLASSES[0];for(const x of CLASSES)if(l>=x.lvl)c=x;return c;}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function isToday(q){if(q.type!=='daily')return true;if(!q.days||q.days.length===0)return true;return q.days.includes(new Date().getDay());}
+function daysBadge(d){if(!d||d.length===0)return'Todo dia';return d.slice().sort().map(x=>DAY_LABELS[x]).join(' ');}
+function hasPerk(id){return state.perks.includes(id);}
+function ensureHist(){const t=todayStr();if(!state.history[t])state.history[t]={xp:0,done:0};if(state.heat[t]===undefined)state.heat[t]=0;}
+
+// ═════ RENDER ═════
+function render(){
+  document.getElementById('p-name').textContent=state.name.toUpperCase();
+  const cls=getClass(state.level),rank=getRank(state.level);
+  document.getElementById('p-class').textContent=cls.name;
+  const at=state.activeTitle?TITLES.find(t=>t.id===state.activeTitle):null;
+  document.getElementById('p-title').textContent=at?'« '+at.nm+' »':'';
+  document.getElementById('p-level').textContent=state.level;
+  const rk=document.getElementById('p-rank');rk.textContent=rank.name;rk.style.color=rank.color;
+  state.hpMax=100+(state.stats.vit-5)*10;state.mpMax=50+(state.stats.int-5)*8;if(state.hp>state.hpMax)state.hp=state.hpMax;
+  setBar('hp',state.hp,state.hpMax);setBar('mp',state.mp,state.mpMax);setBar('xp',state.xp,XP_NEEDED(state.level));setBar('fat',state.fatigue,100);
+  document.getElementById('p-gold').textContent=state.gold;
+  document.getElementById('p-points').textContent=state.points;
+  document.getElementById('p-skill').textContent=state.skillPoints;
+  document.getElementById('skill-pts').textContent=state.skillPoints;
+
+  const sg=document.getElementById('stats-grid');sg.innerHTML='';
+  for(const k of STAT_KEYS){const def=STAT_DEF[k],v=state.stats[k];sg.innerHTML+='<div class="stat-cell"><div class="stat-top"><span class="stat-nm">'+def.label+'</span><span class="stat-vl" style="color:'+def.color+'">'+v+'</span></div><div class="stat-line"><div class="stat-line-fill" style="width:'+Math.min(100,v)+'%;background:'+def.color+'"></div></div><button class="stat-plus" onclick="allocStat(\''+k+'\')" '+(state.points<=0?'disabled':'')+'>+</button></div>';}
+
+  const pg=document.getElementById('perk-grid');pg.innerHTML=PERKS.map(p=>{const owned=hasPerk(p.id);return'<div class="perk '+(owned?'owned':'')+'"><div class="perk-ic">'+p.ic+'</div><div class="perk-nm">'+p.nm+'</div><div class="perk-desc">'+p.desc+'</div><button class="perk-buy" onclick="buyPerk(\''+p.id+'\')" '+(owned||state.skillPoints<p.cost?'disabled':'')+'>'+(owned?'ATIVO ✓':p.cost+' pts')+'</button></div>';}).join('');
+
+  renderShadows();renderQuests();renderDungeons();renderBoss();renderInventory();renderSysShop();renderShop();renderTitles();renderLog();renderProgress();
+
+  const rg=document.getElementById('rank-grid');rg.innerHTML='';
+  for(const r of RANKS){const cur=r.name===rank.name;rg.innerHTML+='<div class="stat-cell" style="text-align:center;'+(cur?'border-color:var(--gold);background:rgba(245,196,81,.06)':'')+'"><div class="stat-vl" style="color:'+r.color+';font-size:22px">'+r.name+'</div><div class="stat-nm" style="margin-top:2px">Lv '+r.lvl+'+</div>'+(cur?'<div style="font-size:9px;color:var(--gold);letter-spacing:1px;margin-top:3px">VOCÊ</div>':'')+'</div>';}
+
+  const ni=document.getElementById('name-input');if(document.activeElement!==ni)ni.value=state.name;
+  document.getElementById('reset-time').value=state.resetTime;
+  checkTitles();save();
+}
+function setBar(id,v,m){v=Math.max(0,Math.round(v));document.getElementById(id+'-bar').style.width=Math.min(100,(v/m)*100)+'%';document.getElementById(id+'-txt').textContent=v+'/'+Math.round(m);}
+
+function renderShadows(){
+  const az=document.getElementById('arise-zone');
+  const eligible=state.quests.filter(q=>!q.extracted&&q.streak>=SHADOW_THRESHOLD);
+  az.innerHTML=eligible.length?eligible.map(q=>'<div class="arise-item"><div class="shadow-ic">🌑</div><div class="shadow-info"><div class="shadow-nm">'+esc(q.name)+'</div><div class="shadow-pw">🔥 '+q.streak+' dias — pronto para erguer</div></div><button class="arise-btn" onclick="ariseShadow('+q.id+')">ARISE</button></div>').join(''):'';
+  const sz=document.getElementById('shadow-zone');
+  if(state.shadows.length===0){sz.innerHTML=az.innerHTML?'':'<div class="empty" style="padding:14px">Mantenha um hábito por '+SHADOW_THRESHOLD+' dias seguidos para erguer seu primeiro soldado.</div>';return;}
+  let totalPw=state.shadows.reduce((a,s)=>a+s.power,0);if(hasPerk('commander'))totalPw=Math.round(totalPw*1.5);
+  sz.innerHTML='<div style="font-size:12px;color:var(--purple);margin-bottom:8px">⚡ XP passivo diário do exército: <b>+'+totalPw+'</b></div>'+state.shadows.map(s=>'<div class="shadow-card"><div class="shadow-ic">'+s.icon+'</div><div class="shadow-info"><div class="shadow-nm">'+esc(s.name)+'</div><div class="shadow-pw">Poder '+s.power+' XP/dia · '+s.tier+'</div></div></div>').join('');
+}
+
+function renderQuests(){
+  let qs=state.quests.slice();
+  if(qFilter==='today')qs=qs.filter(q=>isToday(q)||q.type==='penalty'||q.type==='cls');
+  else if(qFilter!=='all')qs=qs.filter(q=>q.type===qFilter);
+  const wz=document.getElementById('warn-zone');
+  const pending=state.quests.filter(q=>q.type==='daily'&&!q.done&&isToday(q)).length;
+  wz.innerHTML=pending>0?'<div class="warn-banner pulse-red">⚠ <span>'+pending+' diária(s) de hoje pendente(s). Cumpra antes do reset!</span></div>':'';
+  const ql=document.getElementById('quest-list');
+  if(qs.length===0){ql.innerHTML='<div class="empty">Nenhuma missão aqui.<br>Carregue sua rotina em Config ou adicione abaixo.</div>';return;}
+  ql.innerHTML=qs.map(q=>{const d=DIFF[q.diff];const today=isToday(q);const cl=q.type==='penalty'?'penalty':q.type==='cls'?'cls':'';
+    return'<div class="quest '+(q.done?'done':'')+' '+cl+' '+(!today?'notToday':'')+'" onclick="toggleQuest('+q.id+')"><div class="q-check">'+(q.done?'✓':'')+'</div><div class="q-info"><div class="q-name">'+esc(q.name)+'</div><div class="q-meta"><span class="q-tag t-'+q.diff+'">'+d.label+'</span><span style="color:var(--text-dim)">'+TYPE_LABEL[q.type]+'</span><span class="q-stat-tag">'+(STAT_DEF[q.stat]?.label||q.stat)+'</span><span class="q-xp">+'+d.xp+'XP</span><span class="q-reward">+'+d.gold+'G</span>'+(q.streak>0?'<span class="q-streak">🔥'+q.streak+'</span>':'')+(q.type==='daily'?'<span class="q-days">'+daysBadge(q.days)+(today?'':' • hoje não')+'</span>':'')+'</div></div><button class="q-del" onclick="delQuest(event,'+q.id+')">×</button></div>';}).join('');
+}
+
+function renderBoss(){const bz=document.getElementById('boss-zone');if(!state.boss){bz.innerHTML='<div class="empty">Nenhum boss ativo.<br>Carregue sua rotina ou crie um objetivo grande do mês.</div>';return;}const b=state.boss,pct=Math.max(0,(b.hp/b.hpMax)*100);bz.innerHTML='<div class="boss-card '+(b.defeated?'defeated':'')+'"><div class="boss-top"><div class="boss-emoji">'+(b.defeated?'👑':(b.icon||'☠️'))+'</div><div><div class="boss-name">'+esc(b.name)+'</div><div class="boss-sub">'+(b.defeated?'DERROTADO':'BOSS DO MÊS')+'</div></div></div>'+(b.defeated?'<div style="text-align:center;color:var(--gold);font-weight:700;padding:8px">VITÓRIA CONQUISTADA ⚔</div>':'<div class="boss-hp-top"><span style="color:var(--red)">HP</span><span>'+Math.max(0,Math.round(b.hp))+' / '+b.hpMax+'</span></div><div class="boss-hp-track"><div class="boss-hp-fill" style="width:'+pct+'%"></div></div>')+'<div class="boss-reward">Recompensa: <b>'+b.rewXp+' XP</b> + <b>'+b.rewGold+' G</b>. Cada missão concluída causa dano!</div>'+(b.defeated?'<button class="btn btn-pri btn-block" style="margin-top:10px" onclick="clearBoss()">Definir Novo Boss</button>':'')+'</div>'+(b.defeated?'':'<div style="text-align:center;margin-top:8px"><button class="btn btn-ghost btn-sm" onclick="clearBoss()">Trocar/Remover Boss</button></div>');}
+
+function renderDungeons(){const dl=document.getElementById('dungeon-list');if(state.dungeons.length===0){dl.innerHTML='<div class="empty">Nenhuma masmorra ativa.</div>';return;}dl.innerHTML=state.dungeons.map(dg=>{const pct=(dg.cleared/dg.total)*100;let bt='Avançar Andar',dis=false;if(dg.done){bt='Concluída ✓';dis=true;}else if(dg.lastDay===todayStr()){bt='Volte amanhã';dis=true;}return'<div class="dungeon '+(dg.done?'complete':'')+'"><div class="dg-top"><div class="dg-icon">'+(dg.icon||'🏰')+'</div><div class="dg-info"><div class="dg-name">'+esc(dg.name)+'</div><div class="dg-floors">Andar '+dg.cleared+' / '+dg.total+'</div></div><button class="q-del" onclick="delDungeon('+dg.id+')">×</button></div><div class="dg-prog-track"><div class="dg-prog-fill" style="width:'+pct+'%"></div></div><div class="dg-actions"><div class="dg-rew">Recompensa: <b>'+dg.rewXp+' XP</b> + <b>'+dg.rewGold+' G</b></div><button class="dg-clear" onclick="advanceDungeon('+dg.id+')" '+(dis?'disabled':'')+'>'+bt+'</button></div></div>';}).join('');}
+
+function renderInventory(){const iz=document.getElementById('inv-zone');const owned=Object.entries(state.inventory).filter(([k,v])=>v>0);if(owned.length===0){iz.innerHTML='<div class="empty" style="padding:14px">Inventário vazio. Compre itens na Loja do Sistema abaixo.</div>';return;}iz.innerHTML=(state.buffs.xpDoubleToday?'<div style="font-size:12px;color:var(--gold);margin-bottom:8px">🧪 XP DUPLO ativo hoje!</div>':'')+owned.map(([k,v])=>{const it=ITEMS[k];return'<div class="shop-item"><div class="shop-icon">'+it.ic+'</div><div class="shop-info"><div class="shop-name">'+it.nm+'</div><div class="shop-desc">'+it.desc+'</div></div><div class="shop-buy"><span class="item-count">x'+v+'</span><button class="use-btn" onclick="useItem(\''+k+'\')">Usar</button></div></div>';}).join('');}
+
+function renderSysShop(){document.getElementById('sysshop-zone').innerHTML=Object.entries(ITEMS).map(([k,it])=>'<div class="shop-item"><div class="shop-icon">'+it.ic+'</div><div class="shop-info"><div class="shop-name">'+it.nm+'</div><div class="shop-desc">'+it.desc+'</div></div><div class="shop-buy"><span class="shop-cost">⬡ '+it.cost+' G</span><button class="buy-btn" onclick="buyItem(\''+k+'\')" '+(state.gold<it.cost?'disabled':'')+'>Comprar</button></div></div>').join('');}
+
+function renderShop(){const sl=document.getElementById('shop-list');if(state.shop.length===0){sl.innerHTML='<div class="empty">Nenhuma recompensa.<br>Adicione abaixo.</div>';return;}sl.innerHTML=state.shop.map(item=>'<div class="shop-item"><div class="shop-icon">'+(item.icon||'🎁')+'</div><div class="shop-info"><div class="shop-name">'+esc(item.name)+'</div><div class="shop-desc">Recompensa pessoal</div></div><div class="shop-buy"><span class="shop-cost">⬡ '+item.cost+' G</span><button class="buy-btn" onclick="redeemReward('+item.id+')" '+(state.gold<item.cost?'disabled':'')+'>Resgatar</button></div><button class="q-del" onclick="delShop('+item.id+')">×</button></div>').join('');}
+
+function renderTitles(){document.getElementById('titles-list').innerHTML=TITLES.map(t=>{const u=state.unlockedTitles.includes(t.id),a=state.activeTitle===t.id;return'<div class="title-item '+(u?'':'locked')+' '+(a?'active-title':'')+'"><div class="title-ic">'+t.ic+'</div><div class="title-tx"><div class="title-nm">'+t.nm+'</div><div class="title-cond">'+(u?'Desbloqueado':t.cond)+'</div></div>'+(u?'<button class="title-use" onclick="setTitle(\''+t.id+'\')" '+(a?'disabled':'')+'>'+(a?'Ativo':'Usar')+'</button>':'')+'</div>';}).join('');}
+
+function renderLog(){const ll=document.getElementById('log-list');if(state.log.length===0){ll.innerHTML='<div class="empty">Nenhuma atividade ainda.</div>';return;}ll.innerHTML=[...state.log].reverse().slice(0,60).map(l=>{let a='';if(l.xp)a='<span class="log-amt" style="color:var(--green)">+'+l.xp+'XP</span>';else if(l.gold!=null)a='<span class="log-amt" style="color:'+(l.gold<0?'var(--red)':'var(--gold)')+'">'+(l.gold>0?'+':'')+l.gold+'G</span>';else if(l.hp)a='<span class="log-amt" style="color:var(--red)">'+l.hp+'HP</span>';return'<div class="log-row"><span class="log-t">'+l.time+'</span><span class="log-x">'+esc(l.text)+'</span>'+a+'</div>';}).join('');}
+
+function renderProgress(){
+  document.getElementById('ss-streak').textContent=state.streak;
+  document.getElementById('ss-done').textContent=state.stats_meta.totalDone;
+  document.getElementById('ss-clean').textContent=state.cleanDays;
+  drawXpChart();drawRadar();drawHeatmap();
+}
+function lastNDates(n){const arr=[];const d=new Date();for(let i=n-1;i>=0;i--){const x=new Date(d);x.setDate(d.getDate()-i);arr.push(x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'));}return arr;}
+function drawXpChart(){const c=document.getElementById('xpChart');if(!c)return;const w=c.clientWidth||320;c.width=w;c.height=120;const ctx=c.getContext('2d');ctx.clearRect(0,0,w,120);const dates=lastNDates(14);const vals=dates.map(d=>state.history[d]?state.history[d].xp:0);const max=Math.max(10,...vals);const bw=w/dates.length;dates.forEach((d,i)=>{const v=vals[i];const h=(v/max)*90;const x=i*bw+bw*0.18,bwid=bw*0.64,y=105-h;const g=ctx.createLinearGradient(0,y,0,105);g.addColorStop(0,'#5fd4ff');g.addColorStop(1,'#2a4dd0');ctx.fillStyle=g;ctx.fillRect(x,y,bwid,h);if(i%2===0||i===dates.length-1){ctx.fillStyle='#5b6a98';ctx.font='9px Rajdhani';ctx.textAlign='center';ctx.fillText(d.slice(8),x+bwid/2,118);}});ctx.fillStyle='#5b6a98';ctx.font='9px Rajdhani';ctx.textAlign='left';ctx.fillText('máx '+max,2,10);}
+function drawRadar(){const c=document.getElementById('radarChart');if(!c)return;const w=c.clientWidth||320;c.width=w;c.height=220;const ctx=c.getContext('2d');ctx.clearRect(0,0,w,220);const cx=w/2,cy=110,R=78;const N=STAT_KEYS.length;const maxStat=Math.max(10,...STAT_KEYS.map(k=>state.stats[k]));
+  for(let ring=1;ring<=3;ring++){ctx.beginPath();for(let i=0;i<=N;i++){const a=-Math.PI/2+i*2*Math.PI/N;const r=R*ring/3;const x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}ctx.strokeStyle='rgba(86,140,255,0.15)';ctx.stroke();}
+  ctx.beginPath();STAT_KEYS.forEach((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/N;const r=R*(state.stats[k]/maxStat);const x=cx+r*Math.cos(a),y=cy+r*Math.sin(a);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});ctx.closePath();ctx.fillStyle='rgba(95,212,255,0.25)';ctx.fill();ctx.strokeStyle='#5fd4ff';ctx.lineWidth=2;ctx.stroke();
+  STAT_KEYS.forEach((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/N;const x=cx+(R+16)*Math.cos(a),y=cy+(R+16)*Math.sin(a);ctx.fillStyle=STAT_DEF[k].color;ctx.font='bold 10px Rajdhani';ctx.textAlign='center';ctx.fillText(STAT_DEF[k].label.slice(0,4)+' '+state.stats[k],x,y+3);});}
+function drawHeatmap(){const g=document.getElementById('heat-grid');if(!g)return;const dates=lastNDates(119);g.innerHTML=dates.map(d=>{const v=state.heat[d]||0;let bg='rgba(86,140,255,0.06)';if(v>=5)bg='rgba(63,240,160,0.85)';else if(v>=3)bg='rgba(63,240,160,0.55)';else if(v>=1)bg='rgba(63,240,160,0.3)';return'<div class="heat-cell" title="'+d+': '+v+'" style="background:'+bg+'"></div>';}).join('');}
+
+// ═════ ACTIONS ═════
+function addXP(amount){state.xp+=amount;let lv=false,g=0;while(state.xp>=XP_NEEDED(state.level)){state.xp-=XP_NEEDED(state.level);state.level++;g++;state.points+=BASE_POINTS+(hasPerk('veteran')?1:0);state.skillPoints+=1;state.hp=state.hpMax;lv=true;}if(lv){checkClassQuests();showLevelUp(g);}}
+function damageBoss(a){if(!state.boss||state.boss.defeated)return;state.boss.hp-=a;sfxHit();if(state.boss.hp<=0){state.boss.hp=0;defeatBoss();}}
+function healBoss(a){if(state.boss&&!state.boss.defeated)state.boss.hp=Math.min(state.boss.hpMax,state.boss.hp+a);}
+function defeatBoss(){const b=state.boss;b.defeated=true;state.gold+=b.rewGold;state.stats_meta.totalGold+=b.rewGold;state.stats_meta.bossKills++;log('☠ BOSS DERROTADO: '+b.name,{xp:b.rewXp,gold:b.rewGold});addXP(b.rewXp);sfxWin();document.getElementById('bw-msg').textContent='Você derrotou « '+b.name+' »! +'+b.rewXp+' XP e +'+b.rewGold+' G.';setTimeout(()=>document.getElementById('bossWin').classList.add('show'),300);}
+
+function toggleQuest(id){
+  const q=state.quests.find(x=>x.id===id);if(!q)return;const d=DIFF[q.diff];ensureHist();const t=todayStr();
+  if(q.done){
+    q.done=false;
+    let undoXp=d.xp;state.xp=Math.max(0,state.xp-undoXp);state.gold=Math.max(0,state.gold-d.gold);healBoss(undoXp);
+    if(q.lastDoneDay===t){q.streak=Math.max(0,q.streak-1);q.lastDoneDay='';}
+    state.history[t].xp=Math.max(0,state.history[t].xp-undoXp);state.history[t].done=Math.max(0,state.history[t].done-1);state.heat[t]=Math.max(0,(state.heat[t]||0)-1);
+    log('Revertida: '+q.name,{gold:-d.gold});
+  }else{
+    q.done=true;
+    if(q.lastDoneDay!==t){q.streak=(q.streak||0)+1;q.lastDoneDay=t;if(q.streak>q.best)q.best=q.streak;}
+    const boost=(q.diff==='epic'?3:q.diff==='hard'?2:1)+((hasPerk('titan')&&(q.diff==='hard'||q.diff==='epic'))?1:0);
+    state.stats[q.stat]=(state.stats[q.stat]||0)+boost;
+    // xp multipliers
+    let m=1;if(hasPerk('scholar'))m*=1.15;if(state.buffs.xpDoubleToday)m*=2;if(state.fatigue>=80)m*=0.7;else if(state.fatigue>=60)m*=0.85;
+    const xpGain=Math.round(d.xp*m);
+    let goldGain=d.gold;if(hasPerk('lucky'))goldGain=Math.round(goldGain*1.25);if(state.fatigue>=70)goldGain=Math.round(goldGain*0.6);
+    let fatAdd=Math.floor(d.fat/2);if(hasPerk('enduring'))fatAdd=Math.round(fatAdd*0.6);
+    state.gold+=goldGain;state.fatigue=Math.min(100,state.fatigue+fatAdd);
+    state.stats_meta.totalDone++;state.stats_meta.totalGold+=goldGain;
+    state.history[t].xp+=xpGain;state.history[t].done++;state.heat[t]=(state.heat[t]||0)+1;
+    log('✓ '+q.name+(q.streak>1?' (🔥'+q.streak+')':''),{xp:xpGain,gold:goldGain});
+    addXP(xpGain);damageBoss(xpGain);sfxComplete();
+    notif('MISSÃO COMPLETA',q.name+' — +'+xpGain+'XP, +'+goldGain+'G'+(state.fatigue>=70?' (fadiga alta!)':''));
+    if(q.type==='penalty'||q.type==='cls')setTimeout(()=>{state.quests=state.quests.filter(x=>x.id!==id);render();},800);
+  }
+  render();
+}
+
+function ariseShadow(id){const q=state.quests.find(x=>x.id===id);if(!q||q.extracted||q.streak<SHADOW_THRESHOLD)return;q.extracted=true;const pw=DIFF[q.diff].sp;const tier=q.diff==='epic'?'Elite':q.diff==='hard'?'Veterano':q.diff==='med'?'Soldado':'Recruta';const icons=['🌑','👤','🥷','⚔️','🛡️'];state.shadows.push({id:state.nextSh++,name:q.name,icon:icons[Math.floor(Math.random()*icons.length)],power:pw,tier});log('🌑 ARISE! Sombra erguida: '+q.name);sfxArise();document.getElementById('ar-msg').textContent='« '+q.name+' » se ergue das sombras como '+tier+'! +'+pw+' XP passivo todo dia, para sempre.';document.getElementById('arise').classList.add('show');render();}
+
+function buyPerk(id){const p=PERKS.find(x=>x.id===id);if(!p||hasPerk(id)||state.skillPoints<p.cost)return;state.skillPoints-=p.cost;state.perks.push(id);log('🌟 Perk desbloqueado: '+p.nm);notif('PERK DESBLOQUEADO',p.ic+' '+p.nm,false,'gold');sfxBuy();render();}
+function allocStat(k){if(state.points<=0)return;state.points--;state.stats[k]++;sfxClick();render();}
+function delQuest(e,id){e.stopPropagation();state.quests=state.quests.filter(q=>q.id!==id);render();}
+function addQuest(){const name=document.getElementById('q-name').value.trim();if(!name){notif('ERRO','Digite um nome.',true);return;}const type=document.getElementById('q-type').value;state.quests.push({id:state.nextQ++,name,stat:document.getElementById('q-stat').value,diff:document.getElementById('q-diff').value,type,days:type==='daily'?pickedDays.slice():[],done:false,streak:0,best:0,lastDoneDay:'',extracted:false});document.getElementById('q-name').value='';pickedDays=[];toggleAddForm();render();}
+function buildDayPicker(){const dp=document.getElementById('day-picker');dp.innerHTML='';DAY_SHORT.forEach((l,i)=>{const c=document.createElement('div');c.className='day-chip'+(pickedDays.includes(i)?' on':'');c.textContent=l;c.title=DAY_LABELS[i];c.onclick=()=>{if(pickedDays.includes(i))pickedDays=pickedDays.filter(d=>d!==i);else pickedDays.push(i);buildDayPicker();sfxClick();};dp.appendChild(c);});}
+function toggleAddForm(){const f=document.getElementById('add-form'),b=document.getElementById('add-btn');const s=f.style.display==='none';f.style.display=s?'block':'none';b.style.display=s?'none':'block';if(s){pickedDays=[];buildDayPicker();}}
+function setFilter(f,btn){qFilter=f;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderQuests();}
+
+// CLASS QUESTS
+function checkClassQuests(){for(const c of CLASSES){if(c.lvl>1&&state.level>=c.lvl&&!state.classQuestsSpawned.includes(c.lvl)){state.classQuestsSpawned.push(c.lvl);state.quests.push({id:state.nextQ++,name:'Prova de Classe: torne-se '+c.name,stat:'disc',diff:'epic',type:'cls',days:[],done:false,streak:0,best:0,lastDoneDay:'',extracted:false});notif('QUEST DE CLASSE','Prova desbloqueada: torne-se '+c.name+'!',false,'purple');}}}
+
+// DUNGEONS
+function advanceDungeon(id){const dg=state.dungeons.find(d=>d.id===id);if(!dg||dg.done)return;if(dg.lastDay===todayStr()){notif('MASMORRA','Você já avançou hoje. Volte amanhã!');return;}ensureHist();const t=todayStr();dg.cleared++;dg.lastDay=t;const fx=Math.round(dg.rewXp/dg.total/2)+5;state.history[t].xp+=fx;log('🏰 '+dg.name+' — Andar '+dg.cleared+'/'+dg.total,{xp:fx});addXP(fx);damageBoss(fx);sfxComplete();if(dg.cleared>=dg.total){dg.done=true;state.gold+=dg.rewGold;state.stats_meta.totalGold+=dg.rewGold;state.stats_meta.dungeonsCleared++;log('🏰 MASMORRA CONCLUÍDA: '+dg.name,{xp:dg.rewXp,gold:dg.rewGold});addXP(dg.rewXp);damageBoss(dg.rewXp);notif('MASMORRA CONCLUÍDA',dg.name+'! +'+dg.rewXp+'XP +'+dg.rewGold+'G',false,'gold');sfxWin();}else{notif('ANDAR LIMPO',dg.name+' — '+dg.cleared+'/'+dg.total+' • +'+fx+'XP');}render();}
+function addDungeon(){const name=document.getElementById('dg-name').value.trim();const fl=parseInt(document.getElementById('dg-floors').value)||0;if(!name||fl<=0){notif('ERRO','Preencha nome e nº de andares.',true);return;}state.dungeons.push({id:state.nextD++,name,icon:document.getElementById('dg-icon').value.trim()||'🏰',total:fl,cleared:0,lastDay:'',rewXp:parseInt(document.getElementById('dg-xp').value)||fl*15,rewGold:parseInt(document.getElementById('dg-gold').value)||fl*8,done:false});['dg-name','dg-icon','dg-floors','dg-xp','dg-gold'].forEach(i=>document.getElementById(i).value='');toggleDgForm();render();}
+function toggleDgForm(){const f=document.getElementById('dg-form'),b=document.getElementById('dg-add-btn');const s=f.style.display==='none';f.style.display=s?'block':'none';b.style.display=s?'none':'block';}
+function delDungeon(id){if(confirm('Remover esta masmorra?')){state.dungeons=state.dungeons.filter(d=>d.id!==id);render();}}
+function clearBoss(){const name=prompt('Nome do novo Boss do Mês (objetivo grande):',state.boss&&!state.boss.defeated?state.boss.name:'Boss do Mês: Superar a Si Mesmo');if(name===null){if(state.boss&&state.boss.defeated){state.boss=null;render();}return;}const hp=parseInt(prompt('Vida do boss (sugestão 1200):','1200'))||1200;state.boss={name:name||'Boss do Mês',icon:'☠️',hpMax:hp,hp:hp,rewXp:Math.round(hp*0.4),rewGold:Math.round(hp*0.2),defeated:false};log('Novo Boss invocado: '+state.boss.name);notif('NOVO BOSS','« '+state.boss.name+' » apareceu!',true);render();}
+
+// ITEMS
+function buyItem(k){const it=ITEMS[k];if(!it||state.gold<it.cost)return;state.gold-=it.cost;state.inventory[k]=(state.inventory[k]||0)+1;log('🛒 Comprou: '+it.nm,{gold:-it.cost});sfxBuy();notif('ITEM COMPRADO',it.ic+' '+it.nm);render();}
+function useItem(k){if(!state.inventory[k]||state.inventory[k]<=0)return;const it=ITEMS[k];if(k==='xp_potion'){state.buffs.xpDoubleToday=true;notif('XP DUPLO','Ativo até o fim do dia! 🧪',false,'gold');}else if(k==='rest_crystal'){state.fatigue=0;notif('DESCANSADO','Fadiga zerada! 💎');}else if(k==='penalty_shield'){notif('ESCUDO','Será usado automaticamente na próxima falha. 🛡️');return;}state.inventory[k]--;log('Usou: '+it.nm);sfxBuy();render();}
+
+// SHOP (rewards)
+function addShopItem(){const name=document.getElementById('s-name').value.trim();const cost=parseInt(document.getElementById('s-cost').value)||0;if(!name||cost<=0){notif('ERRO','Preencha nome e custo válido.',true);return;}state.shop.push({id:state.nextS++,name,icon:document.getElementById('s-icon').value.trim()||'🎁',cost});document.getElementById('s-name').value='';document.getElementById('s-cost').value='';document.getElementById('s-icon').value='';toggleShopForm();render();}
+function toggleShopForm(){const f=document.getElementById('shop-form'),b=document.getElementById('shop-add-btn');const s=f.style.display==='none';f.style.display=s?'block':'none';b.style.display=s?'none':'block';}
+function delShop(id){state.shop=state.shop.filter(i=>i.id!==id);render();}
+function redeemReward(id){const item=state.shop.find(i=>i.id===id);if(!item||state.gold<item.cost)return;state.gold-=item.cost;state.fatigue=Math.max(0,state.fatigue-15);log('🎁 Resgatado: '+item.name,{gold:-item.cost});sfxBuy();notif('RECOMPENSA RESGATADA',item.icon+' '+item.name+'. Aproveite!',false,'gold');render();}
+
+// TITLES
+function setTitle(id){state.activeTitle=id;sfxClick();render();}
+function checkTitles(){for(const t of TITLES){if(!state.unlockedTitles.includes(t.id)&&t.check(state)){state.unlockedTitles.push(t.id);notif('TÍTULO DESBLOQUEADO',t.ic+' « '+t.nm+' »',false,'gold');sfxBuy();}}}
+
+function updateName(){state.name=document.getElementById('name-input').value||'Hunter';document.getElementById('p-name').textContent=state.name.toUpperCase();save();}
+function updateResetTime(){state.resetTime=document.getElementById('reset-time').value;save();}
+function log(text,extra={}){const now=new Date();const time=now.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});state.log.push(Object.assign({time,text},extra));if(state.log.length>250)state.log=state.log.slice(-250);}
+
+// ═════ DAY CHANGE / PENALTY ═════
+function checkDayChange(){
+  const today=todayStr();if(state.lastDay===today)return;
+  ensureHist();const lastWd=weekdayOf(state.lastDay);
+  const due=state.quests.filter(q=>q.type==='daily'&&(!q.days||q.days.length===0||q.days.includes(lastWd)));
+  let failed=due.filter(q=>!q.done);
+  // streak reset for failed dailies
+  failed.forEach(q=>{q.streak=0;});
+  // penalty shields
+  if(failed.length>0&&state.inventory.penalty_shield>0){const used=Math.min(state.inventory.penalty_shield,failed.length);state.inventory.penalty_shield-=used;failed=failed.slice(used);if(used>0)notif('ESCUDO USADO','🛡️ '+used+' falha(s) anulada(s) pelo escudo!',false,'gold');}
+  if(due.length>0&&failed.length>0){applyPenalty(failed);state.streak=0;state.cleanDays=0;}
+  else if(due.length>0){state.streak++;state.cleanDays++;state.fatigue=Math.max(0,state.fatigue-30);notif('DIA PERFEITO','Sequência: '+state.streak+' dia(s)!',false,'gold');}
+  // shadow passive xp
+  if(state.shadows.length>0){let pw=state.shadows.reduce((a,s)=>a+s.power,0);if(hasPerk('commander'))pw=Math.round(pw*1.5);if(!state.history[today])state.history[today]={xp:0,done:0};state.history[today].xp+=pw;log('🌑 Exército treinou durante a noite',{xp:pw});addXP(pw);notif('EXÉRCITO DAS SOMBRAS','Seus soldados renderam +'+pw+' XP!',false,'purple');}
+  state.quests.forEach(q=>{if(q.type==='daily')q.done=false;});
+  state.quests=state.quests.filter(q=>q.type!=='penalty');
+  state.buffs.xpDoubleToday=false;
+  state.lastDay=today;state.fatigue=Math.max(0,state.fatigue-20);state.mp=state.mpMax;save();
+}
+function applyPenalty(failed){let hpLoss=failed.length*15;if(hasPerk('ironmind'))hpLoss=Math.round(hpLoss/2);const goldLoss=Math.min(state.gold,failed.length*8);state.hp=Math.max(0,state.hp-hpLoss);state.gold-=goldLoss;state.fatigue=Math.min(100,state.fatigue+failed.length*10);log('⚠ PENALIDADE: '+failed.length+' diária(s) falhada(s)',{hp:-hpLoss});const items=['-'+hpLoss+' HP','-'+goldLoss+' Ouro','+'+(failed.length*10)+' Fadiga','🔥 Sequências zeradas'];if(state.hp<=0){state.hp=Math.floor(state.hpMax*0.3);state.quests.push({id:state.nextQ++,name:'QUEST DE PENALIDADE: Recupere-se — complete 1 missão difícil hoje',stat:'disc',diff:'hard',type:'penalty',days:[],done:false,streak:0,best:0,lastDoneDay:'',extracted:false});items.push('⚠ HP ZERADO — Quest de Penalidade gerada!');log('☠ HP zerado — Penalty Quest gerada');}showPenalty(failed.length,items);sfxPenalty();}
+
+// ═════ OVERLAYS ═════
+function showLevelUp(lv){sfxLevel();document.getElementById('lu-sub').textContent='LV. '+state.level;document.getElementById('lu-detail').textContent='+'+(lv*(BASE_POINTS+(hasPerk('veteran')?1:0)))+' atributos · +'+lv+' skill point(s) · HP restaurado';document.getElementById('levelup').classList.add('show');setTimeout(()=>document.getElementById('levelup').classList.remove('show'),2600);}
+let pendingPenalty=null;
+function showPenalty(c,items){pendingPenalty={c,items};}
+function actuallyShowPenalty(){if(!pendingPenalty)return;document.getElementById('pen-msg').textContent='Você falhou em '+pendingPenalty.c+' missão(ões) diária(s). Consequências:';document.getElementById('pen-list').innerHTML=pendingPenalty.items.map(i=>'<div>▸ '+i+'</div>').join('');document.getElementById('penalty').classList.add('show');pendingPenalty=null;}
+function closeOv(id){document.getElementById(id).classList.remove('show');sfxClick();if(id==='bossWin')render();}
+function notif(title,body,danger=false,variant=''){const wrap=document.getElementById('notif-wrap');const el=document.createElement('div');el.className='notif'+(danger?' danger':'')+(variant?' '+variant:'');el.innerHTML='<div class="notif-h"></div><div class="notif-b">'+esc(body)+'</div>';el.querySelector('.notif-h').textContent='◆ '+title;wrap.appendChild(el);requestAnimationFrame(()=>el.classList.add('show'));setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),350);},3400);}
+
+// ═════ COUNTDOWN ═════
+function updateCountdown(){const[h,m]=state.resetTime.split(':').map(Number);const now=new Date();const reset=new Date();reset.setHours(h,m,0,0);if(reset<=now)reset.setDate(reset.getDate()+1);const diff=reset-now;const hh=String(Math.floor(diff/3600000)).padStart(2,'0');const mm=String(Math.floor(diff%3600000/60000)).padStart(2,'0');const ss=String(Math.floor(diff%60000/1000)).padStart(2,'0');const el=document.getElementById('countdown');if(el)el.textContent=hh+':'+mm+':'+ss;}
+
+// ═════ ROUTINE LOADERS ═════
+function loadMyRoutine(){
+  const dailies=[
+    {name:'Estudar matéria da faculdade (1h)',stat:'int',diff:'hard',days:[1,2,3,4,5]},
+    {name:'Estudar curso / extra (30min)',stat:'int',diff:'med',days:[1,2,3,4,5]},
+    {name:'Praticar inglês (15min)',stat:'int',diff:'easy',days:[1,2,3,4,5]},
+    {name:'Ler um pouco (20min)',stat:'per',diff:'easy',days:[]},
+    {name:'Beber 2L de água',stat:'vit',diff:'easy',days:[]},
+    {name:'Planejar o dia / meditar (10min)',stat:'disc',diff:'easy',days:[]},
+    {name:'Dormir antes da meia-noite',stat:'vit',diff:'med',days:[]},
+    {name:'Academia 💪',stat:'forca',diff:'hard',days:[5,6,0]},
+    {name:'Aula de inglês',stat:'int',diff:'med',days:[6]}
+  ];
+  const weekly=[{name:'Planejar a semana de estudos',stat:'per',diff:'med'},{name:'Momento de qualidade com ela ❤',stat:'per',diff:'easy'},{name:'Descanso de verdade (1 dia leve)',stat:'vit',diff:'easy'}];
+  const main=[{name:'Passar nas matérias deste semestre',stat:'int',diff:'epic'},{name:'Concluir um curso até o fim',stat:'int',diff:'epic'}];
+  dailies.forEach(q=>state.quests.push({id:state.nextQ++,...q,type:'daily',done:false,streak:0,best:0,lastDoneDay:'',extracted:false}));
+  weekly.forEach(q=>state.quests.push({id:state.nextQ++,...q,type:'weekly',days:[],done:false,streak:0,best:0,lastDoneDay:'',extracted:false}));
+  main.forEach(q=>state.quests.push({id:state.nextQ++,...q,type:'main',days:[],done:false,streak:0,best:0,lastDoneDay:'',extracted:false}));
+  [{name:'Maratona de Estudos',icon:'📚',total:20,rewXp:350,rewGold:180},{name:'Forja do Corpo',icon:'🏋️',total:12,rewXp:260,rewGold:140},{name:'O Retorno do Leitor',icon:'📖',total:14,rewXp:220,rewGold:110},{name:'Caminho da Fluência',icon:'🗣️',total:30,rewXp:450,rewGold:240}].forEach(d=>state.dungeons.push({id:state.nextD++,...d,cleared:0,lastDay:'',done:false}));
+  state.boss={name:'Boss do Mês: A Melhor Versão de Mim',icon:'☠️',hpMax:1500,hp:1500,rewXp:600,rewGold:300,defeated:false};
+  [{name:'1h de videogame',icon:'🎮',cost:40},{name:'Episódio de série',icon:'📺',cost:30},{name:'Comida favorita',icon:'🍕',cost:90},{name:'Date especial com ela',icon:'❤',cost:160},{name:'Dia de folga total',icon:'🛌',cost:220},{name:'Comprinha pra mim',icon:'🛒',cost:150}].forEach(i=>state.shop.push({id:state.nextS++,...i}));
+  log('⚡ Rotina personalizada carregada — bora evoluir!');notif('ROTINA CARREGADA','Tudo pronto pra sua vida!',false,'gold');switchTab('quests',document.querySelectorAll('.tab-btn')[1]);render();
+}
+function loadDefaults(){[{name:'Exercício 30 min',stat:'forca',diff:'med'},{name:'Beber 2L de água',stat:'vit',diff:'easy'},{name:'Ler 20 min',stat:'per',diff:'easy'},{name:'Estudar 1h',stat:'int',diff:'hard'},{name:'Meditar 10 min',stat:'disc',diff:'easy'},{name:'Dormir cedo',stat:'vit',diff:'med'}].forEach(q=>state.quests.push({id:state.nextQ++,...q,type:'daily',days:[],done:false,streak:0,best:0,lastDoneDay:'',extracted:false}));[{name:'1h de videogame',icon:'🎮',cost:40},{name:'Comida favorita',icon:'🍕',cost:80},{name:'Dia de folga',icon:'🛌',cost:200}].forEach(i=>state.shop.push({id:state.nextS++,...i}));notif('CARREGADO','Rotina genérica adicionada!');switchTab('quests',document.querySelectorAll('.tab-btn')[1]);render();}
+function exportData(){const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='the_system_'+state.name+'.json';a.click();}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{state=migrate(JSON.parse(ev.target.result));save();render();notif('IMPORTADO','Dados restaurados!');}catch{notif('ERRO','Arquivo inválido',true);}};r.readAsText(f);}
+function resetAll(){if(confirm('Apagar TODOS os dados?')){state=defaultState();save();render();notif('RESET','Sistema reiniciado.');}}
+
+// ═════ TABS ═════
+function switchTab(name,btn){sfxClick();const tabs=['status','quests','raid','itens','prog','titles','config'];document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',tabs[i]===name));tabs.forEach(t=>{const el=document.getElementById('tab-'+t);if(el)el.classList.toggle('active',t===name);});window.scrollTo({top:0,behavior:'smooth'});if(name==='prog')setTimeout(renderProgress,60);}
+
+// ═════ BOOT ═════
+const bootMsgs=['Conectando ao Sistema...','Carregando perfil do Jogador...','Sincronizando missões...','Convocando exército das sombras...','Verificando penalidades...','Bem-vindo, Hunter.'];
+function boot(){let i=0;const sub=document.getElementById('boot-sub');const iv=setInterval(()=>{sub.textContent=bootMsgs[i];beep(440+i*70,.05,'sine',.04);i++;if(i>=bootMsgs.length){clearInterval(iv);setTimeout(finishBoot,500);}},400);}
+function finishBoot(){document.getElementById('boot').classList.add('hide');checkDayChange();render();if(pendingPenalty)setTimeout(actuallyShowPenalty,400);setTimeout(()=>document.getElementById('boot').style.display='none',700);}
+
+ensureHist();checkDayChange();render();
+window.addEventListener('load',()=>{boot();updateCountdown();setInterval(updateCountdown,1000);});
+window.addEventListener('resize',()=>{if(document.getElementById('tab-prog').classList.contains('active'))renderProgress();});
+</script>
+</body>
+</html>

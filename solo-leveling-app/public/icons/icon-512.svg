@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" fill="#04060f"/>
+  <circle cx="256" cy="256" r="215.04" fill="none" stroke="rgba(58,143,255,0.8)" stroke-width="12.8"/>
+  <circle cx="256" cy="256" r="194.56" fill="rgba(4,6,15,0.95)"/>
+  <text x="256" y="266.24" font-size="215.04" text-anchor="middle" dominant-baseline="middle" font-family="serif">👑</text>
+  <text x="256" y="399.36" font-size="51.2" text-anchor="middle" fill="#3a8fff" font-family="sans-serif" font-weight="bold" letter-spacing="2">MONARCA</text>
+</svg>
