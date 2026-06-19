@@ -328,5 +328,119 @@ export const MISSIONS: Mission[] = [
     dungeonId: 'dungeon-amor',
     estimatedMinutes: 60,
     icon: '💞'
+  },
+
+  // ── FLEXÍVEIS — degraus baixos e genéricos (bônus, sem punição) ─────
+  // Sem dungeonId de propósito: constroem atributo pela categoria, mas não
+  // adiantam masmorra (a masmorra continua premiando o hábito focado).
+  {
+    id: 'estudo-livre',
+    name: 'Estude qualquer coisa por 10 min',
+    type: 'bonus',
+    category: 'estudo',
+    xpReward: 15,
+    xpPenalty: 0,
+    availableDays: ['seg','ter','qua','qui','sex','sab','dom'],
+    estimatedMinutes: 10,
+    icon: '🧠'
+  },
+  {
+    id: 'aprender-novo',
+    name: 'Aprenda algo novo (vídeo, artigo, curiosidade)',
+    type: 'bonus',
+    category: 'estudo',
+    xpReward: 15,
+    xpPenalty: 0,
+    availableDays: ['seg','qua','sex'],
+    estimatedMinutes: 10,
+    icon: '💡'
+  },
+  {
+    id: 'mexer-corpo',
+    name: 'Mexa o corpo 10 min (alongue, ande, dance)',
+    type: 'bonus',
+    category: 'saude',
+    xpReward: 15,
+    xpPenalty: 0,
+    availableDays: ['seg','ter','qua','qui','sex','sab','dom'],
+    estimatedMinutes: 10,
+    icon: '🤾'
+  },
+  {
+    id: 'gratidao-momento',
+    name: 'Momento de gratidão',
+    type: 'bonus',
+    category: 'fe',
+    xpReward: 12,
+    xpPenalty: 0,
+    availableDays: ['seg','ter','qua','qui','sex','sab','dom'],
+    estimatedMinutes: 3,
+    icon: '🌟'
+  },
+  {
+    id: 'gesto-gentileza',
+    name: 'Um pequeno gesto por alguém',
+    type: 'bonus',
+    category: 'carater',
+    xpReward: 15,
+    xpPenalty: 0,
+    availableDays: ['seg','ter','qua','qui','sex'],
+    estimatedMinutes: 0,
+    icon: '🫶'
+  },
+  {
+    id: 'zona-conforto',
+    name: 'Saí da zona de conforto hoje',
+    type: 'bonus',
+    category: 'carater',
+    xpReward: 25,
+    xpPenalty: 0,
+    availableDays: ['ter','qui','sab'],
+    estimatedMinutes: 0,
+    icon: '🔥'
+  },
+  {
+    id: 'desconectar',
+    name: 'Desconectar 30 min (sem telas)',
+    type: 'bonus',
+    category: 'habito',
+    xpReward: 15,
+    xpPenalty: 0,
+    availableDays: ['seg','qua','sex','dom'],
+    estimatedMinutes: 30,
+    icon: '🌙'
+  },
+  {
+    id: 'criativo',
+    name: 'Fiz algo criativo (escrever, desenhar, tocar)',
+    type: 'bonus',
+    category: 'habito',
+    xpReward: 20,
+    xpPenalty: 0,
+    availableDays: ['qua','sab','dom'],
+    estimatedMinutes: 20,
+    icon: '🎨'
+  },
+  {
+    id: 'natureza',
+    name: 'Tempo ao ar livre / contato com a natureza',
+    type: 'bonus',
+    category: 'saude',
+    xpReward: 20,
+    xpPenalty: 0,
+    availableDays: ['sab','dom'],
+    estimatedMinutes: 20,
+    icon: '🌳'
+  },
+  {
+    id: 'conexao-querida',
+    name: 'Conversa boa com alguém querido',
+    type: 'bonus',
+    category: 'familia',
+    xpReward: 15,
+    xpPenalty: 0,
+    availableDays: ['sex','sab','dom'],
+    estimatedMinutes: 15,
+    icon: '💬'
   }
 ]

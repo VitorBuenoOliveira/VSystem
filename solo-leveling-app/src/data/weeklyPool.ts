@@ -75,6 +75,42 @@ const WEEKLY_POOL: WeeklyTemplate[] = [
     goalType: 'honor', goal: 5,
     xpReward: 200, goldReward: 40,
   },
+  // ── Metas mais acessíveis e variadas (reduz repetição) ──────────────
+  {
+    name: 'Semana Consistente',
+    description: 'Complete 20 missões esta semana',
+    icon: '🌱',
+    goalType: 'missions', goal: 20,
+    xpReward: 70, goldReward: 12,
+  },
+  {
+    name: 'Semana do Caráter',
+    description: 'Complete 5 missões de caráter',
+    icon: '🕊️',
+    goalType: 'category', goalCategory: 'carater', goal: 5,
+    xpReward: 85, goldReward: 15,
+  },
+  {
+    name: 'Semana em Família',
+    description: 'Complete 4 missões de família',
+    icon: '👨‍👩‍👦',
+    goalType: 'category', goalCategory: 'familia', goal: 4,
+    xpReward: 80, goldReward: 15,
+  },
+  {
+    name: 'Semana do Equilíbrio',
+    description: '4 dias honrados esta semana',
+    icon: '☯️',
+    goalType: 'honor', goal: 4,
+    xpReward: 150, goldReward: 30,
+  },
+  {
+    name: 'Semana do Hábito',
+    description: 'Complete 6 missões de hábito',
+    icon: '🔁',
+    goalType: 'category', goalCategory: 'habito', goal: 6,
+    xpReward: 85, goldReward: 15,
+  },
 ]
 
 /** Calcula a data da segunda-feira da semana atual */
