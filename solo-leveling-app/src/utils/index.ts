@@ -969,6 +969,5 @@ export function createInitialStats(name = 'Caçador'): PlayerStats {
     todayCompleted: [],
     todayBonusEffort: [],
     lastActiveDate: '',
-    avatarEmoji: '⚔️',
   }
 }

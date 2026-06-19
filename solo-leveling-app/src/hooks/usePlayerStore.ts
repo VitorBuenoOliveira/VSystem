@@ -83,8 +83,8 @@ function migrate(raw: PlayerStats): PlayerStats {
     streakShieldActive:   raw.streakShieldActive   ?? false,
     relicScrollActive:    raw.relicScrollActive    ?? false,
     coldBloodUsedMonth:   raw.coldBloodUsedMonth   ?? '',
-    // Campos novos do 5.3
-    avatarEmoji:          raw.avatarEmoji          ?? '⚔️',
+    // Debug de teste não persiste entre sessões
+    debugShadowStage:     undefined,
   }
 }
 
@@ -749,10 +749,6 @@ export function usePlayerStore() {
     setStats({ ...stats, name })
   }, [stats, setStats])
 
-  const setAvatarEmoji = useCallback((emoji: string) => {
-    setStats({ ...stats, avatarEmoji: emoji })
-  }, [stats, setStats])
-
   const resetData = useCallback(() => {
     setStats(createInitialStats(stats.name))
   }, [stats.name, setStats])
@@ -790,7 +786,6 @@ export function usePlayerStore() {
     unequipRelic,
     ascend,
     updateName,
-    setAvatarEmoji,
     resetData,
   }
 }

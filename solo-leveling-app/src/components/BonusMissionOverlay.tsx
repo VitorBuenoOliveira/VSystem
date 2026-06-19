@@ -1,22 +1,12 @@
 import { useEffect, useState } from 'react'
 import type { BonusMission } from '../types'
 import { playNotificationSound } from '../hooks/useSounds'
+import { CAT_COLORS as CAT_COLOR } from '../data/categoryColors'
 
 interface Props {
   mission: BonusMission
   onAccept: () => void
   onDismiss: () => void
-}
-
-const CAT_COLOR: Record<string, string> = {
-  saude:   '#3a8fff',
-  amor:    '#e05080',
-  estudo:  '#8060ff',
-  ingles:  '#40c0e0',
-  fe:      '#f0d060',
-  habito:  '#50e890',
-  familia: '#e0903a',
-  carater: '#c8a0ff',
 }
 
 export default function BonusMissionOverlay({ mission, onAccept, onDismiss }: Props) {

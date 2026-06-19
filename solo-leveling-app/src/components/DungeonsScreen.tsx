@@ -8,17 +8,7 @@ import { calcWinChance, getBossTier, TIER_CAPS, TIER_COLORS, TIER_LABELS } from 
 import type { BossTier } from '../data/monthlyBoss'
 import type { Dungeon, FloorGate, MonthlyBoss, PlayerAttributes } from '../types'
 import { useEffect, useState } from 'react'
-
-const CAT_COLORS: Record<string, string> = {
-  estudo: '#9080e8',
-  saude:  '#40c870',
-  ingles: '#40c8d8',
-  amor:   '#e06090',
-  fe:     '#f0c040',
-  habito: '#3a8fff',
-  familia: '#e0903a',
-  carater: '#c8a0ff',
-}
+import { CAT_COLORS } from '../data/categoryColors'
 
 export default function DungeonsScreen() {
   const { stats, openGate } = usePlayerStore()

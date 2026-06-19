@@ -2,7 +2,7 @@ import { useEffect, useRef, useLayoutEffect, useState } from 'react'
 import SLFrame from './ui/SLFrame'
 import { usePlayerStore } from '../hooks/usePlayerStore'
 import { useSounds } from '../hooks/useSounds'
-import { calcAttributes, calcBaseAttributes } from '../utils'
+import { calcAttributes, calcBaseAttributes, dateStrFor } from '../utils'
 import { RANKS } from '../data/ranks'
 import { Gear } from './ui/GearDecor'
 import ClassesPanel from './ClassesPanel'
@@ -44,7 +44,7 @@ function XPBarChart({ logs }: { logs: DailyLog[] }) {
     const days: { date: string; log: DailyLog | undefined }[] = []
     for (let i = DAYS - 1; i >= 0; i--) {
       const d = new Date(); d.setDate(d.getDate() - i)
-      const date = d.toISOString().slice(0, 10)
+      const date = dateStrFor(d)
       days.push({ date, log: logs.find(l => l.date === date) })
     }
 
@@ -281,7 +281,7 @@ function ActivityHeatmap({ logs }: { logs: DailyLog[] }) {
       for (let day = 0; day < 7; day++) {
         const d = new Date(startDay)
         d.setDate(startDay.getDate() + week * 7 + day)
-        const dateStr  = d.toISOString().slice(0, 10)
+        const dateStr  = dateStrFor(d)
         const count    = countMap[dateStr] ?? -1
         const isFuture = d > today
         const log      = logs.find(l => l.date === dateStr)
@@ -838,7 +838,7 @@ function getLast7Days() {
   const result = []
   for (let i = 6; i >= 0; i--) {
     const d = new Date(); d.setDate(d.getDate() - i)
-    const date  = d.toISOString().slice(0, 10)
+    const date  = dateStrFor(d)
     const label = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][d.getDay()]
     result.push({ date, label })
   }

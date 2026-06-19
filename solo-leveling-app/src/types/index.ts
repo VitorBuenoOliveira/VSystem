@@ -333,7 +333,4 @@ export interface PlayerStats {
   todayCompleted: string[]
   todayBonusEffort: string[]   // ids de missões em que o jogador "fez a mais" (XP extra)
   lastActiveDate: string
-
-  // Customização
-  avatarEmoji: string
 }

@@ -225,6 +225,17 @@ export default function ProfileScreen() {
               </div>
             ))}
           </div>
+
+          {/* Legenda dos eixos de progressão */}
+          <div style={{
+            fontFamily: 'Rajdhani', fontSize: 9, color: 'var(--text-muted)',
+            letterSpacing: '0.03em', textAlign: 'center', lineHeight: 1.5,
+            maxWidth: 300, marginTop: 2,
+          }}>
+            <span style={{ color: rankCfg.color }}>Rank</span> = poder geral (XP) ·{' '}
+            <span style={{ color: '#b388ff' }}>Sombras</span> = evolução ·{' '}
+            <span style={{ color: '#50e890' }}>Classe</span> = especialização
+          </div>
         </div>
       </SLFrame>
 

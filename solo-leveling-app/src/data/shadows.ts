@@ -46,7 +46,7 @@ export const DEFAULT_BOSS: Boss = {
   defeated: false,
   rewXp: 200,
   rewGold: 100,
-  createdAt: new Date().toISOString().slice(0, 10),
+  createdAt: (d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`)(new Date()),
 }
 
 // Nomes automáticos das sombras baseado no tipo de missão

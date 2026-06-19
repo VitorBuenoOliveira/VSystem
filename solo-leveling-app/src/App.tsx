@@ -25,7 +25,7 @@ import type { DayEndResult } from './utils'
 import type { RankLabel } from './types'
 
 // ── Beta version ──────────────────────────────────────────────────────────
-export const APP_VERSION = '7.1'
+export const APP_VERSION = '7.2'
 
 type Screen = 'dashboard' | 'dungeons' | 'army' | 'vida' | 'shop' | 'stats' | 'profile'
 
