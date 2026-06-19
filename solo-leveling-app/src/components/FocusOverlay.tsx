@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useSounds } from '../hooks/useSounds'
 import { burstParticles } from './ui/ParticleBackground'
 import { getVerseOfDay } from '../data/verses'
