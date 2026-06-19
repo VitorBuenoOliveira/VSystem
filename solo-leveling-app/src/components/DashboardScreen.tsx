@@ -4,7 +4,9 @@ import XPBar      from './ui/XPBar'
 import FloatXP    from './ui/FloatXP'
 import MissionCard from './MissionCard'
 import StatusPanel from './StatusPanel'
+import FocusOverlay from './FocusOverlay'
 import { Gear } from './ui/GearDecor'
+import { getVerseOfDay } from '../data/verses'
 import { getShadowStage } from '../data/shadowPath'
 import { useAdmin } from '../hooks/useAdmin'
 import { getTodayMissions, getRankProgress, checkHonorDay, todayDayOfWeek } from '../utils'
@@ -111,6 +113,9 @@ export default function DashboardScreen({ onDayEnd }: Props) {
   })
   const [xpEvent,     setXpEvent]     = useState<XPEvent | null>(null)
   const [dayResult,   setDayResult]   = useState<DayEndResult | null>(null)
+  const [focusMission, setFocusMission] = useState<import('../types').Mission | null>(null)
+  const [showVerse, setShowVerse] = useState(false)
+  const verseOfDay = getVerseOfDay(new Date().getFullYear() + '-' + String(new Date().getMonth()+1).padStart(2,'0') + '-' + String(new Date().getDate()).padStart(2,'0'))
 
   useEffect(() => { sounds.playSystemOpen() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -144,6 +149,10 @@ export default function DashboardScreen({ onDayEnd }: Props) {
       if (mission) setXpEvent({ amount: mission.xpReward, positive: true, key: Date.now() })
     }
   }, [stats.todayCompleted, toggleMission, todayMissions, sounds])
+
+  const completeFromFocus = useCallback((id: string) => {
+    if (!stats.todayCompleted.includes(id)) handleToggle(id)
+  }, [stats.todayCompleted, handleToggle])
 
   const handleEndDay = useCallback(() => {
     const result = endDay()
@@ -180,6 +189,15 @@ export default function DashboardScreen({ onDayEnd }: Props) {
       {/* Float XP */}
       {xpEvent && (
         <FloatXP key={xpEvent.key} amount={xpEvent.amount} positive={xpEvent.positive} onDone={() => setXpEvent(null)} />
+      )}
+
+      {/* Overlay de Foco / Pomodoro */}
+      {focusMission && (
+        <FocusOverlay
+          mission={focusMission}
+          onComplete={completeFromFocus}
+          onClose={() => setFocusMission(null)}
+        />
       )}
 
       {/* ── Header ── */}
@@ -354,6 +372,27 @@ export default function DashboardScreen({ onDayEnd }: Props) {
         </div>
       )}
 
+      {/* Versículo do dia (recolhível) */}
+      <div style={{ padding: '10px 16px 0' }}>
+        <button
+          onClick={() => setShowVerse(v => !v)}
+          style={{
+            width: '100%', textAlign: 'left', cursor: 'pointer',
+            background: 'rgba(40,30,6,0.35)', border: '1px solid rgba(240,208,96,0.25)',
+            borderLeft: '2px solid rgba(240,208,96,0.6)', padding: '8px 12px',
+            display: 'flex', alignItems: 'center', gap: 8,
+          }}
+        >
+          <span style={{ fontSize: 14 }}>✝️</span>
+          <span style={{ flex: 1, fontFamily: 'Rajdhani', fontSize: 12, color: 'rgba(230,220,180,0.9)', lineHeight: 1.4 }}>
+            {showVerse
+              ? <>“{verseOfDay.text}” <span style={{ color: 'rgba(240,208,96,0.8)' }}>({verseOfDay.ref})</span></>
+              : 'Versículo do dia'}
+          </span>
+          <span style={{ color: 'rgba(240,208,96,0.6)', fontSize: 11 }}>{showVerse ? '▲' : '▼'}</span>
+        </button>
+      </div>
+
       {/* ── Profecia Ativa ── */}
       {stats.activeProphecy && !stats.activeProphecy.failed && (
         <ProphecyCard prophecy={stats.activeProphecy} />
@@ -417,6 +456,7 @@ export default function DashboardScreen({ onDayEnd }: Props) {
           headerColor="rgba(220,80,80,0.8)"
           headerBg="rgba(60,10,10,0.4)"
           bonusEffort={stats.todayBonusEffort}
+          onFocus={setFocusMission}
           onEffort={toggleEffort}
         />
 
@@ -431,6 +471,7 @@ export default function DashboardScreen({ onDayEnd }: Props) {
           headerColor="var(--neon-bright)"
           headerBg="rgba(4,16,52,0.5)"
           bonusEffort={stats.todayBonusEffort}
+          onFocus={setFocusMission}
           onEffort={toggleEffort}
         />
 
@@ -446,6 +487,7 @@ export default function DashboardScreen({ onDayEnd }: Props) {
             headerColor="var(--gold)"
             headerBg="rgba(40,28,4,0.4)"
             bonusEffort={stats.todayBonusEffort}
+          onFocus={setFocusMission}
             onEffort={toggleEffort}
           />
         )}
@@ -685,9 +727,10 @@ interface SectionProps {
   headerBg: string
   bonusEffort?: string[]
   onEffort?: (id: string) => void
+  onFocus?: (mission: import('../types').Mission) => void
 }
 
-function MissionSection({ title, subtitle, missions, completed, onToggle, onDelete, glowColor, headerColor, headerBg, bonusEffort, onEffort }: SectionProps) {
+function MissionSection({ title, subtitle, missions, completed, onToggle, onDelete, glowColor, headerColor, headerBg, bonusEffort, onEffort, onFocus }: SectionProps) {
   if (missions.length === 0) return null
   const pending = missions.filter(m => !completed.includes(m.id)).length
 
@@ -729,6 +772,7 @@ function MissionSection({ title, subtitle, missions, completed, onToggle, onDele
               onDelete={onDelete}
               effortActive={bonusEffort?.includes(m.id)}
               onEffort={onEffort}
+              onFocus={onFocus}
             />
           </div>
         ))}

@@ -8,6 +8,7 @@ interface Props {
   onXP?: (amount: number, positive: boolean) => void
   effortActive?: boolean
   onEffort?: (id: string) => void
+  onFocus?: (mission: Mission) => void
 }
 
 const BORDER_BY_TYPE: Record<string, string> = {
@@ -22,7 +23,7 @@ const BG_BY_TYPE: Record<string, string> = {
   bonus:      'rgba(40,28,4,0.15)',
 }
 
-export default function MissionCard({ mission, done, onToggle, onDelete, onXP, effortActive, onEffort }: Props) {
+export default function MissionCard({ mission, done, onToggle, onDelete, onXP, effortActive, onEffort, onFocus }: Props) {
   const borderColor = done ? 'rgba(64,224,128,0.5)' : BORDER_BY_TYPE[mission.type]
   const effortBonus = Math.round(mission.xpReward * 0.5)
 
@@ -143,6 +144,26 @@ export default function MissionCard({ mission, done, onToggle, onDelete, onXP, e
           </span>
         )}
       </div>
+
+      {/* Focar (timer) — missões com tempo, não concluídas */}
+      {!done && onFocus && mission.estimatedMinutes > 0 && (
+        <span
+          role="button"
+          tabIndex={0}
+          onClick={e => { e.stopPropagation(); onFocus(mission) }}
+          onKeyDown={e => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); onFocus(mission) }
+          }}
+          title="Focar (timer)"
+          style={{
+            width: 24, height: 24, flexShrink: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            border: '1px solid rgba(120,200,255,0.4)', borderRadius: 4,
+            color: 'var(--neon-bright)', fontSize: 11, cursor: 'pointer',
+            background: 'rgba(58,143,255,0.08)',
+          }}
+        >▶</span>
+      )}
 
       {/* Checkbox */}
       {mission.custom && onDelete && (

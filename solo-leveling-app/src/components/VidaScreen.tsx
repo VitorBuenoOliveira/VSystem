@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import SLFrame from './ui/SLFrame'
+import MeuPorque from './MeuPorque'
 import { Gear } from './ui/GearDecor'
 import { usePlayerStore } from '../hooks/usePlayerStore'
 import { calcAreaScore, calcAreaDetail, calcMonarcaScore } from '../utils'
@@ -111,6 +112,9 @@ export default function VidaScreen() {
 
   return (
     <div style={{ padding: '14px 16px 80px', display: 'flex', flexDirection: 'column', gap: 10, overflowY: 'auto', height: '100%' }}>
+
+      {/* ── POR QUE EU LUTO ── */}
+      <MeuPorque />
 
       {/* ── BARRA MONARCA ── */}
       <SLFrame glowColor="#f0c040" style={{ padding: '16px' }}>
