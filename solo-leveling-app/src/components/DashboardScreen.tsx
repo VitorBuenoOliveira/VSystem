@@ -225,13 +225,16 @@ export default function DashboardScreen({ onDayEnd }: Props) {
                 borderRadius: '50%',
                 border: `2px solid ${rankCfg.color}`,
                 boxShadow: `0 0 14px ${rankCfg.color}55, inset 0 0 12px ${rankCfg.color}22`,
-                position: 'relative',
+                position: 'relative', overflow: 'hidden',
+                background: rankCfg.bgColor,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22,
               }}>
+                <span style={{ position: 'absolute' }}>{shadowStage.icon}</span>
                 <img
                   src={shadowStage.image}
                   alt={shadowStage.name}
                   onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%', display: 'block' }}
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%', display: 'block' }}
                 />
                 {/* Badge do rank */}
                 <div style={{

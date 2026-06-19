@@ -54,13 +54,16 @@ export default function StatusPanel({ stats }: Props) {
           borderRadius: '50%',
           border: `2px solid ${rankCfg.color}`,
           boxShadow: `0 0 16px ${rankCfg.color}55, inset 0 0 14px ${rankCfg.color}22`,
-          overflow: 'hidden',
+          overflow: 'hidden', position: 'relative',
+          background: rankCfg.bgColor,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26,
         }}>
+          <span style={{ position: 'absolute' }}>{shadow.icon}</span>
           <img
             src={shadow.image}
             alt={shadow.name}
             onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
           />
         </div>
         <div style={{ flex: 1 }}>

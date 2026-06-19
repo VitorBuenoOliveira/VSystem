@@ -93,17 +93,25 @@ export default function ProfileScreen() {
           </div>
 
           {/* Avatar = foto do estágio atual do Caminho das Sombras */}
-          <div style={{ position: 'relative' }}>
+          <div style={{
+            position: 'relative', width: 92, height: 92,
+            borderRadius: '50%',
+            border: `2px solid ${shadowStage.color}`,
+            boxShadow: `0 0 20px ${shadowStage.color}66, inset 0 0 20px ${shadowStage.color}22`,
+            background: rankCfg.bgColor,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            overflow: 'hidden', fontSize: 40,
+          }}>
+            {/* fallback (ícone do estágio) atrás */}
+            <span style={{ position: 'absolute' }}>{shadowStage.icon}</span>
             <img
               src={shadowStage.image}
               alt={shadowStage.name}
               onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
               style={{
-                width: 92, height: 92, objectFit: 'cover',
-                border: `2px solid ${shadowStage.color}`,
-                boxShadow: `0 0 20px ${shadowStage.color}66, inset 0 0 20px ${shadowStage.color}22`,
-                borderRadius: '50%',
-                display: 'block',
+                position: 'absolute', inset: 0,
+                width: '100%', height: '100%', objectFit: 'cover',
+                borderRadius: '50%', display: 'block',
               }}
             />
             {/* Badge de rank */}
